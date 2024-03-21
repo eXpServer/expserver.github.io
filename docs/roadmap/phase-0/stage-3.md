@@ -1,4 +1,4 @@
-# Stage 3: epoll
+# Stage 3: Epoll
 
 ## Recap
 
