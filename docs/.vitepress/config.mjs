@@ -7,7 +7,8 @@ export default defineConfig({
 	base: '/',
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
-		logo: '/assets/icon.png',
+		logo: { light: '/assets/logo-light.png', dark: '/assets/logo-dark.png', alt: 'eXpServer' },
+		siteTitle: false,
 
 		search: {
 			provider: 'local',
