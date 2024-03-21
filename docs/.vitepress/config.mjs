@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
 	title: 'eXpServer',
 	description: 'Documentation for eXpServer',
+	base: '/',
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
 		logo: '/assets/icon.png',
