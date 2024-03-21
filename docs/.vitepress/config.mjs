@@ -39,7 +39,7 @@ export default defineConfig({
 								link: '/roadmap/phase-0/',
 							},
 							{
-								text: 'Stage 0: Installation and Setup',
+								text: 'Stage 0: Setup',
 								link: '/roadmap/phase-0/stage-0.md',
 							},
 							{
@@ -51,7 +51,7 @@ export default defineConfig({
 								link: '/roadmap/phase-0/stage-2',
 							},
 							{
-								text: 'Stage 3: epoll',
+								text: 'Stage 3: Epoll',
 								link: '/roadmap/phase-0/stage-3',
 							},
 							{
@@ -66,27 +66,27 @@ export default defineConfig({
 						items: [
 							{
 								text: 'Overview',
-								link: '/api-examples',
+								link: '/roadmap/phase-1/',
 							},
 							{
-								text: 'Stage 5: Server and Client module',
-								link: '/api-examples',
+								text: 'Stage 5: Server & Client module',
+								link: '/roadmap/phase-1/stage-5',
 							},
 							{
 								text: 'Stage 6: Core & Loop module',
-								link: '/api-examples',
+								link: '/roadmap/phase-1/stage-6',
 							},
 							{
 								text: 'Stage 7: TCP module',
-								link: '/api-examples',
+								link: '/roadmap/phase-1/stage-7',
 							},
 							{
 								text: 'Stage 8: Upstream module',
-								link: '/api-examples',
+								link: '/roadmap/phase-1/stage-8',
 							},
 							{
 								text: 'Stage 9: File module',
-								link: '/api-examples',
+								link: '/roadmap/phase-1/stage-9',
 							},
 						],
 					},
@@ -96,23 +96,23 @@ export default defineConfig({
 						items: [
 							{
 								text: 'Overview',
-								link: '/api-examples',
+								link: '/roadmap/phase-2/',
 							},
 							{
-								text: 'Stage 10: HTTP parser & HTTP req',
-								link: '/api-examples',
+								text: 'Stage 10: HTTP parser',
+								link: '/roadmap/phase-2/stage-10',
 							},
 							{
-								text: 'Stage 11: HTTP res',
-								link: '/api-examples',
+								text: 'Stage 11: HTTP req & HTTP res',
+								link: '/roadmap/phase-2/stage-11',
 							},
 							{
 								text: 'Stage 12: Config & Session module',
-								link: '/api-examples',
+								link: '/roadmap/phase-2/stage-12',
 							},
 							{
 								text: 'Stage 13: HTTP Spec',
-								link: '/api-examples',
+								link: '/roadmap/phase-2/stage-13',
 							},
 						],
 					},
@@ -122,27 +122,27 @@ export default defineConfig({
 						items: [
 							{
 								text: 'Overview',
-								link: '/api-examples',
+								link: '/roadmap/phase-3/',
 							},
 							{
 								text: 'Stage 14: IP whitelist & blacklist',
-								link: '/api-examples',
+								link: '/roadmap/phase-3/stage-14',
 							},
 							{
 								text: 'Stage 15: Directory browsing',
-								link: '/api-examples',
+								link: '/roadmap/phase-3/stage-15',
 							},
 							{
 								text: 'Stage 16: Compression',
-								link: '/api-examples',
+								link: '/roadmap/phase-3/stage-16',
 							},
 							{
 								text: 'Stage 17: Load balancing',
-								link: '/api-examples',
+								link: '/roadmap/phase-3/stage-17',
 							},
 							{
 								text: 'Stage 18: Rate limiting & timeouts',
-								link: '/api-examples',
+								link: '/roadmap/phase-3/stage-18',
 							},
 						],
 					},
@@ -152,19 +152,19 @@ export default defineConfig({
 						items: [
 							{
 								text: 'Overview',
-								link: '/api-examples',
+								link: '/roadmap/phase-4/',
 							},
 							{
 								text: 'Stage 19: TLS',
-								link: '/api-examples',
+								link: '/roadmap/phase-4/stage-19',
 							},
 							{
 								text: 'Stage 20: Caching',
-								link: '/api-examples',
+								link: '/roadmap/phase-4/stage-20',
 							},
 							{
 								text: 'Stage 21: Multiprocess',
-								link: '/api-examples',
+								link: '/roadmap/phase-4/stage-21',
 							},
 						],
 					},

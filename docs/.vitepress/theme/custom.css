@@ -1,5 +1,5 @@
 /* CUSTOM CSS */
-.main .name, .main .text {
+.main h1.name span.clip, .main  p.text {
 	letter-spacing: -0.17rem;
  }
 
