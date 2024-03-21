@@ -6,7 +6,7 @@ export default defineConfig({
 	description: 'Documentation for eXpServer',
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
-		logo: '',
+		logo: '/assets/icon.png',
 
 		search: {
 			provider: 'local',
@@ -31,35 +31,37 @@ export default defineConfig({
 				items: [
 					{
 						text: 'Phase 0',
+						collapsed: false,
 						items: [
 							{
 								text: 'Overview',
-								link: '/api-examples',
+								link: '/roadmap/phase-0/',
 							},
 							{
-								text: 'Stage 0: Setting up env',
-								link: '/api-examples',
+								text: 'Stage 0: Installation and Setup',
+								link: '/roadmap/phase-0/stage-0.md',
 							},
 							{
 								text: 'Stage 1: TCP server',
-								link: '/api-examples',
+								link: '/roadmap/phase-0/stage-1',
 							},
 							{
 								text: 'Stage 2: TCP client',
-								link: '/api-examples',
+								link: '/roadmap/phase-0/stage-2',
 							},
 							{
 								text: 'Stage 3: EPOLL',
-								link: '/api-examples',
+								link: '/roadmap/phase-0/stage-3',
 							},
 							{
 								text: 'Stage 4: TCP proxy',
-								link: '/api-examples',
+								link: '/roadmap/phase-0/stage-4',
 							},
 						],
 					},
 					{
 						text: 'Phase 1',
+						collapsed: true,
 						items: [
 							{
 								text: 'Overview',
@@ -89,6 +91,7 @@ export default defineConfig({
 					},
 					{
 						text: 'Phase 2',
+						collapsed: true,
 						items: [
 							{
 								text: 'Overview',
@@ -114,6 +117,7 @@ export default defineConfig({
 					},
 					{
 						text: 'Phase 3',
+						collapsed: true,
 						items: [
 							{
 								text: 'Overview',
@@ -143,6 +147,7 @@ export default defineConfig({
 					},
 					{
 						text: 'Phase 4',
+						collapsed: true,
 						items: [
 							{
 								text: 'Overview',
