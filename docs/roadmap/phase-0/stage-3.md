@@ -1,4 +1,4 @@
-# Stage 3: Epoll
+# Stage 3: Linux epoll
 
 ## Recap
 

@@ -1,1 +1,1 @@
-# Stage 18: Load balancing
+# Stage 18: Rate Limiting & Timeout

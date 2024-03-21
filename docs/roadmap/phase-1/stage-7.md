@@ -1,1 +1,1 @@
-# Stage 7: Server & client module
+# Stage 7: TCP Module

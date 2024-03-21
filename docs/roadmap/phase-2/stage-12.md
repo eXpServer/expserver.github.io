@@ -1,1 +1,1 @@
-# Stage 12: Upstream module
+# Stage 12: Config & Session Modules

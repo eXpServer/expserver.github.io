@@ -1,1 +1,1 @@
-# Stage 6: Core & loop module
+# Stage 6: Core & Loop Modules

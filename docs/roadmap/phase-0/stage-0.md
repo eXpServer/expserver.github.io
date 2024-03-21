@@ -1,4 +1,4 @@
-# Stage 0: Installation and Setup
+# Stage 0: Setup
 
 ## Recap
 
