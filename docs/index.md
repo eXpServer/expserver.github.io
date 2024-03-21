@@ -4,22 +4,27 @@ layout: home
 
 hero:
   name: "eXpServer"
-  text: "Documentation for eXpServer"
-  tagline: My great project tagline
+  text: "Documentation"
+  tagline: Educational Webserver written from Scratch in C
+  image:
+    src: '/assets/hero.png'
   actions:
     - theme: brand
-      text: Markdown Examples
+      text: Roadmap
       link: /markdown-examples
     - theme: alt
-      text: API Examples
+      text: About
       link: /api-examples
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - icon: ⚙️
+    title: Architecture
+    details: Single threaded, event-driven, nonblocking architecture similar to NGINX
+  - icon: 🐧
+    title: Written in C
+    details: eXpServer is written completely in C using Linux socket programming APIs
+  - icon: 🚦
+    title: Roadmap
+    details: Beginner friendly stage driven incremental learning
 ---
 
