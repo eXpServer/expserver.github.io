@@ -50,7 +50,7 @@ export default defineConfig({
 								link: '/roadmap/phase-0/stage-2',
 							},
 							{
-								text: 'Stage 3: EPOLL',
+								text: 'Stage 3: epoll',
 								link: '/roadmap/phase-0/stage-3',
 							},
 							{

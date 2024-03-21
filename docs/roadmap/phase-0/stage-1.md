@@ -10,7 +10,7 @@
 
 How does a server function? It listens for any connections, i.e. clients that are trying to connect to the server, and based on the request from the client, it does some specific operation.
 
-To be able to listen for connections, it needs **listening sockets**. Listening **s**ockets are bound to a specific IP address and a port. If any client wants to connect to the server, they have to direct their request to this particular IP:port combo that the server is listening to.
+To be able to listen for connections, it needs **listening sockets**. Listening \*\*\*\*sockets are bound to a specific IP address and a port. If any client wants to connect to the server, they have to direct their request to this particular IP:port combo that the server is listening to.
 
 For eg. Let us assume you have a TCP server ‘running’ on your computer on port 8000. Running signifies that the server is ‘listening’ for any connections on port 8000. If a client wants to connect to the server, they would have to direct their request to `<IP_address_of_computer>:8000`.
 
@@ -20,7 +20,7 @@ Create an illustration of the working of server.
 
 ## Implementation
 
-![stage-1.png](../../assets/phase-0/stage-1.png)
+![implementation.png](/assets/stage-1/implementation.png)
 
 All the code from this stage will be written in `stage1/tcp_server.c`.
 
@@ -76,8 +76,6 @@ Now that we have created a socket, we need to specify the address that it needs 
   server_addr.sin_port = htons(PORT);
 ```
 
-`struct sockaddr_in` is a structure used in socket programming to represent socket address.
-
 - `server_addr.sin_family = AF_INET` - socket will use the IPv4 address format
 - `server_addr.sin_addr.s_addr = htonl(INADDR_ANY)` - allows the server to accept connections from any client (explain htonl)
 - `server_addr.sin_port = htons(PORT)` - sets the port number (explain htons)
@@ -127,11 +125,7 @@ Compile the code using the following command:
 gcc tcp_server.c -o tcp_server
 ```
 
-But what/who is going to connect to the server? Since we have not created a TCP client yet, lets use a networking utility tool called _netcat_. netcat is a versatile tool that has a wide range of functionalities including the ability to act as a TCP client.
-
-netcat takes an IP address and a port to connect to. In our case, since the server is running on the same machine, we can use `[localhost](http://localhost)` as the IP address and 8080 as the port number.
-
-Let’s start the server program using the following command:
+To start the server, use the following command:
 
 ```bash
 ./tcp_server
@@ -143,17 +137,21 @@ On running the TCP server, it will display the following message:
 [INFO] Server listening on port 8080
 ```
 
-When the client connection to the server is successful, it will show the following message:
+But what/who is going to connect to the server? Since we have not created a TCP client yet, lets use a networking utility tool called _netcat_. netcat is a versatile tool that has a wide range of functionalities including the ability to act as a TCP client.
 
-```bash
-[INFO] Server listening on port 8080
-[INFO] Client connected to server
-```
+netcat takes an IP address and a port to connect to. In our case, since the server is running on the same machine, we can use `[localhost](http://localhost)` as the IP address and 8080 as the port number.
 
 Open another terminal in parallel and type the following command to start a netcat TCP client:
 
 ```bash
 nc localhost 8080
+```
+
+When the client connection to the server is successful, it will show the following message:
+
+```bash
+[INFO] Server listening on port 8080
+[INFO] Client connected to server
 ```
 
 This confirms that the server is able to accept incoming connections from a client.
@@ -278,6 +276,7 @@ int main() {
   printf("[INFO] Client connected to server\n");
 
   while (1) {
+    // create buffer to store client message
     char buff[BUFF_SIZE];
     memset(buff, 0, BUFF_SIZE);
 
@@ -291,7 +290,7 @@ int main() {
       exit(1);
     }
 
-    // print message from cilent
+    // print message from client
     printf("[CLIENT MESSAGE] %s", buff);
 
     // sting reverse
@@ -314,16 +313,16 @@ Upon successful connection of the client to the server, the server terminal shou
 [INFO] Client connected to server
 ```
 
-The server will receive the message sent by the client, and should send a response back to the client with the reversed string.
-
-```bash
-[CLIENT MESSAGE] hello
-```
-
 Let us try to send a string from the client terminal:
 
 ```bash
 hello
+```
+
+The server will receive the message sent by the client, and should send a response back to the client with the reversed string.
+
+```bash
+[CLIENT MESSAGE] hello
 ```
 
 The client will receive the reversed string.

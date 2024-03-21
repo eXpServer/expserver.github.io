@@ -12,7 +12,7 @@ Expect some code to echo the TCP server implementation, given the similarities i
 
 ## Implementation
 
-![stage-2.png](../../assets/phase-0/stage-2.png)
+![implementation.png](/assets/stage-2/implementation.png)
 
 Create a file named `tcp_client.c` in the same directory as `tcp_server.c`. All the code from this stage will be written to it.
 
@@ -115,17 +115,17 @@ The terminal with the TCP server should display the following message:
 [INFO] Client connected to server
 ```
 
-The server will receive the message sent by the the client.
-
-```bash
-[CLIENT MESSAGE] hello
-```
-
 Type some message in the terminal running the TCP client.
 
 ```c
 [INFO] Connected to tcp server
 hello
+```
+
+The server will receive the message sent by the the client.
+
+```bash
+[CLIENT MESSAGE] hello
 ```
 
 The client terminal should get a response message (reversed string) from the server as a receipt.
