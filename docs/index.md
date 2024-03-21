@@ -3,18 +3,18 @@
 layout: home
 
 hero:
-  name: "eXpServer"
-  text: "Documentation"
+  name: 'eXpServer'
+  text: 'Documentation'
   tagline: Educational Webserver written from Scratch in C
   image:
     src: '/assets/hero.png'
   actions:
     - theme: brand
       text: Roadmap
-      link: /markdown-examples
+      link: /roadmap/
     - theme: alt
       text: About
-      link: /api-examples
+      link: /about
 
 features:
   - icon: ⚙️
@@ -27,4 +27,3 @@ features:
     title: Roadmap
     details: Beginner friendly stage driven incremental learning
 ---
-

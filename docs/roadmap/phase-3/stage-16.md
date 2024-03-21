@@ -1,1 +1,1 @@
-# Stage 16: IP whitelist/blacklist
+# Stage 16: Gzip Compression

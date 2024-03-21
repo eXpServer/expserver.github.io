@@ -1,1 +1,1 @@
-# Stage 17: Gzip compression
+# Stage 17: Load Balancing

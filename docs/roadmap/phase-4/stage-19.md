@@ -1,1 +1,1 @@
-# Stage 19: Rate limiting & timeout
+# Stage 19: Transport Layer Security (TLS)

@@ -1,4 +1,4 @@
-# Stage 2: A Basic TCP Client
+# Stage 2: TCP Client
 
 ## Recap
 

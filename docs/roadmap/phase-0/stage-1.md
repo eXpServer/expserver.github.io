@@ -1,4 +1,4 @@
-# Stage 1: A Basic TCP Server
+# Stage 1: TCP Server
 
 ## Recap
 
