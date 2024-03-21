@@ -10,7 +10,7 @@ Consistency in the development schedule is recommended for maintaining clarity a
 
 ### Phase 0
 
-- [Overview](phase-/)
+- [Overview](phase-0/)
 - [Stage 0: Setup](phase-0/stage-0)
 - [Stage 1: TCP Server](phase-0/stage-1)
 - [Stage 2: TCP Slient](phase-0/stage-2)
