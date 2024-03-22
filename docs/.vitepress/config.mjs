@@ -4,9 +4,11 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
 	title: 'eXpServer',
 	description: 'Documentation for eXpServer',
+	head: [['link', { rel: 'icon', href: '/images/icon.png' }]],
+	base: '/',
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
-		logo: { light: './assets/logo-light.png', dark: './assets/logo-dark.png', alt: 'eXpServer' },
+		logo: { light: '/images/logo-light.png', dark: '/images/logo-dark.png', alt: 'eXpServer' },
 		siteTitle: false,
 
 		search: {
