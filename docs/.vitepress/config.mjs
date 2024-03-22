@@ -4,10 +4,9 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
 	title: 'eXpServer',
 	description: 'Documentation for eXpServer',
-	base: '/expserver.github.io/',
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
-		logo: { light: '/assets/logo-light.png', dark: '/assets/logo-dark.png', alt: 'eXpServer' },
+		logo: { light: './assets/logo-light.png', dark: './assets/logo-dark.png', alt: 'eXpServer' },
 		siteTitle: false,
 
 		search: {
@@ -30,7 +29,11 @@ export default defineConfig({
 			'/resources/': [
 				{
 					text: 'Resources',
-					items: [{ text: 'GNU Debugger', link: '/resources/gdb' }],
+					items: [
+						{ text: 'Linux epoll', link: '/resources/linux-epoll' },
+						{ text: 'HTTP', link: '/resources/http' },
+						{ text: 'File Descriptors', link: '/resources/file-descriptors' },
+					],
 				},
 			],
 			'/roadmap/': [
