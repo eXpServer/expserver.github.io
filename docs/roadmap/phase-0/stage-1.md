@@ -10,7 +10,7 @@
 
 How does a server function? It listens for any connections, i.e. clients that are trying to connect to the server, and based on the request from the client, it does some specific operation.
 
-To be able to listen for connections, it needs **listening sockets**. Listening \*\*\*\*sockets are bound to a specific IP address and a port. If any client wants to connect to the server, they have to direct their request to this particular IP:port combo that the server is listening to.
+To be able to listen for connections, it needs **listening sockets**. Listening sockets are bound to a specific IP address and a port. If any client wants to connect to the server, they have to direct their request to this particular IP:port combo that the server is listening to.
 
 For eg. Let us assume you have a TCP server ‘running’ on your computer on port 8000. Running signifies that the server is ‘listening’ for any connections on port 8000. If a client wants to connect to the server, they would have to direct their request to `<IP_address_of_computer>:8000`.
 
@@ -86,7 +86,7 @@ Now that we have created a socket, we need to specify the address that it needs 
 
   // starting to listen
   listen(listen_sock_fd, MAX_ACCEPT_BACKLOG);
-	printf("[INFO] Server listening on port %d\n", PORT);
+  printf("[INFO] Server listening on port %d\n", PORT);
 ```
 
 The `bind()`function, provided by the `<sys/socket.h>` library, will bind the listening socket to the provided port. The `listen()` function marks the socket as a passive socket, ready to accept incoming connection requests.
@@ -103,7 +103,7 @@ We need to get the address of the clients that are connecting to the server. For
   int client_addr_len;
 
   int conn_sock_fd = accept(listen_sock_fd, (struct sockaddr *)&client_addr, &client_addr_len);
-	printf("[INFO] Client connected to server\n");
+  printf("[INFO] Client connected to server\n");
 ```
 
 The `accept()` function accepts the incoming client connection and creates a new socket for the same.
@@ -133,7 +133,7 @@ To start the server, use the following command:
 
 On running the TCP server, it will display the following message:
 
-```bash
+```Server
 [INFO] Server listening on port 8080
 ```
 
@@ -149,7 +149,7 @@ nc localhost 8080
 
 When the client connection to the server is successful, it will show the following message:
 
-```bash
+```Server
 [INFO] Server listening on port 8080
 [INFO] Client connected to server
 ```
@@ -184,7 +184,7 @@ Let’s take care of some error handling in case of unexpected failure.
 ```c
     // client closed connection or error occurred
     if (read_n <= 0) {
-			printf("[INFO] Client disconnected. Closing server\n");
+      printf("[INFO] Client disconnected. Closing server\n");
       close(conn_sock_fd);
       exit(1);
     }
@@ -209,8 +209,8 @@ void strrev(char *str) {
 Now that `buff` has the reversed string, its time to send it to the client. We can use the `send()` function provided by the `<sys/socket.h>` library to achieve this.
 
 ```c
-  	// string reverse
-		strrev(buff);
+    // string reverse
+    strrev(buff);
 
     // sending client message to server
     send(conn_sock_fd, buff, read_n, 0);
@@ -221,6 +221,8 @@ Now that `buff` has the reversed string, its time to send it to the client. We c
 ---
 
 The final code should look like this.
+
+::: details Code
 
 ```c
 #include <arpa/inet.h>
@@ -302,32 +304,34 @@ int main() {
 }
 ```
 
+:::
+
 ### Milestone #2
 
 It’s time to test the server! Similar to last time, open 2 terminals, one for the TCP server that we just wrote and another for the netcat client. Start the server followed by the client.
 
 Upon successful connection of the client to the server, the server terminal should look like this:
 
-```bash
+```Server
 [INFO] Server listening on port 8080
 [INFO] Client connected to server
 ```
 
 Let us try to send a string from the client terminal:
 
-```bash
+```Client
 hello
 ```
 
 The server will receive the message sent by the client, and should send a response back to the client with the reversed string.
 
-```bash
+```Server
 [CLIENT MESSAGE] hello
 ```
 
 The client will receive the reversed string.
 
-```bash
+```Client
 olleh
 ```
 

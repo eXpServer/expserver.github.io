@@ -7,6 +7,7 @@ export default defineConfig({
 	head: [['link', { rel: 'icon', href: '/images/icon.png' }]],
 	base: '/',
 	themeConfig: {
+		outline: { level: 'deep' },
 		// https://vitepress.dev/reference/default-theme-config
 		logo: { light: '/images/logo-light.png', dark: '/images/logo-dark.png', alt: 'eXpServer' },
 		siteTitle: false,
