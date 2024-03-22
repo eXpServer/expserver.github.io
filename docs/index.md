@@ -7,7 +7,7 @@ hero:
   text: 'Documentation'
   tagline: Educational Webserver written from Scratch in C
   image:
-    src: '/assets/hero.png'
+    src: '/images/hero.png'
   actions:
     - theme: brand
       text: Roadmap
