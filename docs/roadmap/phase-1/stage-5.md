@@ -57,7 +57,7 @@ main()
 
 `xps.h` will consist of constants and user defined types that are common to all modules and will be used everywhere. Create a file `xps.h` under `expserver` folder and copy the below content to it.
 
-::: details `expserver/xps.h`
+::: details expserver/xps.h
 
 ```c
 #ifndef XPS_H
@@ -106,7 +106,7 @@ We will be constantly modifying/adding to this file in each stage to accommodate
 
 The code below has the contents of the header file for `xps_socket`. Have a look at it and make a copy of it in your codebase.
 
-::: details `expserver/network/xps_socket.h`
+::: details expserver/network/xps_socket.h
 
 ```c
 #ifndef XPS_SOCKET_H
@@ -163,7 +163,7 @@ Each entity will have a create and destroy function. Create functions are respon
 
 Let’s start by writing the `xps_socket_create()` function.
 
-::: details `expserver/network/xps_socket.c`
+::: details expserver/network/xps_socket.c
 
 ```c
 xps_socket_t *xps_socket_create(int fd) {
@@ -216,7 +216,7 @@ xps_socket_t *xps_socket_create(int fd) {
 
 Moving on to the destroy function. When a socket is provided to be destroyed, we have to close the socket and free up the memory.
 
-::: details `expserver/network/xps_socket.c`
+::: details expserver/network/xps_socket.c
 
 ```c
 void xps_socket_destroy(xps_socket_t *sock) {
@@ -253,7 +253,7 @@ void xps_socket_destroy(xps_socket_t *sock) {
 
 The code below has the contents of the header file for `xps_server`. Have a look at it and make a copy of it in your codebase.
 
-::: details `expserver/network/xps_socket.h`
+::: details expserver/network/xps_socket.h
 
 ```c
 #ifndef XPS_SERVER_H
@@ -287,7 +287,7 @@ Each server instance will have the following:
 
 Let’s proceed with writing the functions associated with the server. We have a server create and destroy function. Most of the implementation for `xps_server_create()` was already done by us in the previous stages.
 
-::: details `expserver/network/xps_server.c`
+::: details expserver/network/xps_server.c
 
 ```c
 xps_server_t *xps_server_create(int port, xps_server_connection_handler_t connection_cb) {
@@ -344,7 +344,7 @@ This destroy function might be a bit tricky on first glance as `xps_server_t` st
 
 You might have a question here. What about `server->port` & `server->connection_cb`? Memory needs to be free/deallocated ONLY for members which were dynamically allocated (for eg. using malloc).
 
-::: details `expserver/network/xps_server.c`
+::: details expserver/network/xps_server.c
 
 ```c
 void xps_server_destroy(xps_server_t *server) {
@@ -379,7 +379,7 @@ The above code snippet shows us how we can destroy objects stored in a `vec` lis
 
 Last but not least, we have a short and important function `xps_server_loop_read_handler()` that invokes the callback function that should be called when the server receives a new client connection
 
-::: details `expserver/network/xps_server.c`
+::: details expserver/network/xps_server.c
 
 ```c
 void xps_server_loop_read_handler(xps_server_t *server) {
@@ -413,7 +413,7 @@ Let’s have a recap of what we have done till now.
 
 The code below has the contents of the header file for `xps_client`. Have a look at it and make a copy of it in your codebase.
 
-::: details `expserver/network/xps_client.h`
+::: details expserver/network/xps_client.h
 
 ```c
 #ifndef XPS_CLIENT_H
@@ -449,7 +449,7 @@ The client will also have functions specifically for creation and destruction.
 
 `xps_client_create()` function will create a new client instance with the specified server and socket.
 
-::: details `expserver/network/xps_client.c`
+::: details expserver/network/xps_client.c
 
 ```c
 xps_client_t *xps_client_create(xps_server_t *server, xps_socket_t *sock, xps_client_read_handler_t read_cb) {
@@ -475,7 +475,7 @@ Recall how in the `xps_server_destroy()` function we used `xps_client_destroy()`
 
 The `xps_client_destroy()` function is responsible for releasing the resources associated with a client instance. Each client belongs to a server, and the server may have multiple clients connected to it. When destroying a client, the function iterates through the list of clients in the server to find the specific client instance and set it to `NULL`.
 
-::: details `expserver/network/xps_client.c`
+::: details expserver/network/xps_client.c
 
 ```c
 void xps_client_destroy(xps_client_t *client) {
@@ -509,7 +509,7 @@ Refer the `handle_client()` function from the previous stage and modify the func
 
 If you notice carefully, the return type of `xps_client_read()` is of type `xps_buffer_t`. How would you create one? We have a `xps_buffer_create()` function just for this. It’ll take care of creating the buffer, handle all the potential errors in between and return a buffer of type `xps_buffer_t`. Read more about `xps_buffer` utility [here](https://www.notion.so/xps_buffer-f8bceae3c7c347c0a86441e3c80aaa61?pvs=21).
 
-::: details `expserver/network/xps_client.c`
+::: details expserver/network/xps_client.c
 
 ```c
 void xps_client_write(xps_client_t *client, xps_buffer_t *buff) {
@@ -531,7 +531,7 @@ xps_buffer_t *xps_client_read(xps_client_t *client) {
 
 Create a simple function, `xps_client_loop_read_handler()` to call the client read callback.
 
-::: details `expserver/network/xps_client.c`
+::: details expserver/network/xps_client.c
 
 ```c
 void xps_client_loop_read_handler(xps_client_t *client) {
@@ -559,7 +559,7 @@ We’ll start with the `main()` function because that is where the execution sta
 Always try to keep the main function simple and distribute the work into dedicated functions.
 :::
 
-::: details `expserver/main.c`
+::: details expserver/main.c
 
 ```c
 // Global variables
@@ -593,7 +593,7 @@ The implementations of `loop_attach()` and `loop_detach()` remain unchanged from
 
 When creating the server with `xps_server_create()`, we provide it with `xps_server_connection_handler` as a callback function. This function gets invoked when a client attempts to connect to the server, essentially replacing `accept_connection()` from the previous stage. It's the same function triggered within `xps_server_loop_read_handler()` in `xps_server.c`. Think about what the callback function will contain before diving into its implementation.
 
-::: details `expserver/main.c`
+::: details expserver/main.c
 
 ```c
 void xps_server_connection_handler(xps_server_t *server, int status) {
@@ -616,7 +616,7 @@ void xps_server_connection_handler(xps_server_t *server, int status) {
 
 `xps_client_read_handler()` \*\*\*\*is the client callback function that we attach to all client instances. This function gets triggered when there is data to be read from the client. Recall its use in `xps_client_loop_read_handler()` in `xps_client.c`.
 
-::: details `expserver/main.c`
+::: details expserver/main.c
 
 ```c
 void xps_client_read_handler(xps_client_t *client, int status) {
@@ -647,7 +647,7 @@ In case of a server event, you would have to loop through all the server instanc
 
 Similarly for client, loop through all the clients in all the servers to find the client with the read event. Call the `xps_client_loop_read_handler()` when the client has been found.
 
-::: details `expserver/main.c`
+::: details expserver/main.c
 
 ```c
 void loop_run(int epoll_fd) {
@@ -692,7 +692,7 @@ void loop_run(int epoll_fd) {
 
 :::
 
-::: note
+::: tip NOTE
 Take a note of the type casting on client from server’s clients list to `xps_client_t` in the client loop.
 :::
 

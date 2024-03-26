@@ -14,9 +14,9 @@ Any distribution of Linux can be used.
 
 ### C compiler - gcc
 
-Since we will be building the project primarily in C programming language, we will need a C compiler. We will stick with the gcc compiler for this purpose.
+Since we will be building the project primarily in C programming language, we will need a C compiler. We will stick with the popular `gcc` compiler for this purpose.
 
-### GDB
+### GNU Debugger - GDB
 
 Read the section on [GDB](https://nitcbase.github.io/docs/Misc/GDB) to learn how to use the GNU debugger.
 
