@@ -1,4 +1,4 @@
-# Phase 1: Overview
+# Overview
 
 Congratulations on completion of Phase 0! Let’s look at what we have done till now.
 
@@ -6,40 +6,57 @@ Congratulations on completion of Phase 0! Let’s look at what we have done till
 
 - In stage 1, we built a simple TCP server that served a _netcat_ client
 - In stage 2, we created our own TCP client and made it communicate with the TCP server
-- In stage 3, we made our TCP server support multiple clients using _epoll_ (concurrency)
-- In stage 4, we converted our TCP server to act as a proxy server and made all client communications to the python file server go through the proxy server
+- In stage 3, we made our TCP server support multiple simultaneous clients using _epoll_ (concurrency)
+- In stage 4, we converted our TCP server to act as a proxy server and made all client communications to the python file server go through it
 
 ## What to expect in Phase 1
 
-Phase 0 gave us an understanding of how servers work in general, and also gave us an idea of how the client-server communication takes place.
+Phase 0 gave us an introduction to Linux socket programming and an understanding of how client-server communications take place.
 
-Now might be the right time to have a look at the overall architecture of eXpServer. Check it out [here](https://www.notion.so/Architecture-68bd371e04e340ce858597abb9cf12cf?pvs=21).
+Now is a good time to have a look at the overall architecture of eXpServer. Check it out [here](https://www.notion.so/Architecture-68bd371e04e340ce858597abb9cf12cf?pvs=21).
 
-eXpServer is broken down into multiple modules. Below are the modules of eXpServer that we will tackle with building in Phase 1:
+eXpServer is broken down into multiple modules. Given below are the modules that we will be tackling in Phase 1:
 
-1. Core & loop module
-2. TCP module
-3. Server and client module
-4. File module
+1. Server & Client modules
+2. Core & Loop modules
+3. TCP module
+4. Upstream module
+5. File module
+
+![overview.png](/assets/phase-1-overview/overview.png)
 
 There will be an apparent jump in the complexity of the code that we will be writing which is normal and expected. You will have to spend a bit more time than Phase 0 for this. Rest assured, this documentation will guide you throughout the process.
 
-## Working directory and code
+## File structure
 
-Find below the starting code that you’ll be working with.
+The code that we have written so far for Phase 0 is a standalone practice session. Going forward we will be starting to build the eXpServer. The file structure will change drastically with the modularisation of code into multiple files and folders.
 
-Give code link here
+In order to maintain consistency, we will be providing you with the expected file structure at the beginning of each stage.
 
-### Understanding the file structure
+### Phase 1 file structure
 
-Each module will require its own folder consisting of its related code. File structure will be given at the beginning of every stage to avoid any confusion.
+![overview-filestructure.png](/assets/phase-1-overview/overview-filestructure.png)
 
-The starting code will consist of the following:
+From Phase 1, we will be using a library called `vec` that provides dynamic array implementation. Read about `vec` more [here](https://www.notion.so/vec-c409d67ef38e4e4b9f3a1fe8b51956ca?pvs=21).
 
-![filestructure.png](/assets/phase-1-overview/filestructure.png)
+## Memory management, error handling & logging
 
-## Memory handling
+In phase 0, we prioritised readability and simplicity over proper error handling and memory management.
 
-From this phase, high importance will be given to proper memory management. If memory is allocated, it has to deallocated before the server is shutdown. We cannot emphasise the importance of memory handling.
+As a web server is a software that is expected to run for long intervals of time without shutting down, memory leaks in the code can lead to huge consumption of system resources, which is inefficient and can lead to the OS killing the process.
 
-We will use using some third-party tools such as Valgrind.
+As a web server deals with a lot of asynchronous system calls and network communications, it can lead to a variety of errors and unexpected failures. If these errors are not properly handled, it can lead to the process exiting itself.
+
+Thus, from this phase onwards,
+
+- High importance is given to proper memory management. If memory is allocated, it has to deallocated before the server is shutdown.
+- Errors from any function calls should be handled properly
+- To help with debugging and understanding the order of function invocations, we will be thoroughly logging messages throughout the code using the provided `xps_logger` utility. Read more about `xps_logger` [here](https://www.notion.so/xps_logger-9c8f4eb874ff4b0db31d2783197a7708?pvs=21).
+
+::: tip
+Third-party tools such as **Valgrind** can help to find any memory leaks in the application we write.
+:::
+
+## Naming convention
+
+Snake case convention is used to name all identifiers, ie. small letters with underscores in place of spaces. eg: `my_server` , `xps_buffer.c` etc. File names, function names and type names are prefixed with `xps_`
