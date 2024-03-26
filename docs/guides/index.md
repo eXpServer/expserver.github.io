@@ -2,14 +2,14 @@
 
 ## Resources
 
-- [Architecture](/resources/architecture)
-- [File Descriptors](/resources/file-descriptors)
-- [Linux epoll](/resources/linux-epoll)
-- [HTTP](/resources/http)
+- [Architecture](/guides/resources/architecture)
+- [File Descriptors](/guides/resources/file-descriptors)
+- [Linux epoll](/guides/resources/linux-epoll)
+- [HTTP](/guides/resources/http)
 
 ## References
 
-- [vec](/references/vec)
-- [xps_buffer](/references/xps_buffer)
-- [xps_logger](/references/xps_logger)
-- [xps_utils](/references/xps_utils)
+- [vec](/guides/references/vec)
+- [xps_buffer](/guides/references/xps_buffer)
+- [xps_logger](/guides/references/xps_logger)
+- [xps_utils](/guides/references/xps_utils)
