@@ -1,4 +1,4 @@
-# File Descriptors
+# File descriptors
 
 When we open a file, the OS creates an entry to represent that file and store the information about that opened file.
 
