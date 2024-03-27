@@ -1,4 +1,4 @@
-# Stage 5: Server and Client Modules
+# Stage 5: Server & Client Modules
 
 ## Recap
 
@@ -505,7 +505,7 @@ void xps_client_destroy(xps_client_t *client) {
 
 :::
 
-::: danger Question
+::: danger QUESTION
 Why do you think it is necessary to set NULL in server’s client list while destroying the client? Why can’t we just remove the item from the list instead of setting it to NULL?
 :::
 

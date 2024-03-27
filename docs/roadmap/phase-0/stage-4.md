@@ -103,8 +103,6 @@ There is another problem that you might have thought of while reading the code b
 Since we have only one listening socket you could easily check whether the event is on the listen socket (we did this in Stage 3). But since we can have multiple connection sockets and multiple upstream sockets, how will you determine if the event is on a connection socket or an upstream socket?
 :::
 
-The answer is pretty simple. Keep a list of all the connection sockets and upstream sockets. Iterating over them to see if it exists in the list should give you the answer if the event is on a connection or upstream socket.
-
 Here are some global variables that could come handy:
 
 ::: tip NOTE
@@ -113,9 +111,7 @@ Add this to global variables:
 ```c
 int listen_sock_fd, epoll_fd;
 struct epoll_event events[MAX_EPOLL_EVENTS];
-int rout_table[MAX_SOCKS][2], rout_table_size = 0;
-int conn_socks[MAX_SOCKS], conn_socks_size = 0;
-int upstream_socks[MAX_SOCKS], upstream_socks_size = 0;
+int route_table[MAX_SOCKS][2], route_table_size = 0;
 ```
 
 :::
@@ -382,4 +378,4 @@ Keep testing the code by navigating across the file sever, and opening files. Ma
 
 Woah! Impressive. This marks the end of Phase 0. Hopefully you have learned a lot from doing the project till now.
 
-The learning doesn't stop here as in the next phase though, as we’ll start building eXpServer in the next phase. Phase 0 laid the foundation as to what is about to come next. Read more about Phase 1 [here](/roadmap/phase-1/).
+The learning doesn't stop here though as in the next phase, as we’ll start building eXpServer in the next phase. Phase 0 laid the foundation as to what is about to come next. Read more about Phase 1 [here](/roadmap/phase-1/).

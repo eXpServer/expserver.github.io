@@ -33,9 +33,9 @@ The code that we have written so far for Phase 0 is a standalone practice sessio
 
 In order to maintain consistency, we will be providing you with the expected file structure at the beginning of each stage.
 
-### Phase 1 file structure
+### Phase 1 initial file structure
 
-![overview-filestructure.png](/assets/phase-1-overview/filestructure.png)
+![filestructure.png](/assets/phase-1-overview/filestructure.png)
 
 From Phase 1, we will be using a library called `vec` that provides dynamic array implementation. Read about `vec` more [here](/guides/references/vec).
 
