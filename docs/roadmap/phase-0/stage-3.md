@@ -60,11 +60,12 @@ struct epoll_event event, events[MAX_EPOLL_EVENTS];
 int epoll_fd = epoll_create1(0);
 ```
 
-::: tip
+::: note
 Add this to global definitions:
 
 ```c
 #define MAX_EPOLL_EVENTS 10
+#define MAX_SOCKS 20
 ```
 
 :::

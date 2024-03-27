@@ -23,7 +23,7 @@ eXpServer is broken down into multiple modules. Given below are the modules that
 4. Upstream module
 5. File module
 
-![overview.png](/assets/phase-1-overview/overview.png)
+![modules.png](/assets/phase-1-overview/modules.png)
 
 There will be an apparent jump in the complexity of the code that we will be writing which is normal and expected. You will have to spend a bit more time than Phase 0 for this. Rest assured, this documentation will guide you throughout the process.
 
@@ -35,7 +35,7 @@ In order to maintain consistency, we will be providing you with the expected fil
 
 ### Phase 1 file structure
 
-![overview-filestructure.png](/assets/phase-1-overview/overview-filestructure.png)
+![overview-filestructure.png](/assets/phase-1-overview/filestructure.png)
 
 From Phase 1, we will be using a library called `vec` that provides dynamic array implementation. Read about `vec` more [here](https://www.notion.so/vec-c409d67ef38e4e4b9f3a1fe8b51956ca?pvs=21).
 

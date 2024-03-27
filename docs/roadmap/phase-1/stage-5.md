@@ -53,7 +53,13 @@ main()
 					send()
 ```
 
+Don’t worry if this is very confusing now. We’ll break it down slowly and build it step by step.
+
 ## Implementation
+
+The figure below gives a high level view of what we’ll be doing in this stage:
+
+![implementation.png](/assets/stage-5/implementation.png)
 
 `xps.h` will consist of constants and user defined types that are common to all modules and will be used everywhere. Create a file `xps.h` under `expserver` folder and copy the below content to it.
 
