@@ -22,7 +22,7 @@ Open a terminal and navigate to the folder you want to serve. Run the following 
 python -m http.server 3000
 ```
 
-Now that the local file server is running on port 3000, we can connect to it using a browser by going to `[localhost:3000](http://localhost:3000)`.
+Now that the local file server is running on port 3000, we can connect to it using a browser by going to `localhost:3000`.
 
 ![python-server.png](/assets/stage-4/python-server.png)
 
@@ -346,11 +346,11 @@ Compile and run `tcp_server.c`. The terminal should output the following:
 [DEBUG] Epoll wait
 ```
 
-Now, the fileserver is active on port `3000` and the proxy is running on port `8080`. In the introduction demo, we connected to the file server directly by accessing [localhost:3000](http://localhost:3000) from our browser (client). This time, we’ll connect to the proxy by looking up [localhost:8080](http://localhost:8080) in the browser.
+Now, the fileserver is active on port `3000` and the proxy is running on port `8080`. In the introduction demo, we connected to the file server directly by accessing `localhost:3000` from our browser (client). This time, we’ll connect to the proxy by looking up `localhost:8080` in the browser.
 
 Both links should lead to the same file server; they're just different paths. If this works as expected, it indicates that our proxy is functioning perfectly!
 
-If you included a `printf` statement in `handle_client()` to print the client message, you would get the [HTTP](https://www.notion.so/HTTP-e93e4b23676d4d5c9e939e7ae835237a?pvs=21) request message in the proxy terminal.
+If you included a `printf` statement in `handle_client()` to print the client message, you would get the [HTTP](/guides/resources/http) request message in the proxy terminal.
 
 ```bash
 [CLIENT MESSAGE] GET / HTTP/1.1
@@ -382,4 +382,4 @@ Keep testing the code by navigating across the file sever, and opening files. Ma
 
 Woah! Impressive. This marks the end of Phase 0. Hopefully you have learned a lot from doing the project till now.
 
-The learning doesn't stop here as in the next phase though, as we’ll start building eXpServer in the next phase. Phase 0 laid the foundation as to what is about to come next. Read more about Phase 1 [here](https://www.notion.so/Overview-874cfcbedbb44523b1b69e8e53c42e34?pvs=21).
+The learning doesn't stop here as in the next phase though, as we’ll start building eXpServer in the next phase. Phase 0 laid the foundation as to what is about to come next. Read more about Phase 1 [here](/roadmap/phase-1/).

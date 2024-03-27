@@ -513,7 +513,7 @@ Now that we have a client instance, we need a way (functions) to communicate (re
 
 Refer the `handle_client()` function from the previous stage and modify the functions below.
 
-If you notice carefully, the return type of `xps_client_read()` is of type `xps_buffer_t`. How would you create one? We have a `xps_buffer_create()` function just for this. It’ll take care of creating the buffer, handle all the potential errors in between and return a buffer of type `xps_buffer_t`. Read more about `xps_buffer` utility [here](https://www.notion.so/xps_buffer-f8bceae3c7c347c0a86441e3c80aaa61?pvs=21).
+If you notice carefully, the return type of `xps_client_read()` is of type `xps_buffer_t`. How would you create one? We have a `xps_buffer_create()` function just for this. It’ll take care of creating the buffer, handle all the potential errors in between and return a buffer of type `xps_buffer_t`. Read more about `xps_buffer` utility [here](/guides/references/xps_buffer).
 
 ::: details expserver/network/xps_client.c
 

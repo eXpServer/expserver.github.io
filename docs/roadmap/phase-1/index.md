@@ -13,7 +13,7 @@ Congratulations on completion of Phase 0! Let’s look at what we have done till
 
 Phase 0 gave us an introduction to Linux socket programming and an understanding of how client-server communications take place.
 
-Now is a good time to have a look at the overall architecture of eXpServer. Check it out [here](https://www.notion.so/Architecture-68bd371e04e340ce858597abb9cf12cf?pvs=21).
+Now is a good time to have a look at the overall architecture of eXpServer. Check it out [here](/guides/resources/architecture).
 
 eXpServer is broken down into multiple modules. Given below are the modules that we will be tackling in Phase 1:
 
@@ -37,7 +37,7 @@ In order to maintain consistency, we will be providing you with the expected fil
 
 ![overview-filestructure.png](/assets/phase-1-overview/filestructure.png)
 
-From Phase 1, we will be using a library called `vec` that provides dynamic array implementation. Read about `vec` more [here](https://www.notion.so/vec-c409d67ef38e4e4b9f3a1fe8b51956ca?pvs=21).
+From Phase 1, we will be using a library called `vec` that provides dynamic array implementation. Read about `vec` more [here](/guides/references/vec).
 
 ## Memory management, error handling & logging
 
@@ -51,7 +51,7 @@ Thus, from this phase onwards,
 
 - High importance is given to proper memory management. If memory is allocated, it has to deallocated before the server is shutdown.
 - Errors from any function calls should be handled properly
-- To help with debugging and understanding the order of function invocations, we will be thoroughly logging messages throughout the code using the provided `xps_logger` utility. Read more about `xps_logger` [here](https://www.notion.so/xps_logger-9c8f4eb874ff4b0db31d2783197a7708?pvs=21).
+- To help with debugging and understanding the order of function invocations, we will be thoroughly logging messages throughout the code using the provided `xps_logger` utility. Read more about `xps_logger` [here](/guides/references/xps_logger).
 
 ::: tip
 Third-party tools such as **Valgrind** can help to find any memory leaks in the application we write.
