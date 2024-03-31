@@ -38,6 +38,7 @@ export default defineConfig({
 						{ text: 'File descriptors', link: '/guides/resources/file-descriptors' },
 						{ text: 'Linux epoll', link: '/guides/resources/linux-epoll' },
 						{ text: 'HTTP', link: '/guides/resources/http' },
+						{ text: 'MIME Types', link: '/guides/resources/mime-types' },
 					],
 				},
 				{

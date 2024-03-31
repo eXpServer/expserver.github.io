@@ -6,6 +6,7 @@
 - [File Descriptors](/guides/resources/file-descriptors)
 - [Linux epoll](/guides/resources/linux-epoll)
 - [HTTP](/guides/resources/http)
+- [MIME Types](/guides/resources/mime-types)
 
 ## References
 
