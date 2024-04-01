@@ -1,11 +1,12 @@
 /* CUSTOM CSS */
-.main h1.name span.clip, .main  p.text {
+.main h1.name span.clip,
+.main p.text {
 	letter-spacing: -0.17rem;
- }
+}
 
- .main .tagline {
+.main .tagline {
 	letter-spacing: -0.045rem;
- }
+}
 
 /**
  * Colors: Solid

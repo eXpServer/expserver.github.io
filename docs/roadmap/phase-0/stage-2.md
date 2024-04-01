@@ -10,13 +10,17 @@ Recall the previous stage where we relied on a third-party client, _netcat_, to 
 
 Expect some code to echo the TCP server implementation, given the similarities in functionality.
 
+::: tip NOTE
+Code snippets will contain comments in between with a format like this: `/* todo */`. These are meant to be filled in as you go through the documentation and implement it.
+:::
+
 ## Implementation
 
 ![implementation.png](/assets/stage-2/implementation.png)
 
-Create a file named `tcp_client.c` in the same directory as `tcp_server.c`. All the code from this stage will be written to it.
+Create a file `expserver/phase_0/tcp_client.c` . All the code from this stage will be written to it.
 
-The header files required for this stage are given below.
+The header includes and defines required for this stage are given below.
 
 ```c
 #include <arpa/inet.h>
@@ -36,44 +40,57 @@ How will the client connect to the server? That’s right, with the help of a so
 
 ```c
 int main() {
+  // Creating listening sock
   int client_sock_fd = /* create a socket of type SOCK_STREAM */
 ```
 
 But where (or which server) does this client connect to? To establish a connection, the client must know the IP address and listening port of the server it intends to connect to. We can use an object of `struct sockaddr_in` for this purpose.
 
 ```c
- 	struct sockaddr_in server_addr;
+  // Creating an object of struct socketaddr_in
+  struct sockaddr_in server_addr;
+
+  // Setting up server addr
   server_addr.sin_family = /* fill this */;
-  server_addr.sin_addr.s_addr = /* fill this */;
+  server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
   server_addr.sin_port = /* fill this */;
 ```
 
-Now that we have the client socket and and the server address (IP and port), connect the client to the server with the help of the `connect` function. Use error handling to handle cases of unexpected failure.
+::: info
+`server_addr.sin_addr.s_addr` is set to the IP address `127.0.0.1`. This IP stands for [localhost](http://localhost) ie. host machine. The `inet_addr()` function will convert string IP to required numeric format.
+:::
 
-Refer [this](https://pubs.opengroup.org/onlinepubs/009695399/functions/connect.html) to read up on the `connect` function call.
+Now that we have the client socket and and the server address (IP and port), connect the client to the server with the help of the `connect()` function. Use error handling to handle cases of unexpected failure. Refer [this linux man page](https://man7.org/linux/man-pages/man2/connect.2.html) to know more about `connect()` .
 
 ```c
-  // connect to tcp server
-	if (connect(/* fill this */) {
+  // Connect to tcp server
+  if (connect(client_sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0) {
     printf("[ERROR] Failed to connect to tcp server\n");
     exit(1);
-  } else
+  } else {
     printf("[INFO] Connected to tcp server\n");
+  }
 ```
+
+---
 
 ### Milestone #1
 
-This is a good point to test the code you have written. Compile and start the TCP server that we wrote in Stage 1 and start this TCP client on separate terminals.
+This is a good point to test the code you have written. Compile and start the TCP server that we wrote in Stage 1 and this TCP client on separate terminals.
+
+::: warning
+Make sure to run the server before you run the client.
+:::
 
 The terminal running the TCP server should display the following message:
 
-```
+```bash
 [INFO] Client connected to server
 ```
 
 The terminal running the TCP client should display the following message:
 
-```
+```bash
 [INFO] Connected to tcp server
 ```
 
@@ -85,25 +102,29 @@ Now let’s implement the functionality for the client to accept some input from
 
 ```c
 	while (1) {
+    // Get message from client terminal
     char *line;
     size_t line_len = 0, read_n;
+    read_n = /* read a line from the user using getline() */
 
-		read_n = /* read a line from the user using getline() */
+    /* send message to tcp server using send() */
 
-		/* send message to tcp server using send() */
+    /* create a char buffer of BUFF_SIZE and memset to 0 */
 
-		/* create a char buffer of BUFF_SIZE and memset to 0 */
+    // Read message from client to buffer
+    read_n = recv(/* read message sent by server to client into buffer */)
 
-		read_n = recv(/* read message sent by server to client into buffer */)
+    /* close the connection and exit if read_n <= 0 */
 
-		/* close the connection if read_n <= 0 */
-
-		// print message from cilent
+    // Print message from cilent
     printf("[SERVER MESSAGE] %s\n", buff);
-	}
-	return 0;
+  }
+
+  return 0;
 }
 ```
+
+---
 
 ### Milestone #2
 
@@ -111,18 +132,18 @@ Again, start the TCP server and TCP client on separate terminals. You should get
 
 The terminal with the TCP server should display the following message:
 
-```c
+```bash
 [INFO] Client connected to server
 ```
 
 Type some message in the terminal running the TCP client.
 
-```c
+```bash
 [INFO] Connected to tcp server
 hello
 ```
 
-The server will receive the message sent by the the client.
+The server would receive the message sent by the the client.
 
 ```bash
 [CLIENT MESSAGE] hello
@@ -130,7 +151,7 @@ The server will receive the message sent by the the client.
 
 The client terminal should get a response message (reversed string) from the server as a receipt.
 
-```c
+```bash
 [INFO] Connected to tcp server
 hello
 olleh
@@ -140,4 +161,4 @@ olleh
 
 Congratulations! You have written a TCP client from the ground up which connected with a TCP server with the ability to send and receive messages.
 
-But there is a big drawback with the server from Stage 1. Think about what it can be. You will find the answer to that question in the next stage!
+But there is a big drawback with the server from Stage 1. Think about what it can be. You will find the answer to that question in the next stage.

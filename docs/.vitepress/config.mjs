@@ -7,6 +7,7 @@ export default defineConfig({
 	head: [['link', { rel: 'icon', href: '/images/icon.png' }]],
 	base: '/',
 	themeConfig: {
+		outline: { level: 'deep' },
 		// https://vitepress.dev/reference/default-theme-config
 		logo: { light: '/images/logo-light.png', dark: '/images/logo-dark.png', alt: 'eXpServer' },
 		siteTitle: false,
@@ -22,19 +23,32 @@ export default defineConfig({
 		nav: [
 			{ text: 'Home', link: '/' },
 			{ text: 'Roadmap', link: '/roadmap/' },
-			{ text: 'Resources', link: '/resources/' },
+			{ text: 'Guides', link: '/guides/' },
 			{ text: 'About', link: '/about' },
 			{ text: 'Feedback', link: '/feedback' },
 		],
 
 		sidebar: {
-			'/resources/': [
+			'/guides/': [
 				{
 					text: 'Resources',
+					collapsed: false,
 					items: [
-						{ text: 'Linux epoll', link: '/resources/linux-epoll' },
-						{ text: 'HTTP', link: '/resources/http' },
-						{ text: 'File Descriptors', link: '/resources/file-descriptors' },
+						{ text: 'Architecture', link: '/guides/resources/architecture' },
+						{ text: 'File descriptors', link: '/guides/resources/file-descriptors' },
+						{ text: 'Linux epoll', link: '/guides/resources/linux-epoll' },
+						{ text: 'HTTP', link: '/guides/resources/http' },
+						{ text: 'MIME Types', link: '/guides/resources/mime-types' },
+					],
+				},
+				{
+					text: 'References',
+					collapsed: false,
+					items: [
+						{ text: 'vec', link: '/guides/references/vec' },
+						{ text: 'xps_buffer', link: '/guides/references/xps_buffer' },
+						{ text: 'xps_logger', link: '/guides/references/xps_logger' },
+						{ text: 'xps_utils', link: '/guides/references/xps_utils' },
 					],
 				},
 			],
