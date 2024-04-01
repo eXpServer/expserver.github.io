@@ -28,7 +28,7 @@ Developed under the guidance of [Dr. Vinod Pathari](https://nitc.ac.in/departmen
 
 ## License
 
-![Cc_by-nc_icon.svg.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/e0adc33d-7fb8-42c1-b545-d1f4639cd8b0/a3b125d5-d35c-4fc1-bc95-181e5cd18ec9/Cc_by-nc_icon.svg.png)
+<img src="/assets/common/ccbync.png" width="150">
 
 eXpServer is licensed under a [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/). Based on the work at https://github.com/eXpServer
 
