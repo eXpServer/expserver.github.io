@@ -1,1 +1,1 @@
-# Stage 21: Multiprocess
+# Stage 21: Multiprocess Architecture
