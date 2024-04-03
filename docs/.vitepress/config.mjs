@@ -21,11 +21,11 @@ export default defineConfig({
 		},
 
 		nav: [
-			{ text: 'Home', link: '/' },
+			// { text: 'Home', link: '/' },
 			{ text: 'Roadmap', link: '/roadmap/' },
 			{ text: 'Guides', link: '/guides/' },
 			{ text: 'About', link: '/about' },
-			{ text: 'Feedback', link: '/feedback' },
+			// { text: 'Feedback', link: '/feedback' },
 		],
 
 		sidebar: {

@@ -6,16 +6,16 @@
 
 ## Introduction
 
-If you observe, we still have a lot of code in our `main.c` file. This is not ideal. In this stage, we will be modularizing the code even further by creating two new modules:
+In this stage, we will be modularizing the code further by creating two new modules:
 
 1. Core module
 2. Loop module
 
-You can probably predict what the loop module will contain. But core is something we have not heard of before.
+The core module, as its name implies, will act as the central hub of the server, where all components will be connected to, including the loop. The `main()` function in `main.c` will create an instance of core and subsequently ‘start’ it. The core should take care of everything else from that point onwards.
 
-The core module, as its name implies, serves as the central hub of the server, where all components will be connected to, including the loop. The `main()` function in `main.c` will create an instance of core and subsequently ‘start’ it. The core takes care of everything else from that point onwards.
+You can probably predict what the loop module will contain.
 
-Have a look at the `xps_core_s` and `xps_loop_s` structures.
+New modules comes with new structures, thus `xps_core_s` and `xps_loop_s` have been added to core and loop header files.
 
 ```c
 // From xps_core.h
@@ -32,110 +32,86 @@ struct xps_loop_s {
 };
 ```
 
-The core contains an instance of the loop, and a list of servers. The loop instance stores the epoll file descriptor, a struct to store its events and list of handles attached to it. We’ll see what handles as we go further.
-
 ### File structure
 
 ![filestructure.png](/assets/stage-6/filestructure.png)
 
-Get the `xps_utils` files from [here](/guides/references/xps_utils). Create appropriate files and place it in `expserver/utils`.
+Find below the updated `xps.h` file. New additions to the file are indicated in green:
 
-### Changes from previous stage
+- expserver/xps.h
 
-- `xps_server.h`
-  - `xps_server_s` will have an instance of `xps_core_t *core`
-  - `xps_server_create()` function takes in `xps_core_t *core` as a parameter
-- `xps_client.h`
-  - `xps_client_s` will have an instance of `xps_core_t *core`
-  - `xps_client_create()` function takes in `xps_core_t *core` as a parameter
-- `xps.h`
+  ```c
+  #ifndef XPS_H
+  #define XPS_H
 
-  - Has new structs and typedefs needed for this stage. Find the updated file below:
-  - `expserver/xps.h`
+  #define DEFAULT_BACKLOG 64
+  #define MAX_EPOLL_EVENTS 16
+  #define DEFAULT_BUFFER_SIZE 100000
 
-    ```c
-    #ifndef XPS_H
-    #define XPS_H
+  // Error constants
+  #define OK 0
+  #define E_FAIL -1
+  #define E_AGAIN -2
+  #define E_CLOSE -3
+  #define E_NOTFOUND -4
+  #define E_PERMISSION -5
+  #define E_EOF -6
 
-    #define DEFAULT_BACKLOG 64
-    #define MAX_EPOLL_EVENTS 16
-    #define DEFAULT_BUFFER_SIZE 100000
+  // Types
+  typedef unsigned char u_char;
+  typedef unsigned int u_int;
 
-    // Error constants
-    #define OK 0
-    #define E_FAIL -1
-    #define E_AGAIN -2
-    #define E_CLOSE -3
-    #define E_NOTFOUND -4
-    #define E_PERMISSION -5
-    #define E_EOF -6
+  typedef enum { // [!code ++]
+    HANDLE_TCP_CLIENT, // [!code ++]
+    HANDLE_TCP_SERVER, // [!code ++]
+  } xps_loop_handle_type_t; // [!code ++]
 
-    // Types
-    typedef unsigned char u_char;
-    typedef unsigned int u_int;
+  struct xps_buffer_s;
+  struct xps_socket_s;
+  struct xps_server_s;
+  struct xps_client_s;
+  struct xps_core_s; // [!code ++]
+  struct xps_loop_s; // [!code ++]
+  struct xps_loop_handle_s; // [!code ++]
 
-    typedef enum {
-      HANDLE_TCP_CLIENT,
-      HANDLE_TCP_SERVER,
-    } xps_loop_handle_type_t;
+  typedef struct xps_buffer_s xps_buffer_t;
+  typedef struct xps_socket_s xps_socket_t;
+  typedef struct xps_server_s xps_server_t;
+  typedef struct xps_client_s xps_client_t;
+  typedef struct xps_core_s xps_core_t; // [!code ++]
+  typedef struct xps_loop_s xps_loop_t; // [!code ++]
+  typedef struct xps_loop_handle_s xps_loop_handle_t; // [!code ++]
 
-    struct xps_buffer_s;
-    struct xps_socket_s;
-    struct xps_server_s;
-    struct xps_client_s;
-    struct xps_core_s;
-    struct xps_loop_s;
-    struct xps_loop_handle_s;
+  typedef void (*xps_server_connection_handler_t)(xps_server_t *server, int status);
+  typedef void (*xps_client_read_handler_t)(xps_client_t *client, int status);
 
-    typedef struct xps_buffer_s xps_buffer_t;
-    typedef struct xps_socket_s xps_socket_t;
-    typedef struct xps_server_s xps_server_t;
-    typedef struct xps_client_s xps_client_t;
-    typedef struct xps_core_s xps_core_t;
-    typedef struct xps_loop_s xps_loop_t;
-    typedef struct xps_loop_handle_s xps_loop_handle_t;
+  #endif
+  ```
 
-    typedef void (*xps_server_connection_handler_t)(xps_server_t *server, int status);
-    typedef void (*xps_client_read_handler_t)(xps_client_t *client, int status);
-
-    #endif
-    ```
+> ::: tip NOTE
+> You are free to modify the code in any file you want, including the `xps.h` file. The documentation is just a here to guide and nudge you in the right direction and not restrict you in any way. Feel free to add new functions, global variables, constants, structs. Just make sure you retain the content you write when you are copying code snippets like above.
+> :::
 
 ## Implementation
 
 Let’s have a clear picture before we move forward with the code.
 
-![stage-6-core.png](/assets/stage-6/core.png)
+![core.png](/assets/stage-6/core.png)
 
-- The main function will create a core instance and start the core, by providing it the number of ports the server wants to have.
-- The core will be responsible for spinning up the servers starting the loop.
-- The loop module will be the epoll, and have functions related to attaching and detaching events to loop, handling the events, etc.
+- The main function will create an instance of a core, and start it by providing the number of listening sockets.
+- The core will be responsible for spinning up the servers and starting the loop.
+- The loop module will contain the epoll, and have functions related to creating and destroying the loop instance, starting it, attaching and detaching events to loop, handling the events, etc.
+- **A loop belongs to a core.** So when we create a loop instance, attach it to the core instance.
 
-Let’s modify some code that we wrote in the previous stages first before we move onto core and loop.
+> ::: tip NOTE
+> Each server instance will have its own listening socket. We know that we can spin up multiple servers, i.e. multiple listen sockets. From now onwards, these collection of servers running on different ports will be collectively called the **server**.
+> :::
 
-### `xps_server.c`
-
-The `xps_server_create()` function now takes an additional parameter `xps_core_t *core`.
-
-```c
-xps_server_t *xps_server_create(xps_core_t *core, int port, xps_server_connection_handler_t connection_cb);
-```
-
-This parameter represents the core of the server. Assign the server’s core property (`server→core`) to the core parameter passed to the function.
-
-In the previous stage, we attached the server to the loop in the main function after creating the server using `xps_server_create()`. Since we’ll be writing a separate loop module now, we will have a function `xps_loop_attach()` for this purpose and we can use that here to attach the created server to the loop.
-
-Don’t forget about the destroy function! Detach the server from loop with `xps_loop_detach()` (we will be writing this later in the loop module). On top of that, set NULL in servers list of core.
-
-### `xps_client.c`
-
-Similar to the above, modify the `xps_client_create()` and `xps_client_destroy()` functions taking core into consideration.
-
----
+Let’s start with the loop module and move onto the core module.
 
 ### `xps_loop.h & xps_loop.c`
 
-Recall in the last stage, we had code related to the epoll in the `main.c` file. It’s time to modularize that now and make a loop module.
+Recall in the last stage, we had code related to the epoll in the `main.c` file. Let’s make a module for it now.
 
 The code below has the contents of the header file for `xps_loop`. Have a look at it and make a copy of it in your codebase.
 
@@ -171,13 +147,13 @@ The code below has the contents of the header file for `xps_loop`. Have a look 
   #endif
   ```
 
-Did you notice a new member in `xps_loop_s` i.e. `vec_void_t handles`?
+Did you notice something new in `xps_loop_s` i.e. `vec_void_t handles`?
 
 ```c
 struct xps_loop_s {
   int epoll_fd;
   struct epoll_event events[MAX_EPOLL_EVENTS];
-  vec_void_t handles; ****// [!code focus]
+  vec_void_t handles; // [!code focus]
 };
 ```
 
@@ -198,12 +174,14 @@ typedef enum {
 } xps_loop_handle_type_t;
 ```
 
-Each handle can be associated with either a TCP client or a TCP server. `xps_loop_handle_type_t type` is utilized for this purpose. `void *item` is a pointer to an object of `xps_server_t` or `xps_client_t`, depending on what the handle is created for.
+Each handle can be associated with either a TCP client or a TCP server, as mentioned before. But how do we figure out which one of them the handle represents? `xps_loop_handle_type_t type` is utilized for this purpose. `void *item` is a pointer to an instance of `xps_server_t` or `xps_client_t`, depending on what the handle is created for.
 
-Fill out the create and destroy functions associated with handles. The **function signatures** are given below.
+So instead of using objects of `xps_server_t` and `xps_client_t`, we will use `xps_loop_handle_s`. We can typecast `void *item` member in the object of `xps_loop_handle_s` to `xps_server_t` or `xps_client_t` depending on `xps_loop_handle_type_t type`.
+
+With this information, try to fill out the create and destroy functions associated with handles. The **function signatures** are given below.
 
 > ::: tip NOTE
-> A function signature outlines the essential details of a function including its name, parameters, return type, and a brief description of its purpose. This signature serves as a reference for how the function should be called and what it does, without detailing the implementation.
+> A function signature outlines the essential details of a function including its name, parameters, return type, and a brief description of its purpose. This signature serves as a reference for how the function should be called and what it does, without detailing the implementation. You will be seeing a lot of these from now onwards.
 > :::
 
 - expserver/core/xps_loop.c
@@ -221,8 +199,6 @@ Fill out the create and destroy functions associated with handles. The **functio
    */
   xps_loop_handle_t *xps_handle_create(int fd, xps_loop_handle_type_t type, void *item) {
 
-  	/* validate params */
-
   	// Alloc memory for handle instance
     xps_loop_handle_t *handle = (xps_loop_handle_t *)malloc(sizeof(xps_loop_handle_t));
     if (handle == NULL) {
@@ -231,9 +207,7 @@ Fill out the create and destroy functions associated with handles. The **functio
       return NULL;
     }
 
-    handle->fd = fd;
-    handle->item = item;
-    handle->type = type;
+    /* assign values to handle */
 
     logger(LOG_DEBUG, "xps_handle_create()", "created handle");
 
@@ -253,13 +227,13 @@ Fill out the create and destroy functions associated with handles. The **functio
   }
   ```
 
-Previously, our `loop_create()` function in Stage 5 was as simple as returning a new epoll instance. The function becomes a bit more sophisticated with the introduction of the `xps_loop_s` structure.
-
-So the `xps_loop_create()` should create an object of `xps_loop_s` (`xps_loop_t *loop`), attach a new epoll instance and return the object.
-
-> ::: tip
-> Use `vec_init(&(loop->handles))` for memory allocation.
+> ::: warning
+> Don’t forget to handle params and other errors!
 > :::
+
+Let’s move onto loop functions. Previously, our `loop_create()` function in Stage 5 was as simple as returning a new epoll instance. The function becomes a bit more sophisticated with the introduction of the `xps_loop_s` structure.
+
+The new `xps_loop_create()` function should create an object of `xps_loop_s` (`xps_loop_t *loop`), attach a new epoll instance and return the object.
 
 - expserver/core/xps_loop.c
   ```c
@@ -275,11 +249,11 @@ So the `xps_loop_create()` should create an object of `xps_loop_s` (`xps_loop_t 
   }
   ```
 
-The `xps_loop_destroy()` function frees up memory from the loop object. It clears the memory taken by the handles by iterating through all the handles in the loop object, and destroying them with the help of `xps_handle_destroy()`.
-
 > ::: tip
-> Use `vec_deinit(&(loop->handles))` to deallocate memory.
+> Use `vec_init(&(loop->handles))` for memory allocation.
 > :::
+
+The `xps_loop_destroy()` function frees up memory from the loop object. It clears the memory taken by the handles by iterating through all the handles in the loop object, and destroying them with the help of `xps_handle_destroy()`.
 
 - expserver/core/xps_loop.c
   ```c
@@ -295,13 +269,13 @@ The `xps_loop_destroy()` function frees up memory from the loop object. It clear
   }
   ```
 
-Now that we can create a loop, lets create the functions to attach, `xps_loop_attach()`, and detach, `xps_loop_detach()`, items from the loop.
+> ::: tip
+> Use `vec_deinit(&(loop->handles))` to deallocate memory.
+> :::
 
-Since item of type `void`, typecast it to `xps_client_t` or `xps_server_t` depending on `type`. This will allow you to get the FD from it. Create a handle using `xps_handle_create()` and add it to list of handles in loop.
+Now that we've established the ability to create a loop, let's proceed to implement the functions for attaching and detaching items from the loop. We'll define `xps_loop_attach()` and `xps_loop_detach()` for this purpose.
 
-The detach function should destroy the handle using the `xps_handle_destroy()` function. Find the handle to delete from the list of handles in the loop. Set the handle in the handles list to NULL.
-
-Doing this both will remove the handle from everywhere. All that's left is to remove the FD from the epoll.
+`xps_loop_attach()` takes in a parameter `void *item`. This object could be an instance of client or server; typecast it to `xps_client_t` or `xps_server_t` depending on the `type` parameter. This will allow you to access the FD in it. After you get the FD, you can create a handle using `xps_handle_create()` and add it to list of handles in loop.
 
 - expserver/core/xps_loop.c
 
@@ -317,9 +291,50 @@ Doing this both will remove the handle from everywhere. All that's left is to re
    * @return int E_FAIL if an error occurs, OK otherwise.
    */
   int xps_loop_attach(xps_loop_t *loop, xps_loop_handle_type_t type, void *item) {
-  	...
-  }
 
+  	/* handle params */
+
+  	int fd = -1;
+
+  	if (type == HANDLE_TCP_CLIENT) {
+      xps_client_t *client = (xps_client_t *)item;
+      fd = client->sock->fd;
+    }
+
+    else if (/* TCP server */) {
+  	  /* fill this */
+  	}
+
+  	xps_loop_handle_t *handle = /* create handle */
+
+  	// Add socket to epoll
+  	struct epoll_event event;
+    event.events = /* fill this */
+    event.data.fd = /* fill this */
+    event.data.ptr = (void *)handle;
+
+    /* attach event to epoll using epoll_ctl() */
+
+    vec_push(&(loop->handles), (void *)handle);
+
+    logger(LOG_DEBUG, "xps_loop_attach()", "attached item to loop");
+
+    return OK;
+
+  }
+  ```
+
+`xps_loop_detach()` takes in a FD that has to be detached from the loop. There are three things to do in `xps_loop_detach()` function:
+
+- Find the handle to be deleted from the list of handles in the loop and set it to NULL
+- Destroy the handle using `xps_handle_destroy()`
+- Remove FD from the epoll
+
+Doing the first two will remove the handle from everywhere.
+
+- expserver/core/xps_loop.c
+
+  ```c
   /**
    * @brief Detaches an item from the event loop.
    *
@@ -331,39 +346,76 @@ Doing this both will remove the handle from everywhere. All that's left is to re
    * @return int E_FAIL if an error occurs, OK otherwise.
    */
   int xps_loop_detach(xps_loop_t *loop, xps_loop_handle_type_t type, int fd) {
-  	...
+
+  	/* handle params */
+
+  	vec_void_t *handles = &(loop->handles);
+
+    int handle_index = -1;
+    for (/* iterate through all the handles */) {
+      xps_loop_handle_t *handle = (xps_loop_handle_t *)((*handles).data[i]);
+      /* fill this */
+    }
+
+    // Setting NULL in handles list
+    (*handles).data[handle_index] = NULL;
+
+    xps_loop_handle_t *handle = (xps_loop_handle_t *)((*handles).data[handle_index]);
+
+    /* destroy handle using xps_handle_destroy() */
+
+    /* remove fd from epoll */
+
+    logger(LOG_DEBUG, "xps_loop_detach()", "detached item from loop");
+
+    return OK;
+
   }
   ```
 
-> ::: tip NOTE
-> While adding the epoll event to the loop, use `event.data.ptr` to point to the handle. This will help when we are handling the events in epoll.
-> :::
+Time to start the loop and handle the events. As we’ve done this multiple, you would be aware of what `xps_loop_run()` is responsible for. Refer to the previous stages if you want a recap.
 
-In the previous stage, we had a `loop_run()` function that did the `epoll_wait()` and handled the events. Let’s rename it to`xps_loop_run()` and modify its code a bit to accommodate for the changes in the architecture.
-
-The function `xps_loop_run()` orchestrates the event loop, initiating a continuous loop operation. It waits for events on epoll and handles events accordingly.
-
-Handling the epoll events
-
-> ::: warning
-> while handling events, make sure handle still exists in the list of handles in loop
-> :::
-
-If the handle is a client handle, call the `xps_client_loop_read_handler()` function and if it is a server handle, call the `xps_server_loop_read_handler()` function.
+In Stage 5, determining whether an FD belongs to a server or client used to require iterating through all servers and clients. However, with handles, our task has significantly simplified.
 
 - expserver/core/xps_loop.c
+
   ```c
   /**
-   * @brief Runs the event loop for the given loop instance.
+   * @brief Runs the event loop.
    *
-   * This function continuously waits for events using epoll and handles them accordingly.
+   * This function runs the event loop and handles the events on it continuously
    *
-   * @param loop Pointer to the loop instance.
+   * @param loop Pointer to the event loop to run.
    */
-  void xps_loop_run(xps_loop_t *loop) {
-  	...
-  }
+   void xps_loop_run(xps_loop_t *loop) {
+
+  	 /* handle params */
+
+  	 while (loop) {
+
+  		 /* epoll wait */
+
+  		 for(/* loop through epoll events */) {
+
+  			 struct epoll_event curr_event = loop->events[i];
+
+  			 xps_loop_handle_t *curr_handle = (xps_loop_handle_t *)curr_event.data.ptr;
+
+  			 /* check if handle still exists */
+
+  			 if(/* handle is of client type */) {
+  				 /* fill this */
+  			 }
+  			 else if(/* handle if of server type */) {
+  				 /* fill this */
+  			 }
+
+  		 }
+
+   }
   ```
+
+Explain why the handle might not exist
 
 > ::: tip
 > Use `vec_filter_null(&(loop->handles))` to remove all the handles that were converted to NULL during `xps_loop_detach()`.
@@ -373,36 +425,73 @@ If the handle is a client handle, call the `xps_client_loop_read_handler()` func
 
 ### Milestone #1
 
----
+Recap:
+
+- ***
+
+Core being the most important module, will keep changing as we build more modules to eXpServer.
+
+The `main()` function in the`main.c` file will create an instance of core with `xps_core_create()` and start it using `xps_core_start()`. From there, the core takes over. The `xps_core_start()` takes in the core instance and also the ports for the listening sockets for the server.
 
 ### `xps_core.h & xps_core.c`
 
-Lets start with `xps_core_create()` and `xps_core_destory()`. Take a look at the `xps_core_s` mentioned above or in the `xps_core.h` file as it’ll come in handy.
+With the ports it receives, create server instances with the `xps_server_create()` function. Don’t forget to add the servers to the core’s list of servers. Start the loop using `xps_loop_run()` at the end.
 
-```c
-xps_core_t *xps_core_create() {
+- expserver/core/xps_core.c
+  ```c
+  /**
+   * @brief Starts the XPS core.
+   *
+   * This function starts the XPS core by creating servers for the specified ports and running the
+   * event loop.
+   *
+   * @param core Pointer to the XPS core.
+   * @param ports Array of port numbers to listen on.
+   * @param n_ports Number of ports in the array.
+   */
+  void xps_core_start(xps_core_t *core, int *ports, int n_ports) {
+  	...
+  }
+  ```
 
-	xps_core_t *core = /* allocate memory for core */
+But wait. We didn’t create the loop anywhere yet. And the core too. Let’s do that in `xps_core_create()`. Make use of `xps_loop_create()` for creating the loop. Attach the loop to the core instance.
 
-	xps_loop_t *loop = /* create an instance of loop using xps_loop_create() */
+While you are at it, finish the `xps_core_destroy()` function, which destroys all the servers and loop associated with the core.
 
-	/* assign values */
+- expserver/core/xps_core.c
 
-	return core;
+  ```c
+  /**
+   * @brief Creates a new XPS core instance.
+   *
+   * This function creates a new XPS core instance and initializes its event loop.
+   *
+   * @return Pointer to the created XPS core, or NULL if an error occurs.
+   */
+  xps_core_t *xps_core_create() {
+  	...
+  }
 
-}
+  /**
+   * @brief Destroys an XPS core instance.
+   *
+   * This function destroys the specified XPS core instance and releases all associated resources.
+   *
+   * @param core Pointer to the XPS core to destroy.
+   */
+  void xps_core_destroy(xps_core_t *core) {
+  	...
+  }
+  ```
 
-void xps_core_destroy(xps_core_t *core) {
+> ::: warning
+> There will be some changes to the server and client module to take core into account. We will work on them after we are done with `xps_core`.
+> :::
 
-  /* loop through the servers and destroy them using xps_server_destroy() */
+> ::: danger QUESTION
+> We used `xps_server_connection_handler()` to handle a new client connection and `xps_client_read_handler()` when there is data available to read. Would there be any changes to these?
+> :::
 
-  /* destory loop using xps_loop_destroy() */
-
-  /* free core */
-
-}
-```
-
-### Milestone #2
+### `xps_server.c & xps_client.c`
 
 ## Conclusion

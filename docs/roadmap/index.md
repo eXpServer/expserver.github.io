@@ -13,7 +13,7 @@ Consistency in the development schedule is recommended for maintaining clarity a
 - [Overview](phase-0/)
 - [Stage 0: Setup](phase-0/stage-0)
 - [Stage 1: TCP Server](phase-0/stage-1)
-- [Stage 2: TCP Slient](phase-0/stage-2)
+- [Stage 2: TCP Client](phase-0/stage-2)
 - [Stage 3: Linux epoll](phase-0/stage-3)
 - [Stage 4: TCP Proxy](phase-0/stage-4)
 

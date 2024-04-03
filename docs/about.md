@@ -1,3 +1,27 @@
+<script setup>
+import { VPTeamMembers } from 'vitepress/theme'
+
+const members = [
+  {
+    avatar: 'https://www.github.com/emanuelchristo.png',
+    name: 'Emanuel Christo',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/emanuelchristo' },
+      { icon: 'linkedin', link: 'https://ecris.in/' }
+    ]
+  }, {
+    avatar: 'https://www.github.com/aadhavanpl.png',
+    name: 'Aadhavan PL',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/aadhavanpl' },
+      { icon: 'linkedin', link: 'https://aadhii.in/' }
+    ]
+  },
+]
+</script>
+
 # About
 
 ## Overview
@@ -16,13 +40,7 @@ This project provides students with practical experience in understanding the ar
 
 ## Authors
 
-**Emanuel Christo**
-
-[Website](https://ecris.in/) | [Github](https://github.com/emanuelchristo)
-
-**Aadhavan P Lenin**
-
-[Website](https://www.aadhii.in/) | [Github](https://github.com/aadhavanpl)
+<VPTeamMembers size="small" :members="members" />
 
 Developed under the guidance of [Dr. Vinod Pathari](https://nitc.ac.in/department/computer-science-amp-engineering/faculty-and-staff/faculty/f6ebabe0-ef35-4efd-964a-59325844b7c5) and [Dr. Murali Krishnan K](https://nitc.ac.in/department/computer-science-amp-engineering/faculty-and-staff/faculty/bdb94a31-f29a-4fb0-b4d5-7db9be64edef) of National Institute of Technology Calicut.
 
