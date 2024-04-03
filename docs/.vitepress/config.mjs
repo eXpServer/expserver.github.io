@@ -189,7 +189,7 @@ export default defineConfig({
 									link: '/roadmap/phase-4/stage-20',
 								},
 								{
-									text: 'Stage 21: Multiprocess',
+									text: 'Stage 21: Multiprocess Architecture',
 									link: '/roadmap/phase-4/stage-21',
 								},
 							],
