@@ -8,6 +8,14 @@
 	letter-spacing: -0.045rem;
 }
 
+.medium-zoom-overlay {
+	z-index: 30;
+}
+
+.medium-zoom-image--opened {
+	z-index: 31;
+}
+
 /**
  * Colors: Solid
  * -------------------------------------------------------------------------- */
