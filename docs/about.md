@@ -25,11 +25,9 @@ const members = [
 
 # About
 
-## Overview
-
 The eXpServer project is an educational web server implementation built entirely in the C language. It is designed to help individuals understand the inner workings of web servers by guiding them through the process of building one from scratch using Linux socket programming APIs.
 
-### Intended audience
+## Intended audience
 
 The project is structured to be offered as an undergraduate Networks Lab course for Computer Science and Engineering programs in universities and colleges. It is ideal for students pursuing a Computer Science degree, particularly those who are currently enrolled or have previously enrolled in a networking theory course.
 
@@ -37,7 +35,7 @@ The implementation of the project is well-suited for a single semester of a Netw
 
 Furthermore, individuals interested in understanding the workings of web servers and eager to implement one themselves are welcome to undertake this project.
 
-### Prerequisites
+## Prerequisites
 
 Since eXpServer will be written entirely in C, the primary prerequisite is a familiarity with the C programming language at the level of a junior year undergraduate CS student.
 
@@ -45,7 +43,7 @@ Having an understanding of basic networking concepts such as, client server mode
 
 Most of the concepts associated with building eXpServer are explained in enough detail through guides available in the documentation. These guides are linked from appropriate parts of the roadmap to explain the concept related to the stage the student is currently in. Links to external resources that further explain the concepts are also included for extended reading.
 
-### What to expect
+## What to expect
 
 Participants in the eXpServer project can anticipate a thorough learning journey centred on constructing an operational web server from scratch. They will gain a deep understanding of networking fundamentals, encompassing the client-server model, TCP/IP protocol stack, OSI model, and diverse networking protocols, all through practical implementation and experimentation. Additional areas of learning encompass C programming, Linux system programming, problem-solving, critical thinking, and the software development cycle.
 

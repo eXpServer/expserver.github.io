@@ -26,13 +26,11 @@ HTTP requests, and responses, share similar structure and are composed of:
 3. **Blank line**, to indicate that all meta-information has been sent
 4. (optional) **Body** containing data associated with the request or response
 
-![http-request](/assets/resources/http-request.png)
-
 HTTP request
 
-![http-response](/assets/resources/http-response.png)
-
-HTTP response
+|                    HTTP request                     |                     HTTP response                     |
+| :-------------------------------------------------: | :---------------------------------------------------: |
+| ![http-request](/assets/resources/http-request.png) | ![http-response](/assets/resources/http-response.png) |
 
 ### **HTTP request line**
 

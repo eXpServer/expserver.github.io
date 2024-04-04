@@ -1,22 +1,14 @@
 # Roadmap
 
----
+The roadmap provides a structured guide for participants to build eXpServer gradually. It outlines the progression of learning objectives, starting from introductory concepts and building up to advanced features and architecture.
 
-**What are we building?**
+Each stage builds upon the previous one, ensuring a systematic approach to the project. Links are provided within the stage documents for additional reference of concepts as and when necessary.
 
-Upon completing the project, we will have crafted a fully functional web server compatible with various Linux distributions. eXpServer will possess a range of capabilities, including serving static files, reverse proxying requests, load balancing, performing gzip compression, implementing caching mechanisms, rate limiting requests, supporting TLS encryption and so on. Notably, the server will maintain high performance standards, efficiently handling numerous requests by utilising multiple CPU cores.
-
----
-
-**How are we building it?**
-
-The roadmap is structured into sequential stages to ensure the gradual development of eXpServer. Each stage builds upon the previous one, ensuring a systematic approach to the project. Links are provided within the stage documents for additional reference of concepts as and when necessary. Consistency in the development schedule is recommended for maintaining clarity and coherence throughout the process of building eXpServer.
+The eXpServer project comprises 22 stages, organized into 5 phases. Prior to the commencement of each phase, participants receive an overview detailing what to anticipate in that phase and summarizing their progress up to that point.
 
 ## Stages
 
-### Phase 0
-
-> Introduction to Linux socket programming
+### Phase 0: Introduction to Linux socket programming
 
 - [Overview](phase-0/)
 - [Stage 0: Setup](phase-0/stage-0)
@@ -25,9 +17,7 @@ The roadmap is structured into sequential stages to ensure the gradual developme
 - [Stage 3: Linux epoll](phase-0/stage-3)
 - [Stage 4: TCP Proxy](phase-0/stage-4)
 
-### Phase 1
-
-> Building the core of eXpServer by creating reusable modules
+### Phase 1: Building the core of eXpServer by creating reusable modules
 
 - [Overview](phase-1/)
 - [Stage 5: Server & Client Modules](phase-1/stage-5)
@@ -36,9 +26,7 @@ The roadmap is structured into sequential stages to ensure the gradual developme
 - [Stage 8: Upstream Module](phase-1/stage-8)
 - [Stage 9: File Module](phase-1/stage-9)
 
-### Phase 2
-
-> Implementing HTTP support
+### Phase 2: Implementing HTTP support
 
 - [Overview](phase-2/)
 - [Stage 10: HTTP Parser](phase-2/stage-10)
@@ -46,9 +34,7 @@ The roadmap is structured into sequential stages to ensure the gradual developme
 - [Stage 12: Config & Session Modules](phase-2/stage-12)
 - [Stage 13: HTTP Specification](phase-2/stage-13)
 
-### Phase 3
-
-> Adding features to eXpServer
+### Phase 3: Adding features to eXpServer
 
 - [Overview](phase-3/)
 - [Stage 14: IP Whitelist/Blacklist](phase-3/stage-14)
@@ -57,9 +43,7 @@ The roadmap is structured into sequential stages to ensure the gradual developme
 - [Stage 17: Load Balancing](phase-3/stage-17)
 - [Stage 18: Rate Limiting & Timeout](phase-3/stage-18)
 
-### Phase 4
-
-> Advanced features and multiprocess architecture
+### Phase 4: Advanced features and multiprocess architecture
 
 - [Overview](phase-4/)
 - [Stage 19: Transport Layer Security (TLS)](phase-4/stage-19)
