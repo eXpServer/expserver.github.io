@@ -8,7 +8,7 @@
 
 Recall the previous stage where we relied on a third-party client, _netcat_, to test the functionality of the TCP server. In this stage we will focus on writing our own TCP client to communicate with the TCP server.
 
-Expect some code to echo the TCP server implementation, given the similarities in functionality.
+Expect some code to repeat from the previous stage, given the similarities in functionality.
 
 ::: tip NOTE
 Code snippets will contain comments in between with a format like this: `/* todo */`. These are meant to be filled in as you go through the documentation and implement it.
@@ -18,7 +18,7 @@ Code snippets will contain comments in between with a format like this: `/* todo
 
 ![implementation.png](/assets/stage-2/implementation.png)
 
-Create a file `expserver/phase_0/tcp_client.c` . All the code from this stage will be written to it.
+Create a file named `tcp_client.c` . All the code from this stage will be written to it.
 
 The header includes and defines required for this stage are given below.
 
@@ -36,7 +36,7 @@ The header includes and defines required for this stage are given below.
 #define BUFF_SIZE 10000
 ```
 
-How will the client connect to the server? That’s right, with the help of a socket! Let’s call it a _client socket_ for the sake of distinguishability.
+How will the client connect to the server? With the help of a socket! Let’s call it a _client socket_ for the sake of distinguishability.
 
 ```c
 int main() {
@@ -60,11 +60,11 @@ But where (or which server) does this client connect to? To establish a connecti
 `server_addr.sin_addr.s_addr` is set to the IP address `127.0.0.1`. This IP stands for [localhost](http://localhost) ie. host machine. The `inet_addr()` function will convert string IP to required numeric format.
 :::
 
-Now that we have the client socket and and the server address (IP and port), connect the client to the server with the help of the `connect()` function. Use error handling to handle cases of unexpected failure. Refer [this linux man page](https://man7.org/linux/man-pages/man2/connect.2.html) to know more about `connect()` .
+Now that we have the client socket and and the server address (IP and port), connect the client to the server with the help of the `connect()` function. Use error handling to handle cases of unexpected failure. Refer [this linux man page](https://man7.org/linux/man-pages/man2/connect.2.html) to know more about `connect()`.
 
 ```c
   // Connect to tcp server
-  if (connect(client_sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0) {
+	if (connect(client_sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0) {
     printf("[ERROR] Failed to connect to tcp server\n");
     exit(1);
   } else {
@@ -101,7 +101,7 @@ This confirms that the client has established a successful connection to the ser
 Now let’s implement the functionality for the client to accept some input from the user, send it to the server and print the reversed string on the client terminal sent by the server.
 
 ```c
-	while (1) {
+  while (1) {
     // Get message from client terminal
     char *line;
     size_t line_len = 0, read_n;
@@ -156,6 +156,8 @@ The client terminal should get a response message (reversed string) from the ser
 hello
 olleh
 ```
+
+---
 
 ## Conclusion
 

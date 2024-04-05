@@ -2,8 +2,9 @@
 
 ## Recap
 
-- We wrote a basic TCP client using Linux networking APIs
-- We established successful connection with the TCP server written in Stage 1
+- We wrote a basic TCP server in Stage 1
+- We wrote a basic TCP client in Stage 2
+- We successfully connected the TCP client to the server
 
 ## Introduction
 
