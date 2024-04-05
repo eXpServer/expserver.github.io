@@ -41,7 +41,7 @@ while(1) {
 
 This step allowed us to connect to one client and keep serving them indefinitely until the connection is broken.
 
-Now let’s use epoll to achieve our goal.
+Now let us use epoll to achieve our goal of concurrency.
 
 First we’ll create an epoll instance using `epoll_create1(0)` given by the `<sys/epoll.h>` library. This returns a file descriptor (FD), and lets call it `epoll_fd`. Remember FD’s are just integers (unsigned integers, to be specific). Read more about FD’s [here](/guides/resources/file-descriptors).
 
@@ -69,6 +69,9 @@ Add this to global definitions:
 #define MAX_SOCKS 20
 ```
 
+`MAX_EPOLL_EVENTS` - maximum number of events that can be handled by the epoll event loop
+`MAX_SOCKS` - maximum number of socket connections that our program can handle simultaneously
+
 :::
 
 The structure definition of `epoll_event` is given below for your understanding.
@@ -89,9 +92,7 @@ union epoll_data {
 typedef union epoll_data epoll_data_t;
 ```
 
-We are now ready to utilize our epoll instance. What FD do we want to monitor first? The listening socket.
-
-So let’s add the listening socket FD to the epoll. This will allow us to listen to incoming connections requests.
+We are now ready to utilize our epoll instance. What FD do we want to monitor first? The listening socket! So let us add that to the epoll. This will allow us to listen to incoming connections requests.
 
 ```c
 event.events = EPOLLIN;
@@ -113,7 +114,7 @@ Let’s recap a bit and look at what we have done as understanding of how epoll 
 
 ---
 
-Now we wait. We wait till there are events in `events[]` that are ready to read. For this we use the function `epoll_wait`. It returns the number of FD’s for which events have occurred and are ready to be processed. The events themselves will be stored in the `events[]`. Let’s also not forget to wrap this in an infinite loop to keep the server running indefinitely.
+Now we wait. We wait till there are events in `events[]` that are ready to read. For this we use the function `epoll_wait`, which is a [function](https://man7.org/linux/man-pages/man2/epoll_wait.2.html) given by the <sys/epoll.h> header. It returns the number of FD’s for which events have occurred and are ready to be processed. The events themselves will be stored in the `events[]`. Let’s also not forget to wrap this in an infinite loop to keep the server running indefinitely.
 
 ```c
 while(1) {
@@ -132,12 +133,12 @@ Now that we got the number of events, let’s iterate through and process them:
 
 Since the epoll is only monitoring the listening socket right now, the events will be from that only.
 
-So when we get events on listen socket, accept the connection, and create a connection socket like how we did in the previous stages. The only difference here is to add the connection socket FD also to the epoll. This will allow us to know if and when events occur on the connection socket.
+So when we get events on listen socket, accept the connection, and create a connection socket like how we did in the previous stages. The only crucial difference here is to add the connection socket FD also to the epoll. This will allow us to know if and when events occur on the connection socket.
 
 This means that, from the next iteration, we could get two types of events:
 
-- event is on listen socket
-- event is on connection socket
+- event on listen socket
+- event on connection socket
 
 The for loop should address both the cases and a simple if-else would be sufficient to differentiate between them:
 
@@ -145,7 +146,7 @@ The for loop should address both the cases and a simple if-else would be suffici
     if (/* event is on listen socket */) {
     	...
     }
-    else { // It is a connection sockect
+    else { // event on connection sockect
     	...
     }
 ```
@@ -156,7 +157,7 @@ The code within the `if` and `else` should be straight forward as we have implem
 
 ---
 
-At the end your code should look like this.
+At the end our code should look like this.
 
 ```c
 /* previous code till listen() */
@@ -194,7 +195,7 @@ while(1) {
 
 ### Milestone #2
 
-Time to test our server! Compile and start `tcp_server.c` in a terminal. You should get the following message:
+Time to test our server! Compile and start `tcp_server.c` in a terminal. We should get the following message:
 
 ```bash
 [INFO] Server listening on port 8080
@@ -216,7 +217,7 @@ Upon client connection to server, the server terminal will enter the `epoll_wait
 [DEBUG] Epoll wait
 ```
 
-Open another client instance, say _client#2_ and connect to the server. You will get the same client message as the previous one. But the server terminal will notify that another client has connected to the server:
+Open another client instance, say _client#2_ and connect to the server. We will get the same client message as the previous one. But the server terminal will notify that another client has connected to the server:
 
 ```bash
 [INFO] Client connected to server
@@ -225,7 +226,7 @@ Open another client instance, say _client#2_ and connect to the server. You will
 [DEBUG] Epoll wait
 ```
 
-Do you realise what this means? Both the clients are connected to server at the same time! Try sending messages from both client terminals and see the output you get in _client#1_, _client#2_ and the server terminal.
+Do you realise what this means? Both the clients are connected to server at the same time! Try sending messages from both client terminals and see the output in _client#1_, _client#2_ and the server terminal.
 
 Here is the expected output:
 
@@ -235,4 +236,4 @@ Here is the expected output:
 
 ## Conclusion
 
-That’s it! The server is now capable of handling multiple clients simultaneously, showcasing the power of epoll. In the next stage, we'll develop a straightforward TCP proxy. If you're unfamiliar with the concept, don't worry—the introduction section will provide clarity.
+That’s it! The server is now capable of handling multiple clients simultaneously, showcasing the power of epoll. In the next stage, we'll develop a straightforward TCP proxy. The introduction section of the next stage will provide clarity on this topic.
