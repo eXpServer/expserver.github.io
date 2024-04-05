@@ -4,29 +4,29 @@
 
 In Phase 0 overview,
 
-- We learnt about the Client-Server architecture.
-- We learnt about the TCP protocol.
-- We learnt how sockets facilitate the communication between clients and servers.
+- We covered the Client-Server architecture.
+- We went through the TCP protocol.
+- We looked into how sockets facilitate the communication between clients and servers.
 
 ## Introduction
 
-How does a server function? It listens for any connections, i.e. clients that are trying to connect to the server, and based on the request from the client it does some specific operation.
+A server functions by actively monitoring for incoming connections from clients. Upon receiving a connection request, the server accepts the connection and proceeds to execute specific operations or protocols based on the client's request.
 
-To be able to listen for connections, it needs **listening sockets**. Listening \*\*\*\*sockets are bound to a specific IP address (interface) and a port. If any client wants to connect to the server, they have to direct their request to this particular IP:port combo that the server is listening on.
+To be able to listen for connections, the server needs **listening sockets**. Listening sockets are bound to a specific IP address (interface) and a port. If any client wants to connect to the server, they have to direct their request to this particular `IP:port` combination that the server is listening on.
 
-For example, let us assume you have a TCP server ‘running’ on your computer on port 8080. Running signifies that the server is ‘listening’ for any connections on port 8080. If a client wants to connect to the server, they would have to direct their request to `<IP_address_of_computer>:8080`.
+For example, let us assume we have a TCP server ‘running’ on our computer on port 8080. Running signifies that the server is ‘listening’ for any connections on port 8080. If a client wants to connect to the server, they would have to direct their request to `<IP_address_of_computer>:8080`.
 
-Using this knowledge, let us build a simple TCP server from the ground up. Since this is just Stage 1, you will be guided throughout the implementation with all the code given in the form of snippets.
+Using this knowledge, let us build a simple TCP server from the ground up. Since this is just Stage 1, the documentation will guide us throughout the implementation with all the code given in the form of snippets.
 
 ## Implementation
 
 ![implementation.png](/assets/stage-1/implementation.png)
 
-Now that we are going to start coding, lets create a `expserver` folder. All files related to our project will go inside it. Create another folder `phase_0` inside `expserver` which will contain the files we will be creating in Phase 0.
+Before we begin, let us create a folder named `expserver`. All files related to this project will go inside it. Create another folder named `phase_0` inside `expserver` which will contain the files we will be creating in Phase 0.
 
-For this stage, as we are creating a tcp server, create a file `expserver/phase_0/tcp_server.c`
+For this stage, as we are creating a TCP server, create a file `tcp_server.c` and place it inside `expserver/phase_0`. All the code from this stage will go into this file.
 
-Let’s start by adding all the header includes and defines. The use of each header will be explained as we proceed further.
+Let us start by adding all the header includes and defines. The use of each header will be explained as we proceed further.
 
 ```c
 #include <arpa/inet.h>
@@ -43,7 +43,7 @@ Let’s start by adding all the header includes and defines. The use of each hea
 #define MAX_ACCEPT_BACKLOG 5
 ```
 
-The first step is to create a listening socket for the clients to be able to connect to the server. This is done using the `socket()` function from the `<sys/socket.h>` header.
+The first step is to create a listening socket for the clients to be able to connect to the server. This is done using the `socket()` [function](https://man7.org/linux/man-pages/man2/socket.2.html) from the `<sys/socket.h>` header.
 
 ```c
 int main() {
@@ -51,13 +51,23 @@ int main() {
   int listen_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 ```
 
-The `socket()` function creates a socket, and upon successful creation, returns a **socket file descriptor**. A file descriptor is a unique integer that designates a socket and allows application programs to refer to it when needed.
+The `socket()` function creates a socket, and upon successful creation, returns a **socket file descriptor**. A file descriptor is a unique integer that designates a socket and allows application programs to refer to it when needed. Read more about them [here](/guides/resources/file-descriptors).
 
 The function takes three arguments:
 
-- domain: `AF_INET` - IPv4
-- type: `SOCK_STREAM` - Socket of type stream (used for TCP)
-- protocol: `0` - allows system to choose the appropriate protocol based on domain and type (TCP)
+- **domain**: This specifies the communication domain or address family used by the socket. In this case, `AF_INET` indicates the use of IPv4 addresses. IPv4 (Internet Protocol version 4) is the most widely used network layer protocol, providing the addressing scheme for internet traffic.
+- **type:** This argument determines the communication semantics and the characteristics of the data transmission over the socket. `SOCK_STREAM` indicates a socket of type stream. Stream sockets provide a reliable, connection-oriented, and sequenced flow of data. They are typically used with the Transmission Control Protocol (TCP), which ensures that data sent from one end of the connection is received correctly at the other end, with no loss, duplication, or corruption.
+- **protocol:** This specifies the specific protocol to be used with the socket. When `0` is passed as the protocol, the system selects the default protocol for the given domain and type combination. For `AF_INET` and `SOCK_STREAM`, this typically results in TCP being chosen as the protocol, as it is the default protocol for stream sockets in the IPv4 domain.
+
+Now that we've initialized our listening socket, it's crucial to ensure its proper functioning, especially in scenarios where the server is stopped and restarted frequently.
+
+Assume that our server is up and running, listening on a particular `IP:port` combination. When we terminate the server program, the socket goes into a `TIME_WAIT` state. In the `TIME_WAIT` state, the socket remains open for a predetermined period to ensure that any lingering packets associated with the previous connection are properly handled.
+
+While a socket is in the `TIME_WAIT` state, the operating system reserves the associated IP and port to prevent any new sockets from binding to the same combination.
+
+When we restart the server quickly, it attempts to bind to the same IP and port to resume it is operation. However, if the IP and port are still reserved due to the previous socket being in the `TIME_WAIT` state, the server may encounter an error indicating that the address is already in use.
+
+In the code snipped below, we'll set the socket option `SO_REUSEADDR` for the listening socket identified by the file descriptor `listen_sock_fd`. This option allows us to reuse local IPs and ports, even if they are in the `TIME_WAIT` state.
 
 ```c
   // Setting sock opt reuse addr
@@ -65,9 +75,7 @@ The function takes three arguments:
   setsockopt(listen_sock_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 ```
 
-This will help us bypass the `TIME_WAIT` state that the address and port combination enters when the server is shutdown, thus allowing us to reuse the same address and port.
-
-Now that we have created a socket, we need to specify the address that it needs to listen to. For this we will be using an object of `struct sockaddr_in` provided by the `<netinet/in.h>` header.
+The next step is to assign an address (consisting of an IP address and a port) to our socket, allowing it to listen for incoming connections. To accomplish this, we'll employ a data structure called `struct sockaddr_in`, provided by the `<netinet/in.h>` header.
 
 ```c
   // Creating an object of struct socketaddr_in
@@ -79,9 +87,13 @@ Now that we have created a socket, we need to specify the address that it needs 
   server_addr.sin_port = htons(PORT);
 ```
 
-- `server_addr.sin_family = AF_INET` - socket will use the IPv4 address format
-- `server_addr.sin_addr.s_addr = htonl(INADDR_ANY)` - INADDR*ANY constant stands for \_any* IP address. When using this for the server address, this lets the server bind to all network interfaces available on the machine. `htonl()` is a function that will convert from host byte order to network byte order for `long` type.
-- `server_addr.sin_port = htons(PORT)` - sets the port number. `htons()` converts from host byte order to network byte order for `short` type.
+- `server_addr.sin_family = AF_INET`: Configures the socket to utilize the IPv4 address format, indicating that the socket will operate within the context of IPv4 networking.
+- `server_addr.sin_addr.s_addr = htonl(INADDR_ANY)`: Assigns the IP address to which the server will bind. The constant `INADDR_ANY` represents any available IP address on the host machine and is defined in the `<netinet/in.h>` header file. Using this constant for the server address allows the server to bind to all network interfaces present on the machine. For e.g. a laptop commonly has multiple network interfaces: Ethernet port and Wi-Fi adapter(s). The `htonl()` function is then used to convert the IP address from host byte order to network byte order, ensuring consistency across different architectures.
+- `server_addr.sin_port = htons(PORT)`: Sets the port number that the server will listen on. The variable `PORT`, that we defined globally at the top of the file, holds the desired port number. The `htons()` function is employed to convert the port number from host byte order to network byte order for consistency in network communication across different platforms.
+
+Now that we've configured the server address, the next step is to bind the listening socket to the specified port. This is achieved through the `bind()` [function](https://man7.org/linux/man-pages/man2/bind.2.html), which is provided by the `<sys/socket.h>` header. By invoking `bind()`, we establish a connection between our listening socket and the specified port, effectively reserving it for our server's use.
+
+Following the binding process, we initiate the listening phase by calling the `listen()` [function](https://man7.org/linux/man-pages/man2/listen.2.html), also provided by `<sys/socket.h>`. This function instructs the operating system to start listening for incoming connections on the socket that has been bound to the specified port.
 
 ```c
   // Binding listening sock to port
@@ -92,7 +104,9 @@ Now that we have created a socket, we need to specify the address that it needs 
   printf("[INFO] Server listening on port %d\n", PORT);
 ```
 
-The `bind()`function, provided by the `<sys/socket.h>` header, will bind the listening socket to the provided port. The `listen()` function marks the socket as a passive socket, ready to accept incoming connection requests.
+The `listen()` function marks the socket as a passive socket, meaning it is ready to accept incoming connection requests. Along with this readiness, `listen()` also specifies the maximum length of the queue for pending connections.
+
+When a client attempts to connect to a server, the server may not be immediately available to accept the connection. In such cases, the connection request is placed in a queue. The `MAX_ACCEPT_BACKLOG` constant, that we defined globally, defines the maximum size of this queue. If the queue is full, any additional connection attempts will be rejected until space becomes available in the queue.
 
 ---
 
@@ -100,7 +114,9 @@ The `bind()`function, provided by the `<sys/socket.h>` header, will bind the lis
 Now that the server is listening on the port, what happens when a client tries to connect to the server?
 :::
 
-We need to get the address of the clients that are connecting to the server. For this lets create another object of `struct sockaddr_in`.
+When a client tries to connect to a server, the server's listening socket detects the incoming connection request. The server then has to ‘accept’ this connection, and create a new socket specifically for communication with that client.
+
+To handle an incoming client connection and gather details about the client's address, we'll create another instance of `struct sockaddr_in`.
 
 ```c
   // Creating an object of struct socketaddr_in
@@ -112,9 +128,19 @@ We need to get the address of the clients that are connecting to the server. For
   printf("[INFO] Client connected to server\n");
 ```
 
-The `accept()` function accepts the incoming client connection and creates a new socket for the same.
+The `accept()` [function](https://man7.org/linux/man-pages/man2/accept.2.html), defined in the `<sys/socket.h>` header, accepts the incoming client connection and creates a new socket for the same.
 
-Let’s pause for a bit and recap what just happened.
+- `listen_sock_fd`: The file descriptor of the listening socket.
+- `(struct sockaddr *)&client_addr`: A pointer to the `client_addr` structure where information about the client's address will be stored.
+- `&client_addr_len`: A pointer to the variable storing the size of the client address structure. Upon successful execution, `accept()` updates this variable with the actual size of the client address structure.
+
+After `accept()` completes successfully, the server can use the `conn_sock_fd` file descriptor to communicate with the client over the newly established connection.
+
+::: tip NOTE
+`accept()` is a blocking system call, meaning that when it is invoked, the program execution halts until a connection request is received from a client. In a blocking call, the program cannot proceed to execute further instructions until the specified condition is met or the operation completes.
+:::
+
+Let us pause for a bit and recap what just happened:
 
 - We created a socket using `socket()` function
 - We bound that socket to a port with `bind()` function
@@ -125,9 +151,9 @@ Let’s pause for a bit and recap what just happened.
 
 ### Milestone #1
 
-We can now do a small test and check how the code performs.
+We can now do a small test and check how our code performs.
 
-Compile the code using the following command:
+Compile the code with the following command:
 
 ```bash
 gcc tcp_server.c -o tcp_server
@@ -139,19 +165,19 @@ To start the server, use the following command:
 ./tcp_server
 ```
 
-On running the TCP server, it will display the following message:
+Upon running the TCP server, the server will display the following message:
 
 ```bash
 [INFO] Server listening on port 8080
 ```
 
-But what/who is going to connect to the server? Since we have not created a TCP client yet, lets use a networking utility tool called _netcat_.
+But what/who is going to connect to the server? Since we have not created a TCP client yet, let us use a networking utility tool called **_[netcat](https://linux.die.net/man/1/nc)_**.
 
 ::: info
 netcat is a versatile tool that has a wide range of functionalities including the ability to act as a TCP client.
 :::
 
-netcat takes an IP address and a port to connect to. In our case, since the server is running on the same machine, we can use `[localhost](http://localhost)` as the IP address and 8080 as the port number.
+netcat takes an IP address and a port to connect to. In our case, since the server is running on the same machine, we can use `localhost` as the IP address and 8080 as the port number: [localhost:8080](http://localhost:8080).
 
 Open another terminal in parallel and type the following command to start a netcat TCP client:
 
@@ -159,7 +185,7 @@ Open another terminal in parallel and type the following command to start a netc
 nc localhost 8080
 ```
 
-When the client connection to the server is successful, it will show the following message:
+When the client connection to the server is successful, the server will show the following message:
 
 ```bash
 [INFO] Server listening on port 8080
@@ -170,11 +196,13 @@ This confirms that the server is able to accept incoming connections from a clie
 
 ---
 
-What happens when a client connection is accepted? Once a connection is established, it acts as a two-way communication channel between the client and the server. Data is sent to each other through this channel in the form of byte streams.
+Let us continue with the implemetation of the server. Till now we have only accepted the client connection. What happens after that?
+
+Once a connection is established, it acts as a two-way communication channel between the client and the server. Data is sent to each other through this channel in the form of **byte streams**. Byte streams represent data as a linear sequence of bytes, where each byte follows the previous one without any inherent structure or boundaries.
 
 Typically a connection is established by the client to request some resource from the server. In this case, let us say the server acts as a string reverser, i.e. if a client sends a string of characters, the server should reverse the string and send it back to the client.
 
-Initialize a `char` buffer to store the client message.
+Initialize a `char` **buffer** to store the client message. A buffer is a region of memory used to temporarily hold data while it is being transferred from one place to another or while it is being processed.
 
 ```c
   while (1) {
@@ -190,9 +218,9 @@ The `memset` function is initialize the value of `buff` to 0.
     int read_n = recv(conn_sock_fd, buff, sizeof(buff), 0);
 ```
 
-The `recv()` function is used to receive data from the connected socket. The received data is stored in the character buffer `buff`. Upon successful reception, the function returns the number of bytes received (`read_n`) and stored in `buff`.
+The `recv()` [function](https://man7.org/linux/man-pages/man2/recv.2.html) is used to receive data from the connected socket. This function reads incoming data from the client and stores it in the character buffer `buff`. Upon successful reception, `recv()` returns the number of bytes received, which is stored in the variable `read_n`.
 
-Let’s take care of some error handling in case of unexpected failure.
+Let's ensure we handle any unexpected failures by implementing error handling.
 
 ```c
     // Client closed connection or error occurred
@@ -206,10 +234,12 @@ Let’s take care of some error handling in case of unexpected failure.
     printf("[CLIENT MESSAGE] %s", buff);
 ```
 
-`buff` now contains the message sent by the client. The server has to reverse the message string and send it back to the client. Let us write a quick and simple string reversal function to take care of this and place it outside of the main function.
+If the value of `read_n` is less than or equal to 0, it indicates that either the client has closed the connection or an error has occurred during data reception. In such cases, we print a message indicating that the client has disconnected, close the connection socket (`conn_sock_fd`), and exit the server program.
+
+Given that `buff` contains the message sent by the client, the server has to reverse this message string and send it back to the client. Let us write a quick and simple string reversal function to take care of this and place it outside of the `main()` function.
 
 ```c
-// Function to reverse a string
+// Function to reverse a string in-place
 void strrev(char *str) {
   for (int start = 0, end = strlen(str) - 2; start < end; start++, end--) {
     char temp = str[start];
@@ -219,7 +249,7 @@ void strrev(char *str) {
 }
 ```
 
-Now that `buff` has the reversed string, its time to send it to the client. We can use the `send()` function provided by the `<sys/socket.h>` header to achieve this.
+Now that `buff` has the reversed string, it is time to send it to the client. We can use the `send()` [function](https://man7.org/linux/man-pages/man2/send.2.html) provided by the `<sys/socket.h>` header to achieve this.
 
 ```c
   	// Sting reverse
@@ -230,6 +260,10 @@ Now that `buff` has the reversed string, its time to send it to the client. We c
   }
 }
 ```
+
+- `conn_sock_fd`: The file descriptor of the connected socket, representing the communication channel between the server and the client.
+- `buff`: The buffer containing the data to be sent. In this case, `buff` holds the reversed message string.
+- `read_n`: The number of bytes to send from the buffer. This value corresponds to the length of the reversed message string.
 
 ---
 
@@ -318,15 +352,13 @@ int main() {
 }
 ```
 
----
-
 :::
 
 ### Milestone #2
 
-It’s time to test the server! Similar to last time, open 2 terminals, one for the TCP server that we just wrote and another for the netcat client. Start the server followed by the client.
+It is time to test the server! As before, open 2 terminals, one for the TCP server that we just wrote and another for the netcat client. Start the server followed by the client.
 
-Upon successful connection of the client to the server, the server terminal should look like this:
+Upon the successful connection of the client to the server, the server terminal should display:
 
 ```bash
 [INFO] Server listening on port 8080
@@ -353,4 +385,4 @@ olleh
 
 ## Conclusion
 
-Congratulations! You have just written you own TCP server from the ground up. In the next stage, instead of using a third-party client, we will write our own TCP client.
+Congratulations! We have just written our own TCP server from scratch. In the next stage, instead of using a third-party client, we will write our own TCP client.
