@@ -175,7 +175,7 @@ But what/who is going to connect to the server? Since we have not created a TCP 
 netcat is a versatile tool that has a wide range of functionalities including the ability to act as a TCP client.
 :::
 
-netcat takes an IP address and a port to connect to. In our case, since the server is running on the same machine, we can use `localhost` as the IP address and 8080 as the port number: [localhost:8080](http://localhost:8080).
+netcat takes an IP address and a port to connect to. In our case, since the server is running on the same machine, we can use `localhost` as the IP address and 8080 as the port number: `localhost:8080`.
 
 Open another terminal in parallel and type the following command to start a netcat TCP client:
 

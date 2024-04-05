@@ -164,3 +164,7 @@ olleh
 Congratulations! You have written a TCP client from the ground up which connected with a TCP server with the ability to send and receive messages.
 
 But there is a big drawback with the server from Stage 1. Think about what it can be. You will find the answer to that question in the next stage.
+
+::: danger QUESTION
+What would happen when multiple client try and connect to the same server? Start the server and connect multiple clients. Try sending messages to the server from them. What do you notice?
+:::
