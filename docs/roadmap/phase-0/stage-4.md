@@ -34,7 +34,7 @@ Right now, the client (web browser), is directly accessing the file server. We w
 
 There will be few major changes in the structure of the code from previous stage where we wrote the entire implementation in `main()`. Thus, for this stage, we recommended working on a new separate file, and let’s call it `tcp_proxy.c`.
 
-In addition to the previous definitions in `tcp_server.c`, add a global definition at the top of the file for the upstream port number that you’ll be serving the python file server from.
+In addition to the previous definitions in `tcp_server.c`, add a global definition at the top of the file for the upstream port number that we will be serving the python file server from.
 
 ::: tip NOTE
 Add this to global definitions
@@ -100,7 +100,7 @@ This is where **route tables** come into play. We store the connection socket FD
 There is another problem that you might have thought of while reading the code block above.
 
 ::: danger QUESTION
-Since we have only one listening socket you could easily check whether the event is on the listen socket (we did this in Stage 3). But since we can have multiple connection sockets and multiple upstream sockets, how will you determine if the event is on a connection socket or an upstream socket?
+Since we have only one listening socket we could easily check whether the event is on the listen socket (we did this in Stage 3). But since we can have multiple connection sockets and multiple upstream sockets, how will we determine if the event is on a connection socket or an upstream socket?
 :::
 
 Here are some global variables that could come handy:
@@ -263,7 +263,7 @@ int main() {
 }
 ```
 
-At the end, your code will have a structure similar to this:
+At the end, our code will have a structure similar to this:
 
 ::: details expserver/tcp_proxy.c
 
@@ -312,7 +312,7 @@ int main() {
 :::
 
 ::: warning
-You're not restricted to just these functions. Feel free to create additional helper functions as needed to suit your requirements.
+There is no restriction to just these functions. Feel free to create additional helper functions as needed to suit your requirements.
 :::
 
 ---
@@ -376,6 +376,6 @@ Keep testing the code by navigating across the file sever, and opening files. Ma
 
 ## Conclusion
 
-Woah! Impressive. This marks the end of Phase 0. Hopefully you have learned a lot from doing the project till now.
+Woah! Impressive. This marks the end of Phase 0.
 
-The learning doesn't stop here though as in the next phase, as we’ll start building eXpServer in the next phase. Phase 0 laid the foundation as to what is about to come next. Read more about Phase 1 [here](/roadmap/phase-1/).
+The learning doesn't stop here though as in the next phase, as we’ll start building eXpServer. Phase 0 laid the foundation as to what is about to come next. Read more about Phase 1 [here](/roadmap/phase-1/).

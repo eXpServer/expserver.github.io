@@ -74,7 +74,7 @@ Add this to global definitions:
 
 :::
 
-The structure definition of `epoll_event` is given below for your understanding.
+The structure definition of `epoll_event` is given below for our understanding.
 
 ```c
 struct epoll_event {
