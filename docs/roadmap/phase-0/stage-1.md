@@ -20,7 +20,7 @@ Using this knowledge, let us build a simple TCP server from the ground up. Since
 
 ![implementation.png](/assets/stage-1/implementation.png)
 
-Before we begin, let us create a folder named `expserver`. All files related to this project will go inside it. Create another folder named `phase_0` inside `expserver` which will contain the files we will be creating in Phase 0.
+Before we begin, let us create a folder named `phase_0` inside `expserver` which will contain the files we will be creating in Phase 0.
 
 For this stage, as we are creating a TCP server, create a file `tcp_server.c` and place it inside `expserver/phase_0`. All the code from this stage will go into this file.
 

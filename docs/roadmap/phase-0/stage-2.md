@@ -18,7 +18,7 @@ Code snippets will contain comments in between with a format like this: `/* todo
 
 ![implementation.png](/assets/stage-2/implementation.png)
 
-Create a file named `tcp_client.c` . All the code from this stage will be written to it.
+Create a file named `tcp_client.c` in `expserver/phase_0`. All the code from this stage will be written to it.
 
 The header includes and defines required for this stage are given below.
 
