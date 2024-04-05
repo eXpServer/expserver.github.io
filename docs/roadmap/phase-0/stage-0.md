@@ -20,6 +20,10 @@ Since we will be building the project primarily in C programming language, we wi
 
 Read the section on [GDB](https://nitcbase.github.io/docs/Misc/GDB) to learn how to use the GNU debugger.
 
+### Version control - Git
+
+Use of a version control like Git is recommended. Have a look [here](https://git-scm.com/doc).
+
 ## Conclusion
 
 That is all the setup that is needed to get started on eXpServer! Let’s proceed to the next stage where we will build a basic, but functional TCP server on our own.

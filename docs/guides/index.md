@@ -12,6 +12,10 @@ The guides feature supplementary documentation intended for your reference as yo
 - [Linux epoll](/guides/resources/linux-epoll)
 - [HTTP](/guides/resources/http)
 - [MIME Types](/guides/resources/mime-types)
+- [Web Servers](/guides/resources/web-servers)
+- [Sockets](/guides/resources/sockets)
+- [Client-Server Model](/guides/resources/client-server-model)
+- [Network Models](/guides/resources/network-models)
 
 ## References
 
