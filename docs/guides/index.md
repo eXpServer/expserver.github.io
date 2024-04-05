@@ -7,7 +7,8 @@ The guides feature supplementary documentation intended for your reference as yo
 
 ## Resources
 
-- [Architecture](/guides/resources/architecture)
+<!-- - [Architecture](/guides/resources/architecture) -->
+
 - [File Descriptors](/guides/resources/file-descriptors)
 - [Linux epoll](/guides/resources/linux-epoll)
 - [HTTP](/guides/resources/http)

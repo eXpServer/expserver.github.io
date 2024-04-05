@@ -13,7 +13,7 @@ Congratulations on completion of Phase 0! Let’s look at what we have done till
 
 Phase 0 gave us an introduction to Linux socket programming and an understanding of how client-server communications take place.
 
-Now is a good time to have a look at the overall architecture of eXpServer. Check it out [here](/guides/resources/architecture).
+<!-- Now is a good time to have a look at the overall architecture of eXpServer. Check it out [here](/guides/resources/architecture). -->
 
 eXpServer is broken down into multiple modules. Given below are the modules that we will be tackling in Phase 1:
 
