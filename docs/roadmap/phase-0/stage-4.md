@@ -95,13 +95,7 @@ void loop_run(int epoll_fd) {
 
 Since we are aiming for concurrency, for each new client that connects to the proxy server, we need to create a new upstream link to connect with the file server. How can we effectively monitor the association between clients and their respective upstream links in scenarios where there are multiple clients?
 
-This is where **route tables** come into play. We store the connection socket FD and its corresponding upstream socket FD in a pair wise manner. So, for eg. when we have a connection socket FD and
-
-There is another problem that you might have thought of while reading the code block above.
-
-::: danger QUESTION
-Since we have only one listening socket we could easily check whether the event is on the listen socket (we did this in Stage 3). But since we can have multiple connection sockets and multiple upstream sockets, how will we determine if the event is on a connection socket or an upstream socket?
-:::
+This is where **route tables** come into play. We store the connection socket FD and its corresponding upstream socket FD in a pair wise manner.
 
 Here are some global variables that could come handy:
 
@@ -115,6 +109,12 @@ int route_table[MAX_SOCKS][2], route_table_size = 0;
 ```
 
 :::
+
+<!-- There is another problem that that might have popped up while reading the above code block.
+
+::: danger QUESTION
+Since we have only one listening socket we could easily check whether the event is on the listen socket (we did this in Stage 3). But since we can have multiple connection sockets and multiple upstream sockets, how will we determine if the event is on a connection socket or an upstream socket?
+::: -->
 
 Now that we have that, we are ready to start accepting connection; so lets write the `accept_connection()` function.
 
@@ -131,18 +131,10 @@ void accept_connection(int listen_sock_fd) {
 
   /* add conn_sock_fd to loop using loop_attach() */
 
-  // add connection socket to conn_socks array
-  conn_socks[conn_socks_size] = conn_sock_fd;
-  conn_socks_size += 1;
-
   // create connection to upstream server
   int upstream_sock_fd = connect_upstream();
 
   /* add upstream_sock_fd to loop using loop_attach() */
-
-  // add upstream socket to upstream_socks array
-  upstream_socks[upstream_socks_size] = upstream_sock_fd;
-  upstream_socks_size += 1;
 
   // add conn_sock_fd and upstream_sock_fd to routing table
   route_table[route_table_size][0] = /* fill this */
@@ -188,7 +180,7 @@ This implementation is similar to how we handled clients in the previous stages 
 ```c
 void handle_client(int conn_sock_fd) {
 
-	int read_n = /* read message from client to buffer using recv */
+  int read_n = /* read message from client to buffer using recv */
 
   // client closed connection or error occurred
   if (read_n <= 0) {
