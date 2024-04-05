@@ -2,8 +2,6 @@
 
 ## Recap
 
-In Phase 0 overview,
-
 - We covered the Client-Server architecture.
 - We went through the TCP protocol.
 - We looked into how sockets facilitate the communication between clients and servers.

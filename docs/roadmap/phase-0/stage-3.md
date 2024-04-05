@@ -61,7 +61,7 @@ struct epoll_event event, events[MAX_EPOLL_EVENTS];
 int epoll_fd = epoll_create1(0);
 ```
 
-::: note
+::: tip NOTE
 Add this to global definitions:
 
 ```c
@@ -75,15 +75,15 @@ The structure definition of `epoll_event` is given below for your understanding.
 
 ```c
 struct epoll_event {
-		uint32_t      events;  /* Epoll events */
-		epoll_data_t  data;    /* User data variable */
+  uint32_t      events;  /* Epoll events */
+  epoll_data_t  data;    /* User data variable */
 };
 
 union epoll_data {
-		void     *ptr;
-    int       fd;
-    uint32_t  u32;
-    uint64_t  u64;
+  void     *ptr;
+  int       fd;
+  uint32_t  u32;
+  uint64_t  u64;
 };
 
 typedef union epoll_data epoll_data_t;
@@ -117,17 +117,17 @@ Now we wait. We wait till there are events in `events[]` that are ready to read.
 
 ```c
 while(1) {
-	int n_ready_fds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, -1);
-	...
+  int n_ready_fds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, -1);
+  ...
 }
 ```
 
 Now that we got the number of events, let’s iterate through and process them:
 
 ```c
-	for(/* interate from 0 to n_ready_fds */) {
-		...
-	}
+  for(/* interate from 0 to n_ready_fds */) {
+  	...
+  }
 ```
 
 Since the epoll is only monitoring the listening socket right now, the events will be from that only.
@@ -142,12 +142,12 @@ This means that, from the next iteration, we could get two types of events:
 The for loop should address both the cases and a simple if-else would be sufficient to differentiate between them:
 
 ```c
-		if (/* event is on listen socket */) {
-			...
-		}
-		else { // It is a connection sockect
-			...
-		}
+    if (/* event is on listen socket */) {
+    	...
+    }
+    else { // It is a connection sockect
+    	...
+    }
 ```
 
 If the event is on the connection socket, read message from client, print it on the terminal, reverse the message and send it to the client.
@@ -166,27 +166,28 @@ At the end your code should look like this.
 /* adding listening socket to epoll */
 
 while(1) {
-	printf("[DEBUG] Epoll wait\n");
-	int n_ready_fds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, -1);
+  printf("[DEBUG] Epoll wait\n");
+  int n_ready_fds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, -1);
 
-	for (/* interate from 0 to n_ready_fds */) {
-		if (/* event is on listen socket */) {
+  for (/* interate from 0 to n_ready_fds */) {
 
-			/* accept connection */
+	if (/* event is on listen socket */) {
 
-			/* add client socket to epoll */
+      /* accept connection */
 
-		}
-		else { // It is a connection sockect
+	  /* add client socket to epoll */
 
-			/* read message from client */
-
-			/* reverse message */
-
-			/* send reversed message to client */
-
-		}
 	}
+	else { // It is a connection sockect
+
+	  /* read message from client */
+
+	  /* reverse message */
+
+	  /* send reversed message to client */
+
+	}
+}
 ```
 
 ---
