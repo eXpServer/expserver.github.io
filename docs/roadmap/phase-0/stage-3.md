@@ -10,11 +10,11 @@
 
 Currently the server is only able to cater to one client at a time. When the client disconnects, the server will break out of the recv-send while loop and exit the program.
 
-In this stage we will modify the `tcp_server.c` code to facilitate **concurrency**. Concurrency refers to the ability to handle multiple clients simultaneously. We will achieve this with the help of **_epoll_**.
+In this stage we will modify the `tcp_server.c` code to facilitate [**concurrency**](<https://en.wikipedia.org/wiki/Concurrency_(computer_science)>). Concurrency refers to the ability to handle multiple clients simultaneously. We will achieve this with the help of **_epoll_**.
 
 ### epoll
 
-epoll is a I/O event notification mechanism provided by the Linux kernel. It allows applications to efficiently monitor multiple file descriptors (such as sockets) for various I/O events. Read about epoll [here](/guides/resources/linux-epoll).
+[epoll](/guides/resources/linux-epoll) is a I/O event notification mechanism provided by the Linux kernel. It allows applications to efficiently monitor multiple file descriptors for various I/O events.
 
 ## Implementation
 
@@ -43,7 +43,7 @@ This step allowed us to connect to one client and keep serving them indefinitely
 
 Now let us use epoll to achieve our goal of concurrency.
 
-First we’ll create an epoll instance using `epoll_create1(0)` given by the `<sys/epoll.h>` library. This returns a file descriptor (FD), and lets call it `epoll_fd`. Remember FD’s are just integers (unsigned integers, to be specific). Read more about FD’s [here](/guides/resources/file-descriptors).
+First we’ll create an epoll instance using [`epoll_create1(0)`](https://man7.org/linux/man-pages/man2/epoll_create.2.html) given by the `<sys/epoll.h>` library. This returns a file descriptor (FD), and lets call it `epoll_fd`. Remember FD’s are just integers (unsigned integers, to be specific).
 
 We need the epoll to do two things:
 
@@ -52,7 +52,7 @@ We need the epoll to do two things:
 
 `struct epoll_event` is a structure provided by the `<sys/epoll.h>` library just for this purpose. So lets create two of them for the above mentioned purposes.
 
-1. `event` - to setup a fd with the events that it should be monitored for and pass on to `epoll_ctl()` function.
+1. `event` - to setup a fd with the events that it should be monitored for and pass on to [`epoll_ctl()`](https://man7.org/linux/man-pages/man2/epoll_ctl.2.html) function.
 2. `events[MAX_EPOLL_EVENTS]` - to store the events that occur
 
 ```c
@@ -114,7 +114,7 @@ Let’s recap a bit and look at what we have done as understanding of how epoll 
 
 ---
 
-Now we wait. We wait till there are events in `events[]` that are ready to read. For this we use the function `epoll_wait`, which is a [function](https://man7.org/linux/man-pages/man2/epoll_wait.2.html) given by the <sys/epoll.h> header. It returns the number of FD’s for which events have occurred and are ready to be processed. The events themselves will be stored in the `events[]`. Let’s also not forget to wrap this in an infinite loop to keep the server running indefinitely.
+Now we wait. We wait till there are events in `events[]` that are ready to read. For this we use the function [`epoll_wait`](https://man7.org/linux/man-pages/man2/epoll_wait.2.html), function given by the `<sys/epoll.h>` header. It returns the number of FD’s for which events have occurred and are ready to be processed. The events themselves will be stored in the `events[]`. Let’s also not forget to wrap this in an infinite loop to keep the server running indefinitely.
 
 ```c
 while(1) {
@@ -231,8 +231,6 @@ Do you realise what this means? Both the clients are connected to server at the 
 Here is the expected output:
 
 ![milestone-2.png](/assets/stage-3/milestone-2.png)
-
----
 
 ## Conclusion
 

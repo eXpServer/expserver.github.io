@@ -14,7 +14,7 @@ Having an understanding of the concepts mentioned above is crucial before advanc
 
 A server functions by actively monitoring for incoming connections from clients. Upon receiving a connection request, the server accepts the connection and proceeds to execute specific operations or protocols based on the client's request.
 
-To be able to listen for connections, the server needs **listening sockets**. Listening sockets are bound to a specific IP address (interface) and a port. If any client wants to connect to the server, they have to direct their request to this particular `IP:port` combination that the server is listening on.
+To be able to listen for connections, the server needs [**listening sockets**](/guides/resources/sockets). Listening sockets are bound to a specific [IP address](/guides/resources/ip#ip-address) (interface) and a [port](/guides/resources/ip#port-numbers). If any client wants to connect to the server, they have to direct their request to this particular `IP:port` combination that the server is listening on.
 
 For example, let us assume we have a TCP server ‘running’ on our computer on port 8080. Running signifies that the server is ‘listening’ for any connections on port 8080. If a client wants to connect to the server, they would have to direct their request to `<IP_address_of_computer>:8080`.
 
@@ -59,8 +59,8 @@ The `socket()` function creates a socket, and upon successful creation, returns
 
 The function takes three arguments:
 
-- **domain**: This specifies the communication domain or address family used by the socket. In this case, `AF_INET` indicates the use of IPv4 addresses. IPv4 (Internet Protocol version 4) is the most widely used network layer protocol, providing the addressing scheme for internet traffic.
-- **type:** This argument determines the communication semantics and the characteristics of the data transmission over the socket. `SOCK_STREAM` indicates a socket of type stream. Stream sockets provide a reliable, connection-oriented, and sequenced flow of data. They are typically used with the Transmission Control Protocol (TCP), which ensures that data sent from one end of the connection is received correctly at the other end, with no loss, duplication, or corruption.
+- **domain**: This specifies the communication domain or address family used by the socket. In this case, `AF_INET` indicates the use of [IPv4 addresses](https://en.wikipedia.org/wiki/Internet_Protocol_version_4). IPv4 (Internet Protocol version 4) is the most widely used network layer protocol, providing the addressing scheme for internet traffic.
+- **type:** This argument determines the communication semantics and the characteristics of the data transmission over the socket. `SOCK_STREAM` indicates a socket of type stream. Stream sockets provide a reliable, connection-oriented, and sequenced flow of data. They are typically used with the [Transmission Control Protocol (TCP)](/guides/resources/tcp), which ensures that data sent from one end of the connection is received correctly at the other end, with no loss, duplication, or corruption.
 - **protocol:** This specifies the specific protocol to be used with the socket. When `0` is passed as the protocol, the system selects the default protocol for the given domain and type combination. For `AF_INET` and `SOCK_STREAM`, this typically results in TCP being chosen as the protocol, as it is the default protocol for stream sockets in the IPv4 domain.
 
 Now that we've initialized our listening socket, it's crucial to ensure its proper functioning, especially in scenarios where the server is stopped and restarted frequently.
@@ -146,7 +146,7 @@ The [`accept()`](https://en.wikipedia.org/wiki/Berkeley_sockets#:~:text=1%20is%2
 
 - `listen_sock_fd`: The file descriptor of the listening socket.
 - `(struct sockaddr *)&client_addr`: A pointer to the `client_addr` structure where information about the client's address will be stored.
-- `&client_addr_len`: A pointer to the variable storing the size of the client address structure. Upon successful execution, `accept()` updates this variable with the actual size of the client address structure. This is required because the size of the sockaddr structure may vary depending on whether it's an IPv4 or IPv6 address.
+- `&client_addr_len`: A pointer to the variable storing the size of the client address structure. Upon successful execution, `accept()` updates this variable with the actual size of the client address structure. This is required because the size of the sockaddr structure may vary depending on whether it's an IPv4 or [IPv6](https://en.wikipedia.org/wiki/IPv6) address.
 
 After `accept()` completes successfully, the server can use the `conn_sock_fd` file descriptor to communicate with the client over the newly established connection.
 

@@ -6,9 +6,9 @@
 
 ## Introduction
 
-Recall the previous stage where we relied on a third-party client, _netcat_, to test the functionality of the TCP server. In this stage we will focus on writing our own TCP client to communicate with the TCP server.
+Recall the previous stage where we relied on a third-party client, [_netcat_](https://en.wikipedia.org/wiki/Netcat), to test the functionality of the TCP server. In this stage we will focus on writing our own TCP client to communicate with the TCP server.
 
-In both the client and server sides of a TCP-based system, socket programming plays a central role in enabling communication. So expect some code to repeat from the previous stage.
+In both the client and server sides of a TCP-based system, socket programming plays a central role in enabling communication. So expect some code to repeat from the [previous stage](/roadmap/phase-0/stage-1).
 
 ::: tip NOTE
 Code snippets will contain comments in between with a format like this: `/* todo */`. These are meant to be filled in as you go through the documentation and implement it.
@@ -36,7 +36,7 @@ The header includes and defines required for this stage are given below.
 #define BUFF_SIZE 10000
 ```
 
-Client connects to a server with the help of a socket interface, similar to how the server connects to a client. Thus we use the same socket() function to create a _client socket_.
+Client connects to a server with the help of a socket interface, similar to how the server connects to a client. Thus we use the same `socket()` function to create a _client socket_.
 
 ```c
 int main() {
@@ -44,7 +44,7 @@ int main() {
   int client_sock_fd = /* create a socket of type SOCK_STREAM */
 ```
 
-But where (or which server) does this client connect to? To establish a connection, the client must know the IP address and listening port of the server it intends to connect to. We can use an object of `struct sockaddr_in` for this purpose.
+But where (or which server) does this client connect to? To establish a connection, the client must know the [IP address](/guides/resources/ip#ip-address) and listening [port](/guides/resources/ip#port-numbers) of the server it intends to connect to. We can use an object of `struct sockaddr_in` for this purpose.
 
 ```c
   // Creating an object of struct socketaddr_in
@@ -76,7 +76,7 @@ Now that we have the client socket and and the server address (IP and port), con
 
 ### Milestone #1
 
-This is a good point to test the code you have written. Compile and start the TCP server that we wrote in Stage 1 and this TCP client on separate terminals.
+This is a good point to test the code you have written. Compile and start the TCP server that we wrote in [Stage 1](/roadmap/phase-0/stage-1) and this TCP client on separate terminals.
 
 ::: warning
 Make sure to run the server before you run the client.
@@ -168,7 +168,7 @@ olleh
 
 Congratulations! You have written a TCP client from the ground up which connected with a TCP server with the ability to send and receive messages.
 
-But there is a big drawback with the server from Stage 1. Think about what it can be. You will find the answer to that question in the next stage.
+But there is a big drawback with the server from [Stage 1](/roadmap/phase-0/stage-1). Think about what it can be. You will find the answer to that question in the next stage.
 
 ::: danger QUESTION
 What would happen when multiple clients try and connect to the same server? Let us test it out!
