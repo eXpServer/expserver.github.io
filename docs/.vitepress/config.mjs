@@ -40,8 +40,8 @@ export default defineConfig({
 						{ text: 'HTTP', link: '/guides/resources/http' },
 						{ text: 'MIME Types', link: '/guides/resources/mime-types' },
 						{
-							text: 'Network Protocols & Models',
-							link: '/guides/resources/network-protocols-models',
+							text: 'TCP/IP Model',
+							link: '/guides/resources/tcp-ip-model',
 						},
 						{ text: 'Sockets', link: '/guides/resources/sockets' },
 						{ text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },

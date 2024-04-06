@@ -1,14 +1,30 @@
 # Sockets
 
-Sockets are a fundamental concept in networking that allow communication between processes running on different computers or within the same computer. They provide a way for programs to establish network connections, send data, and receive data over a network
-
-Each socket comprises an IP address and a port number, identifying both the host and a specific application or service.
-
-There are typically two main types of sockets:
-
-- `SOCK_STREAM`: Stream sockets ensure that data is delivered in the order it was sent and without errors. E.g. Web browsing, email, etc use this socket type (TCP).
-- `SOCK_DGRAM`: Datagram sockets send packets of data, called datagrams, without establishing a connection or ensuring delivery. E.g. Video streaming, online gaming etc use this socket type (UDP).
-
-In a client-server architecture, the server typically initiates socket creation, binding it to a specific IP address and port, and listens for incoming connections. Conversely, client programs establish their own sockets and connect to the server's socket by specifying its IP address and port. Once the connection is established, bidirectional data exchange becomes possible, enabling both client and server to send and receive information seamlessly.
+Sockets are **[file descriptors](https://en.wikipedia.org/wiki/File_descriptor)** that serve as the communication end-points for processes running on a device. A socket connection is a bidirectional communication interface that allows two processes to exchange information within a network.
 
 ![socket.png](/assets/phase-0-overview/socket.png)
+
+Sockets are commonly used is a client-server network. In this model, the server process socket listens and waits for clients' requests. The clients exchange information with the server using [TCP/IP](/guides/resources/tcp) and [UDP/IP](https://en.wikipedia.org/wiki/User_Datagram_Protocol) network protocols, and application-level protocols such as [HTTP](/guides/resources/http), etc.
+
+Although sockets primarily connect processes on a computer network, they also enable communication between processes on the same device. The same-machine connections use the [IPC (Inter-process communication)](https://en.wikipedia.org/wiki/Inter-process_communication) sockets, also known as [Unix domain sockets](https://en.wikipedia.org/wiki/Unix_domain_socket).
+
+Sockets in networking are typically classified into two types:
+
+- `SOCK_STREAM`: Stream sockets ensure that data is delivered in the order it was sent and without errors. E.g. Web browsing ([HTTP](/guides/resources/http)), email ([STMP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)), etc use this socket type ([TCP](/guides/resources/tcp)).
+- `SOCK_DGRAM`: Datagram sockets send packets of data, called datagrams, without establishing a connection or ensuring delivery. E.g. Video streaming, online gaming etc use this socket type ([UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol)).
+
+Each network socket is associated with an [IP address](/guides/resources/ip#ip-address) and a [port number](/guides/resources/ip#port-numbers), identifying both the host and a specific application or service.
+
+## Flow of events
+
+A socket has a typical flow of events. The following figure shows the typical flow of events (and the sequence of issued APIs) for a connection-oriented socket session. An explanation of each event follows the figure.
+
+![socket-flow.png](/assets/phase-0-overview/socket-flow.png)
+
+1. **Socket creation:** The process begins with the creation of a socket using the `socket()` system call. This call initializes a communication endpoint and returns a file descriptor.
+2. **Binding (optional):** In server applications, the socket may be bound to a specific address and port using the `bind()` system call. This step is necessary for servers to listen for incoming connections on a specific network interface and port. (Bind is optional for client sockets as the operating system assigns a local address and port automatically)
+3. **Listening (Server Only)**: Servers then enter a listening state using the `listen()` system call, indicating their readiness to accept incoming connections from clients.
+4. **Connection Establishment (Client)**: Clients initiate a connection to the server by using the `connect()` system call, specifying the server's address and port. This call establishes a connection to the server, allowing for data exchange.
+5. **Accepting Connections (Server):** Upon receiving a connection request from a client, the server accepts the connection using the `accept()` system call. This call creates a new socket specifically for communication with the client.
+6. **Data Exchange**: Once the connection is established, both the client and server can send and receive data using the `send()` and `recv()` system calls, respectively. Data sent by one party is received by the other, allowing for bidirectional communication.
+7. **Connection Termination**: When communication is complete, either party can initiate the termination of the connection using the `close()` system call. This releases the allocated resources associated with the socket and terminates the communication channel.

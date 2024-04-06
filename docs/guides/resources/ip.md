@@ -1,17 +1,32 @@
 # Internet Protocol (IP)
 
-The Internet Protocol (IP) is a protocol, or set of rules, for routing and addressing packets of data so that they can travel across networks and arrive at the correct destination. Data traversing the Internet is divided into smaller pieces, called **packets**. IP information is attached to each packet, and this information helps network routers to send packets to the right place.
+**Internet Protocol (IP)** is the method for sending data from one device to another across the internet. Every device has an IP address that uniquely identifies it and enables it to communicate with and exchange data with other devices connected to the internet. Today, it’s considered the standard for fast and secure communication directly between mobile devices.
 
-Once the packets arrive at their destination, they are handled differently depending on which transport protocol is used in combination with IP. The most common transport protocols are TCP and UDP.
+IP is responsible for defining how applications and devices exchange packets of data with each other. It is the principal communications protocol responsible for the formats and rules for exchanging data and messages between computers on a single network or several internet-connected networks. It does this through the Internet Protocol Suite ([TCP/IP](/guides/resources/tcp-ip-model)), a group of communications protocols that are split into four abstraction layers.
 
-## **What is an IP address?**
+IP is the main protocol within the internet layer of the [TCP/IP](/guides/resources/tcp-ip-model). Its main purpose is to deliver data packets between the source application or device and the destination using methods and structures that place tags, such as address information, within data packets.
 
-An IP address is a unique identifier assigned to a device or domain that connects to the Internet. Each IP address is a series of characters, such as '192.168.1.1'.
+## **IP address?**
 
-Each IP packet will contain both the IP address of the device or domain sending the packet and the IP address of the intended recipient, much like how both the destination address and the return address are included on a piece of mail.
+An **Internet Protocol (IP) address** is the unique identifying number assigned to every device connected to the internet. An IP address definition is a numeric label assigned to devices that use the internet to communicate. Computers that communicate over the internet or via local networks share information to a specific location using IP addresses.
 
-## **What is an IP packet?**
+IP addresses have two distinct versions or standards:
 
-IP packets are created by adding an IP header to each packet of data before it is sent on its way. An IP header is just a series of bits (ones and zeros), and it records several pieces of information about the packet, including the sending and receiving IP address.
+- The Internet Protocol version 4 ([IPv4](https://en.wikipedia.org/wiki/Internet_Protocol_version_4)) address is the older of the two, which has space for up to 4 billion IP addresses and is assigned to all computers.
+- The more recent Internet Protocol version 6 ([IPv6](https://en.wikipedia.org/wiki/IPv6)) has space for trillions of IP addresses
 
-![Untitled](/assets/phase-0-overview/ip.png)
+Every device with an internet connection has an IP address, whether it's a computer, laptop, IoT device, or even toys. The IP addresses allow for the efficient transfer of data between two connected devices, allowing machines on different networks to talk to each other.
+
+Read more about them [here](https://en.wikipedia.org/wiki/IP_address).
+
+## Port numbers
+
+Port numbers are 16-bit unsigned integers used to uniquely identify applications or services running on a computer within a network. They provide a way for incoming data packets to be directed to the appropriate application or service on a host machine.
+
+It ranges from 0 to 65535. They are divided into the following categories:
+
+- 0 to 1023 - Reserved for well-known services
+- 1024 to 49151 - Registered ports assigned by the Internet Assigned Numbers Authority (IANA) for specific services
+- 49152 to 65535 - Dynamic or private ports that can be used by applications dynamically.
+
+Read more about them [here](<https://en.wikipedia.org/wiki/Port_(computer_networking)>).

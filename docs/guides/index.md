@@ -13,7 +13,7 @@ The guides feature supplementary documentation intended for your reference as yo
 - [Linux epoll](/guides/resources/linux-epoll)
 - [HTTP](/guides/resources/http)
 - [MIME Types](/guides/resources/mime-types)
-- [Network Protocols & Models](/guides/resources/network-protocols-models)
+- [TCP/IP Model](/guides/resources/tcp-ip-model)
 - [Sockets](/guides/resources/sockets)
 - [Internet Protocol (IP)](/guides/resources/ip)
 

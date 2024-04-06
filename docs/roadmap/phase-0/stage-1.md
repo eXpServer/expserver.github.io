@@ -6,6 +6,10 @@
 - We went through the TCP protocol.
 - We looked into how sockets facilitate the communication between clients and servers.
 
+::: warning
+Having an understanding of the concepts mentioned above is crucial before advancing. You can find relevant resources in the [Overview of Phase 0](/roadmap/phase-0/).
+:::
+
 ## Introduction
 
 A server functions by actively monitoring for incoming connections from clients. Upon receiving a connection request, the server accepts the connection and proceeds to execute specific operations or protocols based on the client's request.
@@ -41,7 +45,9 @@ Let us start by adding all the header includes and defines. The use of each head
 #define MAX_ACCEPT_BACKLOG 5
 ```
 
-The first step is to create a listening socket for the clients to be able to connect to the server. This is done using the `socket()` [function](https://man7.org/linux/man-pages/man2/socket.2.html) from the `<sys/socket.h>` header.
+**Setting up the server:**
+
+The first step is to create a listening socket for the clients to be able to connect to the server. This is done using the [`socket()`](https://en.wikipedia.org/wiki/Berkeley_sockets#:~:text=the%20specified%20socket.-,socket,-%5Bedit%5D) function from the [`<sys/socket.h>`](https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html) header.
 
 ```c
 int main() {
@@ -49,7 +55,7 @@ int main() {
   int listen_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 ```
 
-The `socket()` function creates a socket, and upon successful creation, returns a **socket file descriptor**. A file descriptor is a unique integer that designates a socket and allows application programs to refer to it when needed. Read more about them [here](/guides/resources/file-descriptors).
+The `socket()` function creates a socket, and upon successful creation, returns a **socket file descriptor**. A [file descriptor](https://en.wikipedia.org/wiki/File_descriptor) is a unique integer that designates a socket and allows application programs to refer to it when needed.
 
 The function takes three arguments:
 
@@ -73,7 +79,21 @@ In the code snipped below, we'll set the socket option `SO_REUSEADDR` for the li
   setsockopt(listen_sock_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 ```
 
-The next step is to assign an address (consisting of an IP address and a port) to our socket, allowing it to listen for incoming connections. To accomplish this, we'll employ a data structure called `struct sockaddr_in`, provided by the `<netinet/in.h>` header.
+The next step is to assign an address (consisting of an IP address and a port) to our socket, allowing it to listen for incoming connections. To accomplish this, we'll employ a data structure called [`struct sockaddr_in`](https://man7.org/linux/man-pages/man3/sockaddr.3type.html), provided by the [`<netinet/in.h>`](https://pubs.opengroup.org/onlinepubs/009695399/basedefs/netinet/in.h.html) header.
+
+This data structure is used for for IPv4 addresses only; have a look at it below:
+
+::: details struct sockaddr_in
+
+```c
+struct sockaddr_in {
+  sa_family_t     sin_family;     /* AF_INET */
+  in_port_t       sin_port;       /* Port number */
+  struct in_addr  sin_addr;       /* IPv4 address */
+};
+```
+
+:::
 
 ```c
   // Creating an object of struct socketaddr_in
@@ -86,12 +106,12 @@ The next step is to assign an address (consisting of an IP address and a port) t
 ```
 
 - `server_addr.sin_family = AF_INET`: Configures the socket to utilize the IPv4 address format, indicating that the socket will operate within the context of IPv4 networking.
-- `server_addr.sin_addr.s_addr = htonl(INADDR_ANY)`: Assigns the IP address to which the server will bind. The constant `INADDR_ANY` represents any available IP address on the host machine and is defined in the `<netinet/in.h>` header file. Using this constant for the server address allows the server to bind to all network interfaces present on the machine. For e.g. a laptop commonly has multiple network interfaces: Ethernet port and Wi-Fi adapter(s). The `htonl()` function is then used to convert the IP address from host byte order to network byte order, ensuring consistency across different architectures.
+- `server_addr.sin_addr.s_addr = htonl(INADDR_ANY)`: Assigns the IP address to which the server will bind. The constant `INADDR_ANY` represents any available IP address on the host machine and is defined in the [`<netinet/in.h>`](https://pubs.opengroup.org/onlinepubs/009695399/basedefs/netinet/in.h.html) header. Using this constant for the server address allows the server to bind to all network interfaces present on the machine. This includes all IP addresses associated with those interfaces. Clients can connect to any one of these IP addresses by specifying the appropriate address when attempting to establish a connection. The `htonl()` function is then used to convert the IP address from host byte order to network byte order, ensuring consistency across different architectures.
 - `server_addr.sin_port = htons(PORT)`: Sets the port number that the server will listen on. The variable `PORT`, that we defined globally at the top of the file, holds the desired port number. The `htons()` function is employed to convert the port number from host byte order to network byte order for consistency in network communication across different platforms.
 
-Now that we've configured the server address, the next step is to bind the listening socket to the specified port. This is achieved through the `bind()` [function](https://man7.org/linux/man-pages/man2/bind.2.html), which is provided by the `<sys/socket.h>` header. By invoking `bind()`, we establish a connection between our listening socket and the specified port, effectively reserving it for our server's use.
+Now that we've configured the server address, the next step is to bind the listening socket to the specified port. This is achieved through the [`bind()`](https://en.wikipedia.org/wiki/Berkeley_sockets#:~:text=newly%20assigned%20descriptor.-,bind,-%5Bedit%5D), which is provided by the [`<sys/socket.h>`](https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html) header. By invoking `bind()`, we establish a connection between our listening socket and the specified port, effectively reserving it for our server's use.
 
-Following the binding process, we initiate the listening phase by calling the `listen()` [function](https://man7.org/linux/man-pages/man2/listen.2.html), also provided by `<sys/socket.h>`. This function instructs the operating system to start listening for incoming connections on the socket that has been bound to the specified port.
+Following the binding process, we initiate the listening phase by calling the [`listen()`](https://en.wikipedia.org/wiki/Berkeley_sockets#:~:text=an%20error%20occurs.-,listen,-%5Bedit%5D) function, also provided by [`<sys/socket.h>`](https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html). This function instructs the operating system to start listening for incoming connections on the socket that has been bound to the specified port.
 
 ```c
   // Binding listening sock to port
@@ -102,15 +122,11 @@ Following the binding process, we initiate the listening phase by calling the `l
   printf("[INFO] Server listening on port %d\n", PORT);
 ```
 
-The `listen()` function marks the socket as a passive socket, meaning it is ready to accept incoming connection requests. Along with this readiness, `listen()` also specifies the maximum length of the queue for pending connections.
-
-When a client attempts to connect to a server, the server may not be immediately available to accept the connection. In such cases, the connection request is placed in a queue. The `MAX_ACCEPT_BACKLOG` constant, that we defined globally, defines the maximum size of this queue. If the queue is full, any additional connection attempts will be rejected until space becomes available in the queue.
+The `listen()` function marks the socket as a passive socket, meaning it is ready to accept incoming connection requests. Along with this readiness, `listen()` also specifies the maximum length of the queue for pending connections. When a client attempts to connect to a server, the server may not be immediately available to accept the connection. In such cases, the connection request is placed in a queue. The `MAX_ACCEPT_BACKLOG` constant, that we defined globally, defines the maximum size of this queue. If the queue is full, any additional connection attempts will be rejected until space becomes available in the queue.
 
 ---
 
-::: danger QUESTION
-Now that the server is listening on the port, what happens when a client tries to connect to the server?
-:::
+**Accepting & processing client connections:**
 
 When a client tries to connect to a server, the server's listening socket detects the incoming connection request. The server then has to ‘accept’ this connection, and create a new socket specifically for communication with that client.
 
@@ -126,16 +142,18 @@ To handle an incoming client connection and gather details about the client's ad
   printf("[INFO] Client connected to server\n");
 ```
 
-The `accept()` [function](https://man7.org/linux/man-pages/man2/accept.2.html), defined in the `<sys/socket.h>` header, accepts the incoming client connection and creates a new socket for the same.
+The [`accept()`](https://en.wikipedia.org/wiki/Berkeley_sockets#:~:text=1%20is%20returned.-,accept,-%5Bedit%5D) function, defined in the [`<sys/socket.h>`](https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html) header, accepts the incoming client connection and creates a new socket for the same.
 
 - `listen_sock_fd`: The file descriptor of the listening socket.
 - `(struct sockaddr *)&client_addr`: A pointer to the `client_addr` structure where information about the client's address will be stored.
-- `&client_addr_len`: A pointer to the variable storing the size of the client address structure. Upon successful execution, `accept()` updates this variable with the actual size of the client address structure.
+- `&client_addr_len`: A pointer to the variable storing the size of the client address structure. Upon successful execution, `accept()` updates this variable with the actual size of the client address structure. This is required because the size of the sockaddr structure may vary depending on whether it's an IPv4 or IPv6 address.
 
 After `accept()` completes successfully, the server can use the `conn_sock_fd` file descriptor to communicate with the client over the newly established connection.
 
 ::: tip NOTE
-`accept()` is a blocking system call, meaning that when it is invoked, the program execution halts until a connection request is received from a client. In a blocking call, the program cannot proceed to execute further instructions until the specified condition is met or the operation completes.
+When accept() is called, it initiates a blocking system call, causing the program execution to enter a state wait state until a connection request is received from a client.
+
+So when the server runs and reaches the accept() function call, it will the pause execution at this line, waiting until it receives a connection request from a client. Once a client attempts to connect, the accept() function will return, allowing the server to proceed with handling the client connection.
 :::
 
 Let us pause for a bit and recap what just happened:
@@ -169,7 +187,7 @@ Upon running the TCP server, the server will display the following message:
 [INFO] Server listening on port 8080
 ```
 
-But what/who is going to connect to the server? Since we have not created a TCP client yet, let us use a networking utility tool called **_[netcat](https://linux.die.net/man/1/nc)_**.
+But what/who is going to connect to the server? Since we have not created a TCP client yet, let us use a networking utility tool called **_[netcat](https://en.wikipedia.org/wiki/Netcat)_**.
 
 ::: info
 netcat is a versatile tool that has a wide range of functionalities including the ability to act as a TCP client.
@@ -216,7 +234,7 @@ The `memset` function is initialize the value of `buff` to 0.
     int read_n = recv(conn_sock_fd, buff, sizeof(buff), 0);
 ```
 
-The `recv()` [function](https://man7.org/linux/man-pages/man2/recv.2.html) is used to receive data from the connected socket. This function reads incoming data from the client and stores it in the character buffer `buff`. Upon successful reception, `recv()` returns the number of bytes received, which is stored in the variable `read_n`.
+The [`recv()`](https://man7.org/linux/man-pages/man2/recv.2.html) function is used to receive data from the connected socket. This function reads incoming data from the client and stores it in the character buffer `buff`. Upon successful reception, `recv()` returns the number of bytes received, which is stored in the variable `read_n`.
 
 Let's ensure we handle any unexpected failures by implementing error handling.
 
@@ -247,7 +265,7 @@ void strrev(char *str) {
 }
 ```
 
-Now that `buff` has the reversed string, it is time to send it to the client. We can use the `send()` [function](https://man7.org/linux/man-pages/man2/send.2.html) provided by the `<sys/socket.h>` header to achieve this.
+Now that `buff` has the reversed string, it is time to send it to the client. We can use the [`send()`](https://man7.org/linux/man-pages/man2/send.2.html) function provided by the [`<sys/socket.h>`](https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html) header to achieve this.
 
 ```c
   	// Sting reverse
