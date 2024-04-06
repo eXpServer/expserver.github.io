@@ -2,11 +2,11 @@
 
 ## Recap
 
-- We modified the TCP server code to handle multiple clients simultaneously using epoll
+- In the previous stage, we modified our TCP server code to handle multiple clients simultaneously using epoll
 
 ## Introduction
 
-In this stage, we will combine the functionalities of a TCP server and client to make a TCP **proxy**.
+In this stage, we will combine the functionalities of a TCP server and client to make a TCP [**proxy**](https://en.wikipedia.org/wiki/Proxy_server).
 
 Proxy is a intermediary which sits in between a client and an upstream server and relays communication between them. When a client makes a request to access a resource (such as a website or a file), it connects to the proxy server instead of directly connecting to the target server. The proxy server then forwards the client's request to the target server, retrieves the response, and sends it back to the client.
 
@@ -67,7 +67,7 @@ void loop_run(int epoll_fd) {
 
 Let’s focus on `loop_run(int epoll_fd)` now. In the previous stage, we had epoll events from two sources; the listen socket and the connection socket. Now there will be another socket that we will be adding to our epoll called as the **upstream socket**.
 
-The python file server is the **upstream server** in our case. When a user connects to the TCP proxy server to access files from the upstream server, the TCP proxy server will open a connection to the upstream server. All the communication sent to the proxy by the client will be relayed to the file server, and similarly data sent by the file server to the proxy (intended for the client) will be sent through this connection.
+The python file server is the [**upstream server**](https://en.wikipedia.org/wiki/Upstream_server) in our case. When a user connects to the TCP proxy server to access files from the upstream server, the TCP proxy server will open a connection to the upstream server. All the communication sent to the proxy by the client will be relayed to the file server, and similarly data sent by the file server to the proxy (intended for the client) will be sent through this connection.
 
 The figure below illustrates the three different events that could occur in epoll, and how we should handle each one of them:
 
@@ -95,7 +95,7 @@ void loop_run(int epoll_fd) {
 
 Since we are aiming for concurrency, for each new client that connects to the proxy server, we need to create a new upstream link to connect with the file server. How can we effectively monitor the association between clients and their respective upstream links in scenarios where there are multiple clients?
 
-This is where **route tables** come into play. We store the connection socket FD and its corresponding upstream socket FD in a pair wise manner.
+This is where [**route tables**](https://en.wikipedia.org/wiki/Routing_table) come into play. We store the connection socket FD and its corresponding upstream socket FD in a pair wise manner.
 
 Here are some global variables that could come handy:
 

@@ -32,7 +32,7 @@ When someone says the word server, we immediately get a picture of huge datacent
 A server's role is to provide data or services requested by ‘someone’. That someone is a client, which again is just a program, that initiates communication by asking the server for what it need. When a client requests something, the server fulfils the request by providing the requested data or service.
 
 ::: tip INFO
-The computers in huge datacentres are different. Their size is primarily due to the significant volume of _traffic_ that these servers (programs) need to handle. Traffic refers to the number of clients that the server serves. To manage the high volume of traffic effectively, the servers require more compute power and bandwidth.
+The computers in huge datacentres are different. Their size is primarily due to the high _traffic_ that these servers (programs) need to handle. To manage the high volume of traffic effectively, the servers require more computing power and bandwidth.
 :::
 
 Communication is an integral part of the client-server relationship, often facilitated through [networking protocols and models](/guides/resources/tcp-ip-model). Read about them before proceeding further.
