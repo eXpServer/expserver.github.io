@@ -10,7 +10,7 @@ At the top of the TCP/IP model is the Application layer. This layer is responsib
 
 ## **2. Transport Layer**
 
-The Transport layer sits above the Internet layer and is responsible for end-to-end communication between devices. It ensures that data is reliably transmitted across the network. The primary protocols operating at this layer are Transmission Control Protocol (TCP) and User Datagram Protocol (UDP). TCP provides reliable, connection-oriented communication, while UDP offers a connectionless, unreliable transmission mechanism.
+The Transport layer sits above the Internet layer and is responsible for end-to-end communication between devices. It ensures that data is reliably transmitted across the network. The primary protocols operating at this layer are Transmission Control Protocol ([TCP](/guides/resources/tcp)) and User Datagram Protocol ([UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol)). TCP provides reliable, connection-oriented communication, while UDP offers a connectionless, unreliable transmission mechanism.
 
 ## **3. Internet Layer**
 

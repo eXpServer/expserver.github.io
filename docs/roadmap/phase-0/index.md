@@ -35,6 +35,6 @@ A server's role is to provide data or services requested by ‘someone’. That 
 The computers in huge datacentres are different. Their size is primarily due to the significant volume of _traffic_ that these servers (programs) need to handle. Traffic refers to the number of clients that the server serves. To manage the high volume of traffic effectively, the servers require more compute power and bandwidth.
 :::
 
-Communication is an integral part of the client-server relationship, often facilitated through [networking protocols and models](/guides/resources/network-protocols-models). Read about them before proceeding further.
+Communication is an integral part of the client-server relationship, often facilitated through [networking protocols and models](/guides/resources/tcp-ip-model). Read about them before proceeding further.
 
 The underlying communication between the devices is taken care by [network sockets](/guides/resources/sockets). They enable bidirectional data flow, allowing processes to send and receive data over a network connection. We will extensively use sockets while writing eXpServer.
