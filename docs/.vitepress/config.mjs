@@ -44,6 +44,7 @@ export default defineConfig({
 							link: '/guides/resources/tcp-ip-model',
 						},
 						{ text: 'Sockets', link: '/guides/resources/sockets' },
+						{ text: 'Transmission Control Protocol (TCP)', link: '/guides/resources/tcp' },
 						{ text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },
 					],
 				},

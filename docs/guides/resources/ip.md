@@ -1,12 +1,14 @@
 # Internet Protocol (IP)
 
-**Internet Protocol (IP)** is the method for sending data from one device to another across the internet. Every device has an IP address that uniquely identifies it and enables it to communicate with and exchange data with other devices connected to the internet. Today, it’s considered the standard for fast and secure communication directly between mobile devices.
+**Internet Protocol (IP)** is the protocol part of the [TCP/IP](/guides/resources/tcp-ip-model) for sending data from one device to another across the internet. Every device has an **IP address** that uniquely identifies it and enables it to communicate with and exchange data with other devices connected to the internet. Today, it’s considered the standard for fast and secure communication.
 
-IP is responsible for defining how applications and devices exchange packets of data with each other. It is the principal communications protocol responsible for the formats and rules for exchanging data and messages between computers on a single network or several internet-connected networks. It does this through the Internet Protocol Suite ([TCP/IP](/guides/resources/tcp-ip-model)), a group of communications protocols that are split into four abstraction layers.
+<!-- IP protocol's main purpose is to deliver data packets between the source application or device and the destination using methods and structures that place tags, such as address information, within data packets. -->
 
-IP is the main protocol within the internet layer of the [TCP/IP](/guides/resources/tcp-ip-model). Its main purpose is to deliver data packets between the source application or device and the destination using methods and structures that place tags, such as address information, within data packets.
+Data traversing the Internet is divided into smaller pieces, called [packets](https://en.wikipedia.org/wiki/Network_packet). IP information is attached to each packet, and this information helps routers to send packets to the right place. Every device or domain that connects to the Internet is assigned an IP address, and as packets are directed to the IP address attached to them, data arrives where it is needed.
 
-## **IP address?**
+Once the packets arrive at their destination, they are handled differently depending on which transport protocol is used in combination with IP. The most common transport protocols are [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) and [UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol).
+
+## IP address
 
 An **Internet Protocol (IP) address** is the unique identifying number assigned to every device connected to the internet. An IP address definition is a numeric label assigned to devices that use the internet to communicate. Computers that communicate over the internet or via local networks share information to a specific location using IP addresses.
 
@@ -21,7 +23,9 @@ Read more about them [here](https://en.wikipedia.org/wiki/IP_address).
 
 ## Port numbers
 
-Port numbers are 16-bit unsigned integers used to uniquely identify applications or services running on a computer within a network. They provide a way for incoming data packets to be directed to the appropriate application or service on a host machine.
+Port numbers are associated with TCP and are 16-bit unsigned integers used to uniquely identify applications or services running on a computer within a network.
+
+They provide a way for incoming data packets to be directed to the appropriate application or service on a host machine.
 
 It ranges from 0 to 65535. They are divided into the following categories:
 

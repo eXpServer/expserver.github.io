@@ -6,7 +6,7 @@ TCP is one of the basic standards that define the rules of the internet and is i
 
 As a result, high-level protocols like Application layer protocols, use the TCP protocol.
 
-Examples include peer-to-peer sharing methods like [File Transfer Protocol (FTP)](https://en.wikipedia.org/wiki/File_Transfer_Protocol), [Secure Shell (SSH)](https://en.wikipedia.org/wiki/Secure_Shell), [Internet Message Access Protocol (IMAP)](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) for sending and receiving emails, [Simple Mail Transfer Protocol (SMTP)](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol), and for web access through the [Hypertext Transfer Protocol (HTTP)](https://www.notion.so/HTTP-e93e4b23676d4d5c9e939e7ae835237a?pvs=21)
+Examples include peer-to-peer sharing methods like [File Transfer Protocol (FTP)](https://en.wikipedia.org/wiki/File_Transfer_Protocol), [Secure Shell (SSH)](https://en.wikipedia.org/wiki/Secure_Shell), [Internet Message Access Protocol (IMAP)](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) for sending and receiving emails, [Simple Mail Transfer Protocol (SMTP)](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol), and for web access through the [Hypertext Transfer Protocol (HTTP)](https://en.wikipedia.org/wiki/HTTP)
 
 ## **How Transmission Control Protocol works**
 
@@ -20,6 +20,6 @@ TCP is a connection-oriented protocol, which means a connection is established a
 - Acknowledges all packets that arrive.
 - Terminates connection once data transmission is complete through a four-way handshake.
 
-When a web server sends an [HTML](https://www.theserverside.com/definition/HTML-Hypertext-Markup-Language) file to a client, it uses the HTTP to do so. The HTTP program layer asks the TCP layer to set up the connection and send the file. The TCP stack divides the file into data packets, numbers them and then forwards them individually to the IP layer for delivery.
+When a web server sends an HTML file to a client, it uses the [Hypertext Transfer Protocol (HTTP)](https://en.wikipedia.org/wiki/HTTP) to do so. The HTTP layer asks the TCP layer to set up the connection and send the file. The TCP stack divides the file into data packets, numbers them and then forwards them individually to the IP layer for delivery.
 
 Although each packet in the transmission has the same source and destination IP address, packets may be sent along multiple routes. The TCP program layer in the client computer waits until all packets have arrived. It then acknowledges those it receives and asks for the retransmission of any it does not, based on missing packet numbers. The TCP layer then assembles the packets into a file and delivers the file to the receiving application.

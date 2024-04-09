@@ -4,11 +4,15 @@
 
 - In the previous stage, we modified our TCP server code to handle multiple clients simultaneously using epoll
 
+## Learning Objectives
+
+-
+
 ## Introduction
 
 In this stage, we will combine the functionalities of a TCP server and client to make a TCP [**proxy**](https://en.wikipedia.org/wiki/Proxy_server).
 
-Proxy is a intermediary which sits in between a client and an upstream server and relays communication between them. When a client makes a request to access a resource (such as a website or a file), it connects to the proxy server instead of directly connecting to the target server. The proxy server then forwards the client's request to the target server, retrieves the response, and sends it back to the client.
+Proxy is a intermediary which sits in between a client and an [upstream server](https://en.wikipedia.org/wiki/Upstream_server) and relays communication between them. When a client makes a request to access a resource (such as a website or a file), it connects to the proxy server instead of directly connecting to the target server. The proxy server then forwards the client's request to the target server, retrieves the response, and sends it back to the client.
 
 In this stage, our client will be a web browser and upstream server will be a python file server serving a folder on our local hard drive. Instead of the web browser directly connecting with the python file server, it makes a connection to the proxy which in turn will connect to the python server to relay the request from the browser.
 
@@ -18,6 +22,8 @@ Before we get into the implementation of the proxy, lets have a look at what we 
 
 Open a terminal and navigate to the folder you want to serve. Run the following command below to start a simple python file server:
 
+This command starts [Python's inbuilt HTTP server module](https://docs.python.org/3/library/http.server.html) which will serve the files in the folder it started in.
+
 ```bash
 python -m http.server 3000
 ```
@@ -26,7 +32,7 @@ Now that the local file server is running on port 3000, we can connect to it usi
 
 ![python-server.png](/assets/stage-4/python-server.png)
 
-Right now, the client (web browser), is directly accessing the file server. We will modify our TCP server code from Stage 3 to turn it into a TCP proxy server.
+Right now, the client (web browser), is directly accessing the file server. Our goal is to modify the TCP server code from Stage 3 to turn it into a TCP proxy server, so that all the communication between the client and upstream server goes though the proxy.
 
 ## Implementation
 
@@ -49,25 +55,25 @@ We’ll start with encapsulation of the code written in the previous stage by pl
 
 ```c
 int create_loop() {
-	/* return new epoll instance */
+  /* return new epoll instance */
 }
 
 void loop_attach(int epoll_fd, int fd, int events) {
-	/* attach fd to epoll */
+  /* attach fd to epoll */
 }
 
 int create_server() {
-	/* create listening socket and return it */
+  /* create listening socket and return it */
 }
 
 void loop_run(int epoll_fd) {
-	/* infinite loop and procession epoll events */
+  /* infinite loop and processing epoll events */
 }
 ```
 
 Let’s focus on `loop_run(int epoll_fd)` now. In the previous stage, we had epoll events from two sources; the listen socket and the connection socket. Now there will be another socket that we will be adding to our epoll called as the **upstream socket**.
 
-The python file server is the [**upstream server**](https://en.wikipedia.org/wiki/Upstream_server) in our case. When a user connects to the TCP proxy server to access files from the upstream server, the TCP proxy server will open a connection to the upstream server. All the communication sent to the proxy by the client will be relayed to the file server, and similarly data sent by the file server to the proxy (intended for the client) will be sent through this connection.
+The python file server is the upstream server in our case. When a user connects to the TCP proxy server to access files from the upstream server, the TCP proxy server will open a connection to the upstream server. All the communication sent to the proxy by the client will be relayed to the file server, and similarly data sent by the file server to the proxy (intended for the client) will be sent through this connection.
 
 The figure below illustrates the three different events that could occur in epoll, and how we should handle each one of them:
 
@@ -120,9 +126,12 @@ Now that we have that, we are ready to start accepting connection; so lets write
 
 ### `accept_connection()`
 
-With the listen socket FD as input, it accepts the client connection and creates the connection socket FD. Add the connection socket to epoll to monitor for events on it.
+`accept_connection()` takes `listen_sock_fd` as a param and do the following
 
-After accepting the client connection, the server opens up a connection to the upstream server using `connect_upstream()`, and adds it to the epoll.
+- Accept the client connection and create the connection socket FD `conn_sock_fd`
+- Add the connection socket to epoll to monitor for events using `epoll_ctl()`
+- Open up a connection to the upstream server using `connect_upstream()`, and add it to the epoll
+- An entry will be added to the route table with the `conn_sock_fd` and it's corresponding `upstream_sock_fd`
 
 ```c
 void accept_connection(int listen_sock_fd) {
@@ -157,6 +166,7 @@ int connect_upstream() {
   connect(/* connect to upstream server */);
 
   return upstream_sock_fd;
+
 }
 ```
 
@@ -171,11 +181,11 @@ Quick recap!
 
 ---
 
-Now that we have accepted the clients, time to handle them when they have messages to be read. We will create the `handle_client()` function to receive the messages from the client, and send it to the upstream server.
+Now that we have accepted the clients, we need to handle. We will create the `handle_client()` function to receive the messages from the client, and send it to the upstream server.
 
 ### `handle_client()`
 
-This implementation is similar to how we handled clients in the previous stages with few changes.
+This implementation is similar to how we handled clients in the previous stages with a few changes.
 
 ```c
 void handle_client(int conn_sock_fd) {
@@ -206,7 +216,7 @@ void handle_client(int conn_sock_fd) {
 Find the upstream socket associated with `conn_sock_fd` and route table and start sending the message that we received from the client.
 
 ::: tip NOTE
-There is a noticeable change to the `send()` function compared to the last stage. The drawback with the old approach will appear we are sending large amounts of data due to limitations in buffer size and network conditions.
+There is a noticeable change to the `send()` function compared to the last stage. The drawback with the old approach will appear when we are sending large amounts of data due to limitations in buffer size and network conditions. We will look into this in an exercise at the end.
 
 The new approach allows us to handle large data by sending it in smaller chunks, and lets us handle any errors.
 :::
@@ -338,7 +348,7 @@ Now, the fileserver is active on port `3000` and the proxy is running on port `8
 
 Both links should lead to the same file server; they're just different paths. If this works as expected, it indicates that our proxy is functioning perfectly!
 
-If you included a `printf` statement in `handle_client()` to print the client message, you would get the [HTTP](/guides/resources/http) request message in the proxy terminal.
+If you included a `printf` statement in `handle_client()` to print the client message, you would get a [HTTP](https://nl.wikipedia.org/wiki/Hypertext_Transfer_Protocol) request message in the proxy terminal when the client visits `localhost:8080`.
 
 ```bash
 [CLIENT MESSAGE] GET / HTTP/1.1
@@ -368,6 +378,6 @@ Keep testing the code by navigating across the file sever, and opening files. Ma
 
 ## Conclusion
 
-Woah! Impressive. This marks the end of Phase 0.
+This marks the end of Phase 0.
 
 The learning doesn't stop here though as in the next phase, as we’ll start building eXpServer. Phase 0 laid the foundation as to what is about to come next. Read more about Phase 1 [here](/roadmap/phase-1/).

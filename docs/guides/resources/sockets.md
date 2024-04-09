@@ -1,23 +1,27 @@
 # Sockets
 
-Sockets are **[file descriptors](https://en.wikipedia.org/wiki/File_descriptor)** that serve as the communication end-points for processes running on a device. A socket connection is a bidirectional communication interface that allows two processes to exchange information within a network.
+Sockets are **[file descriptors](https://en.wikipedia.org/wiki/File_descriptor)** that serve as the communication end-points for processes running on a operating system like Linux. A socket connection is a bidirectional communication interface that allows two processes to exchange information within a network.
+
+Sockets are the interface to use the [TCP protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol). Sockets allow applciations to send and receive data from a TCP connection just like reading and writing to a file using a [file descriptor](https://en.wikipedia.org/wiki/File_descriptor). Hence they are used to implement client and server applications. The server process creates a socket and listens on it for clients' requests.
 
 ![socket.png](/assets/phase-0-overview/socket.png)
 
-Sockets are commonly used is a client-server network. In this model, the server process socket listens and waits for clients' requests. The clients exchange information with the server using [TCP/IP](/guides/resources/tcp) and [UDP/IP](https://en.wikipedia.org/wiki/User_Datagram_Protocol) network protocols, and application-level protocols such as [HTTP](/guides/resources/http), etc.
-
-Although sockets primarily connect processes on a computer network, they also enable communication between processes on the same device. The same-machine connections use the [IPC (Inter-process communication)](https://en.wikipedia.org/wiki/Inter-process_communication) sockets, also known as [Unix domain sockets](https://en.wikipedia.org/wiki/Unix_domain_socket).
+<!-- The clients exchange information with the server using [TCP/IP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) and [UDP/IP](https://en.wikipedia.org/wiki/User_Datagram_Protocol) network protocols, and application-level protocols such as [HTTP](https://simple.wikipedia.org/wiki/Hypertext_Transfer_Protocol), etc. -->
+<!--
+Although sockets primarily connect processes on a computer network, they also enable communication between processes on the same device. The same-machine connections use the [IPC (Inter-process communication)](https://en.wikipedia.org/wiki/Inter-process_communication) sockets, also known as [Unix domain sockets](https://en.wikipedia.org/wiki/Unix_domain_socket). -->
 
 Sockets in networking are typically classified into two types:
 
-- `SOCK_STREAM`: Stream sockets ensure that data is delivered in the order it was sent and without errors. E.g. Web browsing ([HTTP](/guides/resources/http)), email ([STMP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)), etc use this socket type ([TCP](/guides/resources/tcp)).
-- `SOCK_DGRAM`: Datagram sockets send packets of data, called datagrams, without establishing a connection or ensuring delivery. E.g. Video streaming, online gaming etc use this socket type ([UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol)).
+- `SOCK_STREAM`: Stream sockets ensure that data is delivered in the order it was sent and without errors. For example web browsing ([HTTP](/guides/resources/http)), email ([STMP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)), etc use this socket type ([TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)).
+- `SOCK_DGRAM`: Datagram sockets send packets of data, called datagrams, without establishing a connection or ensuring delivery. For example video streaming, online gaming etc. use this socket type ([UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol)).
 
-Each network socket is associated with an [IP address](/guides/resources/ip#ip-address) and a [port number](/guides/resources/ip#port-numbers), identifying both the host and a specific application or service.
+Each network socket is associated with an [IP address](https://en.wikipedia.org/wiki/IP_address) and a [port number](<https://en.wikipedia.org/wiki/Port_(computer_networking)>), identifying both the host and a specific application or service.
 
 ## Flow of events
 
-A socket has a typical flow of events. The following figure shows the typical flow of events (and the sequence of issued APIs) for a connection-oriented socket session. An explanation of each event follows the figure.
+Sockets used in a client-server model has a typical flow of events. The following figure shows the typical flow of events (and the sequence of issued APIs) for a connection-oriented socket session. An explanation of each event follows the figure.
+
+We will be using the following functions to setup TCP connections:
 
 ![socket-flow.png](/assets/phase-0-overview/socket-flow.png)
 

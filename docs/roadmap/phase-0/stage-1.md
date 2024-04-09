@@ -3,11 +3,20 @@
 ## Recap
 
 - We covered the Client-Server architecture.
-- We went through the TCP protocol.
-- We looked into how sockets facilitate the communication between clients and servers.
 
-::: warning
-Having an understanding of the concepts mentioned above is crucial before advancing. You can find relevant resources in the [Overview of Phase 0](/roadmap/phase-0/).
+## Learning objectives
+
+- Placeholder
+
+---
+
+::: tip PRE-REQUISITE READING
+
+- Read about the [TCP/IP Model](/guides/resources/tcp-ip-model)
+- Read about the [TCP Protocol](/guides/resources/tcp)
+- Read about the [IP Protocol](/guides/resources/ip)
+- Read about [Sockets](/guides/resources/sockets)
+
 :::
 
 ## Introduction

@@ -15,6 +15,7 @@ The guides feature supplementary documentation intended for your reference as yo
 - [MIME Types](/guides/resources/mime-types)
 - [TCP/IP Model](/guides/resources/tcp-ip-model)
 - [Sockets](/guides/resources/sockets)
+- [Transmission Control Protocol (TCP)](/guides/resources/tcp)
 - [Internet Protocol (IP)](/guides/resources/ip)
 
 ## References

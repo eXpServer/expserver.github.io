@@ -2,7 +2,11 @@
 
 ## Recap
 
-- We built a simple TCP server using linux networking APIs
+- In stage 1, we built a simple TCP server using linux networking APIs
+
+## Learning objectives
+
+- Placeholder
 
 ## Introduction
 
@@ -164,13 +168,12 @@ hello
 olleh
 ```
 
-## Conclusion
+## Exercises
 
-Congratulations! You have written a TCP client from the ground up which connected with a TCP server with the ability to send and receive messages.
+Explains about the possibilities and limitations about the current model
 
-But there is a big drawback with the server from [Stage 1](/roadmap/phase-0/stage-1). Think about what it can be. You will find the answer to that question in the next stage.
+### Exercise #1
 
-::: danger QUESTION
 What would happen when multiple clients try and connect to the same server? Let us test it out!
 
 First, let's start the server in one terminal. Then, simultaneously, initiate a client instance in a new terminal. The client establishes a connection with the server, which confirms by printing [INFO] Client connected to server. We can then test the communication by exchanging messages between the client and the server, with the server responding with the reversed string, as done in Milestone #2.
@@ -185,8 +188,12 @@ Meanwhile, client #1 remains connected. To verify the connection, we can send an
 
 ![3_client.png](/assets/stage-2/3_client.png)
 
----
+Think of why this is happening. We will fix it in the next stage.
 
-Think of why this may be.
+### Exercise #2
 
-:::
+## Conclusion
+
+Congratulations! You have written a TCP client from the ground up which connected with a TCP server with the ability to send and receive messages.
+
+But there is a big drawback with the server from [Stage 1](/roadmap/phase-0/stage-1). Think about what it can be. You will find the answer to that question in the next stage.
