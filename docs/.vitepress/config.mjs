@@ -34,7 +34,7 @@ export default defineConfig({
 					text: 'Resources',
 					collapsed: false,
 					items: [
-						// { text: 'Architecture', link: '/guides/resources/architecture' },
+						{ text: 'Architecture', link: '/guides/resources/architecture' },
 						{ text: 'File descriptors', link: '/guides/resources/file-descriptors' },
 						{ text: 'Linux epoll', link: '/guides/resources/linux-epoll' },
 						{ text: 'HTTP', link: '/guides/resources/http' },
