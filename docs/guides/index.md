@@ -8,14 +8,14 @@ The guides feature supplementary documentation intended for your reference as yo
 ## Resources
 
 - [Architecture](/guides/resources/architecture)
-- [File Descriptors](/guides/resources/file-descriptors)
-- [Linux epoll](/guides/resources/introduction-to-linux-epoll)
-- [HTTP](/guides/resources/http)
-- [MIME Types](/guides/resources/mime-types)
 - [TCP/IP Model](/guides/resources/tcp-ip-model)
 - [TCP](/guides/resources/tcp)
 - [Sockets](/guides/resources/sockets)
-<!-- - [Internet Protocol (IP)](/guides/resources/ip)  -->
+- [Linux epoll](/guides/resources/introduction-to-linux-epoll)
+- [HTTP](/guides/resources/http)
+  <!-- - [File Descriptors](/guides/resources/file-descriptors) -->
+  <!-- - [MIME Types](/guides/resources/mime-types) -->
+  <!-- - [Internet Protocol (IP)](/guides/resources/ip)  -->
 
 ## References
 
