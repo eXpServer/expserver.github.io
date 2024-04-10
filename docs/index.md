@@ -5,7 +5,7 @@ layout: home
 hero:
   name: 'eXpServer'
   text: 'Documentation'
-  tagline: Educational Webserver written from Scratch in C
+  tagline: Educational web server written from scratch in C
   image:
     src: '/images/hero.png'
   actions:
@@ -19,7 +19,7 @@ hero:
 features:
   - icon: ⚙️
     title: Architecture
-    details: Single threaded, event-driven, nonblocking architecture similar to NGINX
+    details: Single threaded, event-driven, asynchronous architecture similar to Nginx
   - icon: 🐧
     title: Written in C
     details: eXpServer is written completely in C using Linux socket programming APIs
