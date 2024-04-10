@@ -6,7 +6,7 @@
 
 ## Learning Objectives
 
-In this stage, we will implement our own TCP client and connect the TCP client to the TCP server from [Stage 1](/roadmap/phase-0/stage-1).
+- We will implement a simple TCP client that takes an input from the user, sends it to the TCP server from [Stage 1](/roadmap/phase-0/stage-1) and prints the response.
 
 ## Introduction
 
@@ -170,8 +170,6 @@ olleh
 
 ## Exercises
 
-Explains about the possibilities and limitations about the current model
-
 ### Exercise #1
 
 What would happen when multiple clients try and connect to the same server? Let us test it out!
@@ -192,8 +190,21 @@ Think of why this is happening. We will fix it in the next stage.
 
 ### Exercise #2
 
+Did you notice how the server closed when the client disconnected?
+
+TODO
+
+Ask them to fix the issue
+
+Test cases to test the code
+
 ## Conclusion
 
 Congratulations! You have written a TCP client from the ground up which connected with a TCP server with the ability to send and receive messages.
 
-But there is a big drawback with the server from [Stage 1](/roadmap/phase-0/stage-1). Think about what it can be. You will find the answer to that question in the next stage.
+There are two methods to solve the above problem:
+
+1. With threading
+2. With epoll
+
+In the next stage we will work with threading.

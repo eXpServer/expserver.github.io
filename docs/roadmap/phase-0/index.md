@@ -29,7 +29,7 @@ We call this the **client-server model** or the **client-server architecture.**
 
 When someone says the word server, we immediately get a picture of huge datacentres with lots computers, expensive hardware, wires and blinking lights. But in reality, **server is just a program** that is running on a computer. The term “server” just describes the role or the purpose of what the program does.
 
-A server's role is to provide data or services requested by ‘someone’. That someone is a client, which again is just a program, that initiates communication by asking the server for what it need. When a client requests something, the server fulfils the request by providing the requested data or service.
+A server's role is to provide data or services requested by ‘someone’. That someone is a client, which again is just a program, that initiates communication by asking the server for what it needs. When a client requests something, the server fulfils the request by providing the requested data or service.
 
 ::: tip INFO
 The computers in huge datacentres are different. Their size is primarily due to the high _traffic_ that these servers (programs) need to handle. To manage the high volume of traffic effectively, the servers require more computing power and bandwidth.

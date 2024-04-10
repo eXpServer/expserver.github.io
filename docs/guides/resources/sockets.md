@@ -21,7 +21,7 @@ We will be using the following functions to setup TCP connections:
 
 ![socket-flow.png](/assets/resources/flow-of-events.png)
 
-1. **Socket creation:** The process begins with the creation of a socket using the `socket()` system call. This call initializes a communication endpoint and returns a file descriptor.
+1. **Socket creation:** The process begins with the creation of a socket using the `socket()` system call. This call initializes a communication endpoint and returns a [file descriptor](https://en.wikipedia.org/wiki/File_descriptor).
 2. **Binding (optional):** In server applications, the socket may be bound to a specific address and port using the `bind()` system call. This step is necessary for servers to listen for incoming connections on a specific network interface and port. (Bind is optional for client sockets as the operating system assigns a local address and port automatically)
 3. **Listening (Server Only)**: Servers then enter a listening state using the `listen()` system call, indicating their readiness to accept incoming connections from clients.
 4. **Connection Establishment (Client)**: Clients initiate a connection to the server by using the `connect()` system call, specifying the server's address and port. This call establishes a connection to the server, allowing for data exchange.

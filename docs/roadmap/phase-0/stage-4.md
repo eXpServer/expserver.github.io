@@ -6,7 +6,7 @@
 
 ## Learning Objectives
 
-In this stage, we will combine the functionalities of a TCP server and client to make a TCP **proxy**.
+- We will combine the functionalities of a TCP server from [Stage 1](/roadmap/phase-0/stage-1) and client from [Stage 3](/roadmap/phase-0/stage-3) to make a TCP [proxy](https://en.wikipedia.org/wiki/Proxy_server) which will relay communication between a web browser and a python file server.
 
 ## Introduction
 

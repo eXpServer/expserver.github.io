@@ -2,6 +2,8 @@
 
 A type-safe dynamic array implementation for C.
 
+https://github.com/rxi/vec
+
 ## Installation
 
 The vec.c and vec.h files can be dropped into an existing C project and compiled along with it.

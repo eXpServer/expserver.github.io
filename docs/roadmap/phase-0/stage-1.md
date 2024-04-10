@@ -6,11 +6,14 @@
 
 ## Learning Objectives
 
-In this stage, we will implement our own TCP server from the ground up.
+- We will implement a simple TCP server which will receive a string from the client, reverses it and sends it back.
+
+---
 
 ::: tip PRE-REQUISITE READING
 
 - Read about the [TCP/IP Model](/guides/resources/tcp-ip-model)
+- Read about [TCP](/guides/resources/tcp)
 - Read about [Sockets](/guides/resources/sockets)
 
 :::

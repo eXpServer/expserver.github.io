@@ -2,17 +2,17 @@
 
 ## What can eXpServer do?
 
-Before we get into the architecture of eXpServer, lets take a look at what all things a web server is expected to do. We will take [Nginx](https://nginx.org/en/), a popular modern web server, as our reference.
+Before we get into the architecture of eXpServer, let us take a look at what all things a web server is expected to do. We will take [Nginx](https://en.wikipedia.org/wiki/Nginx), a popular modern web server, as our reference.
 
-Upon [installation](https://nginx.org/en/linux_packages.html#instructions), Nginx operates as a [background process](https://en.wikipedia.org/wiki/Background_process). Nginx starts by reading a configuration file by the name of `nginx.conf` usually present at the path `/etc/nginx`. Based on this configuration, Nginx serves static files from a designated folder, [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) requests to [upstream servers](https://en.wikipedia.org/wiki/Upstream_server), implements [load balancing](https://www.cloudflare.com/en-gb/learning/performance/what-is-load-balancing/), and more. Here is a [beginner’s guide to Nginx](https://nginx.org/en/docs/beginners_guide.html) available for reference.
+Upon [installation](https://nginx.org/en/linux_packages.html#instructions), Nginx operates as a [background process](https://en.wikipedia.org/wiki/Background_process). Nginx starts by reading a configuration file by the name of `nginx.conf` usually present at the path `/etc/nginx`. Based on this configuration, Nginx serves static files from a designated folder, [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) requests to [upstream servers](https://en.wikipedia.org/wiki/Upstream_server), implements [load balancing](<https://en.wikipedia.org/wiki/Load_balancing_(computing)>), and more. Here is a [beginner’s guide to Nginx](https://nginx.org/en/docs/beginners_guide.html) available for reference.
 
 eXpServer works in a similar manner. It will take a configuration file which will describe how to serve each client request.
 eXpServer has two primary objectives.
 
 - Serve static files
-- Reverse proxying requests
+- Reverse proxy requests
 
-Additional functionalities such as load balancing, gzip compression etc. will be built on top of this in subsequent stages of the project roadmap.
+Additional functionalities such as load balancing, [gzip compression](https://en.wikipedia.org/wiki/Gzip) etc. will be built on top of this in subsequent stages of the project roadmap.
 
 In order to achieve these objectives, we will implement the [HTTP protocol](https://en.wikipedia.org/wiki/HTTP) on top of [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) utilizing the [socket programming](https://en.wikipedia.org/wiki/Berkeley_sockets) APIs provided by the operating system.
 
@@ -55,11 +55,11 @@ The `xps_core` module serves as the container to which [instances](<https://en.w
 
 ### `xps_loop`
 
-The `xps_loop` module contains the [event loop](https://en.wikipedia.org/wiki/Event_loop). Event loop is the engine that drives eXpServer. It is implemented using Linux [epoll](https://en.wikipedia.org/wiki/Epoll). TCP sockets are attached to epoll to monitor for events. On receiving event notifications, the loop will handle them through [callback functions](<https://en.wikipedia.org/wiki/Callback_(computer_programming)>). Another responsibility of the loop is to drive the _pipes_, through which the bytes flow from one module to another.
+The `xps_loop` module contains the [event loop](https://en.wikipedia.org/wiki/Event_loop). Event loop is the engine that drives eXpServer. It is implemented using Linux [epoll](https://en.wikipedia.org/wiki/Epoll). TCP sockets are attached to epoll to monitor for events. On receiving event notifications, the loop will handle them through [callback functions](<https://en.wikipedia.org/wiki/Callback_(computer_programming)>). Another responsibility of the loop is to drive the `xps_pipe`, through which the bytes flow from one module to another (`xps_pipe` will be explained subsequently).
 
 ### `xps_config`
 
-The `xps_config` module is responsible for reading and parsing the configuration file, the path to which is provided as a [command line argument](https://en.wikipedia.org/wiki/Command-line_interface#Arguments). The configuration file is written and parsed using [Lua](https://www.lua.org/) into a configuration _struct_ and stored in the `xps_core` instance.
+The `xps_config` module is responsible for reading and parsing the configuration file, the path to which is provided as a [command line argument](https://en.wikipedia.org/wiki/Command-line_interface#Arguments). The configuration file is written and parsed using [Lua](<https://en.wikipedia.org/wiki/Lua_(programming_language)>) into a configuration _struct_ and stored in the `xps_core` instance.
 
 ### `xps_listener`
 
@@ -67,11 +67,11 @@ The `xps_listener` module creates a TCP listening socket and attaches it to the 
 
 ### `xps_connection`
 
-The `xps_connection` module creates instances for TCP connections, be it a client or upstream server. The connection instance has handler functions which will take care of sending and receiving from the socket using the `send()` and `recv()` system calls respectively. A connection instance is ‘piped’ - attached using `xps_pipe` instances to an `xps_session` instance. These pipes allow the flow of bytes between the connection instance and the session instance. The session instance will then handle the client request according to the configuration file.
+The `xps_connection` module creates instances for TCP connections, be it a client or upstream server. The connection instance has handler functions which will take care of sending and receiving from the socket using the `send()` and `recv()` system calls respectively. A connection instance is ‘piped’ - attached using `xps_pipe` instances to an `xps_session` instance. These `xps_pipe`s allow the flow of bytes between the connection instance and the session instance. The session instance will then handle the client request according to the configuration file.
 
 ### `xps_session`
 
-An `xps_sesion` instance is created in the previously mentioned `listener_connection_handler()` function at the same time a new client connection is accepted. The session instance is the orchestrator that handles the client requests. It will parse the incoming bytes from the client TCP connection using the `xps_http` module. Based on the parsed HTTP request, the session instance will lookup the configuration to determine whether it should serve a file or reverse proxy the request. On deciding, an `xps_file` instance or an `xps_upstream` instance is created and attached using _pipes_ to the session instance. Then the bytes flow between the _client_ and corresponding _file_ or _upstream_ through the _session_ instance.
+An `xps_sesion` instance is created in the previously mentioned `listener_connection_handler()` function at the same time a new client connection is accepted. The session instance is the orchestrator that handles the client requests. It will parse the incoming bytes from the client TCP connection using the `xps_http` module. Based on the parsed HTTP request, the session instance will lookup the configuration to determine whether it should serve a file or reverse proxy the request. On deciding, an `xps_file` instance or an `xps_upstream` instance is created and attached using `xps_pipe` to the session instance. Then the bytes flow between the _client_ and corresponding _file_ or _upstream_ through the _session_ instance.
 
 ### `xps_http`
 
@@ -79,15 +79,15 @@ The `xps_http` module contains 2 _struct types_: `xps_http_req` and `xps_http_re
 
 ### `xps_file`
 
-An `xps_file` instance is the representation of an open file in eXpServer. Given a file path, it will open a file from the hard disk and calculate the _size_ and _[MIME type](https://en.wikipedia.org/wiki/Media_type)_ of the file. The _file_ instance is connected to the _session_ instance using a pipe to allow the flow of bytes from _file_ to _session_ and eventually to the _client connection_.
+An `xps_file` instance is the representation of an open file in eXpServer. Given a file path, it will open a file from the hard disk and calculate the _size_ and _[MIME type](https://en.wikipedia.org/wiki/Media_type)_ of the file. The _file_ instance is connected to the _session_ instance using a `xps_pipe` to allow the flow of bytes from _file_ to _session_ and eventually to the _client connection_.
 
 ### `xps_upstream`
 
-The `xps_upstream` module takes a [hostname](https://en.wikipedia.org/wiki/Hostname) and [port](<https://en.wikipedia.org/wiki/Port_(computer_networking)>) as parameters, establishes a connection to the specified destination, and then returns an `xps_connection` instance. This connection instance is then attached to the session using pipes.
+The `xps_upstream` module takes a [hostname](https://en.wikipedia.org/wiki/Hostname) and [port](<https://en.wikipedia.org/wiki/Port_(computer_networking)>) as parameters, establishes a connection to the specified destination, and then returns an `xps_connection` instance. This connection instance is then attached to the session using `xps_pipe`s.
 
 ### `xps_pipe`
 
-The `xps_pipe` module serves as a link between various nodes, such as `xps_connection`, `xps_session`, `xps_file`, and others, facilitating the [controlled flow](<https://en.wikipedia.org/wiki/Flow_control_(data)>) of data between them. A pipe enables a unidirectional flow of bytes, with a _source_ and a _sink_ situated at opposite ends. The _source_ writes data to the pipe which is subsequently read by the _sink_. A _buffer threshold_ governs the pipe; if the amount of bytes within the _pipe buffer_ surpasses this threshold, the source won’t be able write to the pipe. Pipes are driven by the _event loop_, aiding in the multiplexing of connections to prevent any connections from being [starved](<https://en.wikipedia.org/wiki/Starvation_(computer_science)>).
+The `xps_pipe` module serves as a link between various nodes, such as `xps_connection`, `xps_session`, `xps_file`, and others, facilitating the [controlled flow](<https://en.wikipedia.org/wiki/Flow_control_(data)>) of data between them. A `xps_pipe` enables a unidirectional flow of bytes, with a _source_ and a _sink_ situated at opposite ends. The _source_ writes data to the pipe which is subsequently read by the _sink_. A _buffer threshold_ governs the pipe; if the amount of bytes within the _pipe buffer_ surpasses this threshold, the source won’t be able write to the pipe. Pipes are driven by the _event loop_, aiding in the multiplexing of connections to prevent any connections from being [starved](<https://en.wikipedia.org/wiki/Starvation_(computer_science)>).
 
 Read more about _pipes_ below.
 
@@ -95,7 +95,7 @@ Read more about _pipes_ below.
 
 Pipes in eXpServer are the links that allow uni-directional [controlled flow](<https://en.wikipedia.org/wiki/Flow_control_(data)>) of bytes from one node to another. A pipe is an instance of `xps_pipe_t` type and is attached to a source instance of type `xps_pipe_source_t` on one end and a sink instance of type `xps_pipe_sink_t` on the other.
 
-Lets take a look at an example
+Let us take a look at an example
 
 ![pipe.png](/assets/resources/pipe.png)
 
@@ -104,7 +104,7 @@ Lets take a look at an example
 
 In this particular example, the source of connection instance is not attached. We only want to read a file and send it to the connection.
 
-Now lets look at how this works
+Now let us look at how this works
 
 - When a pipe is created, it is added to a list of pipes present in the core.
 - With each iteration of the event loop, a `handle_pipes()` function is invoked.
