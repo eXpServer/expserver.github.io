@@ -39,13 +39,13 @@ Furthermore, individuals interested in understanding the workings of web servers
 
 Since eXpServer will be written entirely in C, the primary prerequisite is a familiarity with the C programming language at the level of a junior year undergraduate CS student.
 
-Having an understanding of basic networking concepts such as, client server model, TCP/IP protocol stack, OSI model etc. may be beneficial, but is not necessary.
+Having an understanding of basic networking concepts such as, client server model, TCP/IP protocol stack etc. may be beneficial, but not necessary.
 
 Most of the concepts associated with building eXpServer are explained in enough detail through guides available in the documentation. These guides are linked from appropriate parts of the roadmap to explain the concept related to the stage the student is currently in. Links to external resources that further explain the concepts are also included for extended reading.
 
 ## What to expect
 
-Participants in the eXpServer project can anticipate a thorough learning journey centred on constructing an operational web server from scratch. They will gain a deep understanding of networking fundamentals, encompassing the client-server model, TCP/IP protocol stack, OSI model, and diverse networking protocols, all through practical implementation and experimentation. Additional areas of learning encompass C programming, Linux system programming, problem-solving, critical thinking, and the software development cycle.
+Participants in the eXpServer project can anticipate a thorough learning journey centred on constructing an operational web server from scratch. They will gain a deep understanding of networking fundamentals, encompassing the client-server model, TCP/IP protocol stack, HTTP protocol, reverse proxying, load balancing, gzip compression etc. all through practical implementation and experimentation. Additional areas of learning encompass C programming, Linux system programming, problem-solving, critical thinking, and the software development cycle.
 
 A structured [roadmap](/roadmap/) guides individuals through various stages, systematically addressing specific objectives. This incremental learning approach helps them keep track of where they are in terms of course progression while also enabling instructors to assess their development against predefined milestones.
 
@@ -54,12 +54,12 @@ Upon completing the project, the individual will have crafted a functional web s
 eXpServer will incorporate a range of features, including but not limited to:
 
 - Serving static files
-- Reverse proxy functionality
-- Load balancing capabilities
+- Reverse proxying
+- Load balancing
 - Gzip compression
 - Implementing caching mechanisms
-- Rate limiting for requests
-- TLS support
+- Rate limiting & timeout for requests
+- TLS support etc.
 
 This project provides individuals with practical experience in understanding the architecture of modern web servers. Through hands-on engagement with eXpServer development, individuals gain insight into the complexities of handling dynamic web traffic, preparing them for real-world challenges faced in the industry.
 
