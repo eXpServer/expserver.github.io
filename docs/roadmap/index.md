@@ -2,7 +2,15 @@
 
 The roadmap provides a structured guide for participants to build eXpServer gradually. It outlines the progression of learning objectives, starting from introductory concepts and building up to advanced features and architecture.
 
-Each stage builds upon the previous one, ensuring a systematic approach to the project. Links are provided within the stage documents for additional reference of concepts as and when necessary.
+Each stage builds upon the previous one, ensuring a systematic approach to the project. Links are provided within the stage documents for additional reference of concepts as and when necessary. There will be two types of links present throughout the documentation:
+
+1. **Important links**: Resources under these links are meant to be read before proceeding further with the documentation.
+
+   ::: tip NOTE
+   The important links will be indicated like this.
+   :::
+
+2. **Informative links**: Resources under these links are for more information about a particular concept. The information may not be necessary at that point and you may proceed with the roadmap without visiting these links.
 
 The eXpServer project comprises 22 stages, organized into 5 phases. Prior to the commencement of each phase, participants receive an overview detailing what to anticipate in that phase and summarizing their progress up to that point.
 

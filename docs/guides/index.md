@@ -10,13 +10,13 @@ The guides feature supplementary documentation intended for your reference as yo
 <!-- - [Architecture](/guides/resources/architecture) -->
 
 - [File Descriptors](/guides/resources/file-descriptors)
-- [Linux epoll](/guides/resources/linux-epoll)
+- [Linux epoll](/guides/resources/introduction-to-linux-epoll)
 - [HTTP](/guides/resources/http)
 - [MIME Types](/guides/resources/mime-types)
 - [TCP/IP Model](/guides/resources/tcp-ip-model)
 - [Sockets](/guides/resources/sockets)
-- [Transmission Control Protocol (TCP)](/guides/resources/tcp)
-- [Internet Protocol (IP)](/guides/resources/ip)
+<!-- - [Transmission Control Protocol (TCP)](/guides/resources/tcp)
+- [Internet Protocol (IP)](/guides/resources/ip) -->
 
 ## References
 

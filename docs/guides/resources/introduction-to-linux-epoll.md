@@ -1,4 +1,4 @@
-# Linux epoll
+# Introduction to Linux epoll
 
 **_epoll_** stands for _event poll_ and is a Linux-specific construct. It allows a process to monitor multiple file descriptors and receive notifications when an event occurs on them. Essentially, it's a kernel data structure facilitating I/O multiplexing on multiple file descriptors.
 

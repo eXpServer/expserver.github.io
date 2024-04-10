@@ -2,19 +2,15 @@
 
 ## Recap
 
-- We covered the Client-Server architecture.
+- We covered the Client-Server architecture in Phase 0 Overview
 
-## Learning objectives
+## Learning Objectives
 
-- Placeholder
-
----
+In this stage, we will implement our own TCP server from the ground up.
 
 ::: tip PRE-REQUISITE READING
 
 - Read about the [TCP/IP Model](/guides/resources/tcp-ip-model)
-- Read about the [TCP Protocol](/guides/resources/tcp)
-- Read about the [IP Protocol](/guides/resources/ip)
 - Read about [Sockets](/guides/resources/sockets)
 
 :::
@@ -23,7 +19,7 @@
 
 A server functions by actively monitoring for incoming connections from clients. Upon receiving a connection request, the server accepts the connection and proceeds to execute specific operations or protocols based on the client's request.
 
-To be able to listen for connections, the server needs [**listening sockets**](/guides/resources/sockets). Listening sockets are bound to a specific [IP address](/guides/resources/ip#ip-address) (interface) and a [port](/guides/resources/ip#port-numbers). If any client wants to connect to the server, they have to direct their request to this particular `IP:port` combination that the server is listening on.
+To be able to listen for connections, the server needs **listening sockets**. Listening sockets are bound to a specific [IP address](https://en.wikipedia.org/wiki/IP_address) (interface) and a [port](<https://en.wikipedia.org/wiki/Port_(computer_networking)>). If any client wants to connect to the server, they have to direct their request to this particular `IP:port` combination that the server is listening on.
 
 For example, let us assume we have a TCP server ‘running’ on our computer on port 8080. Running signifies that the server is ‘listening’ for any connections on port 8080. If a client wants to connect to the server, they would have to direct their request to `<IP_address_of_computer>:8080`.
 
@@ -69,7 +65,7 @@ The `socket()` function creates a socket, and upon successful creation, returns
 The function takes three arguments:
 
 - **domain**: This specifies the communication domain or address family used by the socket. In this case, `AF_INET` indicates the use of [IPv4 addresses](https://en.wikipedia.org/wiki/Internet_Protocol_version_4). IPv4 (Internet Protocol version 4) is the most widely used network layer protocol, providing the addressing scheme for internet traffic.
-- **type:** This argument determines the communication semantics and the characteristics of the data transmission over the socket. `SOCK_STREAM` indicates a socket of type stream. Stream sockets provide a reliable, connection-oriented, and sequenced flow of data. They are typically used with the [Transmission Control Protocol (TCP)](/guides/resources/tcp), which ensures that data sent from one end of the connection is received correctly at the other end, with no loss, duplication, or corruption.
+- **type:** This argument determines the communication semantics and the characteristics of the data transmission over the socket. `SOCK_STREAM` indicates a socket of type stream. Stream sockets provide a reliable, connection-oriented, and sequenced flow of data. They are typically used with the [Transmission Control Protocol (TCP)](https://en.wikipedia.org/wiki/Transmission_Control_Protocol), which ensures that data sent from one end of the connection is received correctly at the other end, with no loss, duplication, or corruption.
 - **protocol:** This specifies the specific protocol to be used with the socket. When `0` is passed as the protocol, the system selects the default protocol for the given domain and type combination. For `AF_INET` and `SOCK_STREAM`, this typically results in TCP being chosen as the protocol, as it is the default protocol for stream sockets in the IPv4 domain.
 
 Now that we've initialized our listening socket, it's crucial to ensure its proper functioning, especially in scenarios where the server is stopped and restarted frequently.

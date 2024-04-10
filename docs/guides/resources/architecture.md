@@ -2,33 +2,35 @@
 
 ## What can eXpServer do?
 
-Before we get into the architecture of eXpServer, lets take a look at what all things a web server is expected to do. We will take [Nginx](https://nginx.org/en/) a popular modern web server as our reference.
+Before we get into the architecture of eXpServer, lets take a look at what all things a web server is expected to do. We will take [Nginx](https://nginx.org/en/), a popular modern web server, as our reference.
 
-After [installing](https://nginx.org/en/linux_packages.html#instructions) Nginx on a computer, it will be run as a [background process](https://en.wikipedia.org/wiki/Background_process). Nginx starts by reading a configuration file by the name of `nginx.conf` usually present at the path `/etc/nginx` . According to the configuration, Nginx will serve static files from a folder, [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) requests to [upstream servers](https://en.wikipedia.org/wiki/Upstream_server), do [load balancing](https://www.cloudflare.com/en-gb/learning/performance/what-is-load-balancing/) or a number of other things. Here is a [beginner’s guide](https://nginx.org/en/docs/beginners_guide.html) to Nginx.
+Upon [installation](https://nginx.org/en/linux_packages.html#instructions), Nginx operates as a [background process](https://en.wikipedia.org/wiki/Background_process). Nginx starts by reading a configuration file by the name of `nginx.conf` usually present at the path `/etc/nginx`. Based on this configuration, Nginx serves static files from a designated folder, [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) requests to [upstream servers](https://en.wikipedia.org/wiki/Upstream_server), implements [load balancing](https://www.cloudflare.com/en-gb/learning/performance/what-is-load-balancing/), and more. Here is a [beginner’s guide to Nginx](https://nginx.org/en/docs/beginners_guide.html) available for reference.
 
 eXpServer will work in a similar manner. It will take a configuration file which will describe how to serve each client request. eXpServer will have two primary objectives.
 
 - Serve static files
-- Reverse proxy requests
+- Reverse proxying requests
 
-Other associated features such as load balancing, gzip compression etc. will be built on top of this in later stages of the roadmap.
+Additional functionalities such as load balancing, gzip compression etc. will be built on top of this in subsequent stages of the project roadmap.
 
-In order to achieve these objectives, we need to implement the [HTTP protocol](https://en.wikipedia.org/wiki/HTTP) on top of [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) using [socket programming](https://en.wikipedia.org/wiki/Berkeley_sockets) APIs provided by the operating system.
+In order to achieve these objectives, we will implement the [HTTP protocol](https://en.wikipedia.org/wiki/HTTP) on top of [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) utilizing the [socket programming](https://en.wikipedia.org/wiki/Berkeley_sockets) APIs provided by the operating system.
 
 ## Architecture
 
-When it comes to web servers, there are primarily 2 types of architectures.
+When it comes to web servers, there are primarily 2 types of architectures:
 
 - [Multi-threaded](<https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>) architecture. eg: [Apache](https://httpd.apache.org/)
-- Single-threaded, event-driven, asynchronous architecture. eg [Nginx](https://nginx.org/en/)
+- Single-threaded, event-driven, asynchronous architecture. eg: [Nginx](https://nginx.org/en/)
 
-Let us break it down. In a multi-threaded architecture such as that of Apache, a new [thread](<https://en.wikipedia.org/wiki/Thread_(computing)>) is created to handle every connection. Using threads allow the server to handle multiple clients simultaneously with the operating system taking care of thread scheduling. However, using a separate thread for every connection results in significant overhead on system resources.
+That's a lot of words. Let us break it down.
 
-Due to this limitation, most modern web servers uses a single-threaded, event-driven, asynchronous architecture. What exactly does all these terms mean?
+In a multi-threaded architecture such as that of Apache, a new [thread](<https://en.wikipedia.org/wiki/Thread_(computing)>) is spawned to handle each incoming connection. Utilizing threads enables the server to manage multiple clients concurrently, with the operating system taking care of thread scheduling. However, using a separate thread for every connection results in significant overhead on system resources.
+
+Due to this limitation, most modern web servers uses a single-threaded, event-driven, asynchronous architecture. What exactly do all these terms mean?
 
 - **Single-threaded**: Uses a single OS [thread](<https://en.wikipedia.org/wiki/Thread_(computing)>) to operate
-- **Event-driven**: Uses [event](https://en.wikipedia.org/wiki/Event-driven_architecture) notification mechanisms provided by the operating system (such as [epoll](https://en.wikipedia.org/wiki/Epoll) in Linux) to efficiently monitor multiple events [sockets](https://en.wikipedia.org/wiki/Network_socket) and determine which operations are ready to be processed
-- **Asynchronous**: Uses [asynchronous I/O](https://en.wikipedia.org/wiki/Asynchronous_I/O) that doesn't block and wait for the operation to complete
+- **Event-driven**: Uses [event](https://en.wikipedia.org/wiki/Event-driven_architecture) notification mechanisms provided by the operating system (such as [epoll](https://en.wikipedia.org/wiki/Epoll) in Linux) to efficiently monitor multiple [sockets](https://en.wikipedia.org/wiki/Network_socket) for events and determine which operations are ready for processing
+- **Asynchronous**: Uses [asynchronous I/O](https://en.wikipedia.org/wiki/Asynchronous_I/O), which allows operations to proceed without blocking and waiting for completion
 
 Read more about architecture of Nginx [here](https://aosabook.org/en/v2/nginx.html).
 
@@ -36,19 +38,19 @@ eXpServer uses an architecture similar to Nginx. Using the Linux [epoll](https:/
 
 ## Modules
 
-eXpServer is built in form of modules. A module will have _functions_ and _structs_ that take care of a specific task. Take a look at the following figure that roughly outlines the various modules in eXpServer.
+eXpServer is structured in the form of modules. A module will have _functions_ and _structs_ that take care of a specific task. The following figure provides a rough outline of the various modules within eXpServer:
 
 ![xps_architecture.png](/assets/resources/xps_architecture.png)
 
 Let us go over each module one by one.
 
 ::: tip NOTE
-A detailed view of the _structs_ and _functions_ present in each module will be explained in its corresponding stages along the roadmap.
+A detailed view of the _structs_ and _functions_ present in each module will be explained in their respective stages along the roadmap.
 :::
 
 ### `xps_core`
 
-The `xps_core` module is the container to which all [instances](<https://en.wikipedia.org/wiki/Instance_(computer_science)>) of all other modules attach. It can be thought of as an instance of eXpServer.
+The `xps_core` module serves as the container to which all [instances](<https://en.wikipedia.org/wiki/Instance_(computer_science)>) of all other modules attach. It can be thought of as an instance of eXpServer.
 
 ### `xps_loop`
 

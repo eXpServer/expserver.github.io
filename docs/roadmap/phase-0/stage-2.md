@@ -4,9 +4,9 @@
 
 - In stage 1, we built a simple TCP server using linux networking APIs
 
-## Learning objectives
+## Learning Objectives
 
-- Placeholder
+In this stage, we will implement our own TCP client and connect the TCP client to the TCP server from [Stage 1](/roadmap/phase-0/stage-1).
 
 ## Introduction
 
@@ -48,7 +48,7 @@ int main() {
   int client_sock_fd = /* create a socket of type SOCK_STREAM */
 ```
 
-But where (or which server) does this client connect to? To establish a connection, the client must know the [IP address](/guides/resources/ip#ip-address) and listening [port](/guides/resources/ip#port-numbers) of the server it intends to connect to. We can use an object of `struct sockaddr_in` for this purpose.
+But where (or which server) does this client connect to? To establish a connection, the client must know the [IP address](https://en.wikipedia.org/wiki/IP_address) and listening [port](<https://en.wikipedia.org/wiki/Port_(computer_networking)>) of the server it intends to connect to. We can use an object of `struct sockaddr_in` for this purpose.
 
 ```c
   // Creating an object of struct socketaddr_in

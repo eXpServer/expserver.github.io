@@ -6,13 +6,9 @@ Sockets are the interface to use the [TCP protocol](https://en.wikipedia.org/wik
 
 ![socket.png](/assets/phase-0-overview/socket.png)
 
-<!-- The clients exchange information with the server using [TCP/IP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) and [UDP/IP](https://en.wikipedia.org/wiki/User_Datagram_Protocol) network protocols, and application-level protocols such as [HTTP](https://simple.wikipedia.org/wiki/Hypertext_Transfer_Protocol), etc. -->
-<!--
-Although sockets primarily connect processes on a computer network, they also enable communication between processes on the same device. The same-machine connections use the [IPC (Inter-process communication)](https://en.wikipedia.org/wiki/Inter-process_communication) sockets, also known as [Unix domain sockets](https://en.wikipedia.org/wiki/Unix_domain_socket). -->
-
 Sockets in networking are typically classified into two types:
 
-- `SOCK_STREAM`: Stream sockets ensure that data is delivered in the order it was sent and without errors. For example web browsing ([HTTP](/guides/resources/http)), email ([STMP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)), etc use this socket type ([TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)).
+- `SOCK_STREAM`: Stream sockets ensure that data is delivered in the order it was sent and without errors. For example web browsing ([HTTP](https://en.wikipedia.org/wiki/HTTP)), email ([STMP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)), etc use this socket type ([TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)).
 - `SOCK_DGRAM`: Datagram sockets send packets of data, called datagrams, without establishing a connection or ensuring delivery. For example video streaming, online gaming etc. use this socket type ([UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol)).
 
 Each network socket is associated with an [IP address](https://en.wikipedia.org/wiki/IP_address) and a [port number](<https://en.wikipedia.org/wiki/Port_(computer_networking)>), identifying both the host and a specific application or service.
@@ -23,7 +19,7 @@ Sockets used in a client-server model has a typical flow of events. The followin
 
 We will be using the following functions to setup TCP connections:
 
-![socket-flow.png](/assets/phase-0-overview/socket-flow.png)
+![socket-flow.png](/assets/resources/flow-of-events.png)
 
 1. **Socket creation:** The process begins with the creation of a socket using the `socket()` system call. This call initializes a communication endpoint and returns a file descriptor.
 2. **Binding (optional):** In server applications, the socket may be bound to a specific address and port using the `bind()` system call. This step is necessary for servers to listen for incoming connections on a specific network interface and port. (Bind is optional for client sockets as the operating system assigns a local address and port automatically)

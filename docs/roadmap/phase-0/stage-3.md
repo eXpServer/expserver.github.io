@@ -3,11 +3,11 @@
 ## Recap
 
 - In stage 1, we wrote a basic TCP server
-- In stage 2, we wrote a basic TCP client and connected it to the server
+- In stage 2, we wrote a basic TCP client and connected it to the TCP server
 
 ## Learning Objectives
 
-- Modify the TCP server to serve multiple clients simultaneously
+In this stage, we will modify our TCP server from [Stage 1](/roadmap/phase-0/stage-1) to serve multiple clients simultaneously.
 
 ## Introduction
 
@@ -64,7 +64,7 @@ The above code allowed us to connect to one client at a time and keep serving th
 Now let us modify this section and use epoll to achieve our goal of concurrency.
 
 ::: tip PRE-REQUISITE READING
-Read the following [introduction to epoll](/guides/resources/linux-epoll) before procedding further.
+Read the following [introduction to epoll](/guides/resources/introduction-to-linux-epoll) before procedding further.
 :::
 
 First we’ll create an epoll instance using [`epoll_create1()`](https://man7.org/linux/man-pages/man2/epoll_create.2.html) given by the `<sys/epoll.h>` header. This returns a file descriptor (FD), and lets call it `epoll_fd`. Remember FD’s are just integers (unsigned integers, to be specific).

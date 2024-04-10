@@ -6,13 +6,11 @@
 
 ## Learning Objectives
 
--
+In this stage, we will combine the functionalities of a TCP server and client to make a TCP **proxy**.
 
 ## Introduction
 
-In this stage, we will combine the functionalities of a TCP server and client to make a TCP [**proxy**](https://en.wikipedia.org/wiki/Proxy_server).
-
-Proxy is a intermediary which sits in between a client and an [upstream server](https://en.wikipedia.org/wiki/Upstream_server) and relays communication between them. When a client makes a request to access a resource (such as a website or a file), it connects to the proxy server instead of directly connecting to the target server. The proxy server then forwards the client's request to the target server, retrieves the response, and sends it back to the client.
+[Proxy](https://en.wikipedia.org/wiki/Proxy_server) is a intermediary which sits in between a client and an [upstream server](https://en.wikipedia.org/wiki/Upstream_server) and relays communication between them. When a client makes a request to access a resource (such as a website or a file), it connects to the proxy server instead of directly connecting to the target server. The proxy server then forwards the client's request to the target server, retrieves the response, and sends it back to the client.
 
 In this stage, our client will be a web browser and upstream server will be a python file server serving a folder on our local hard drive. Instead of the web browser directly connecting with the python file server, it makes a connection to the proxy which in turn will connect to the python server to relay the request from the browser.
 
@@ -38,7 +36,7 @@ Right now, the client (web browser), is directly accessing the file server. Our 
 
 ![implementation.png](/assets/stage-4/implementation.png)
 
-There will be few major changes in the structure of the code from previous stage where we wrote the entire implementation in `main()`. Thus, for this stage, we recommended working on a new separate file, and let’s call it `tcp_proxy.c`.
+There will be few major changes in the structure of the code from previous stage where we wrote the entire implementation in `main()`. Thus, for this stage, we recommended working on a new separate file; let’s call it `tcp_proxy.c`.
 
 In addition to the previous definitions in `tcp_server.c`, add a global definition at the top of the file for the upstream port number that we will be serving the python file server from.
 
