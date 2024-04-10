@@ -35,20 +35,21 @@ export default defineConfig({
 					collapsed: false,
 					items: [
 						{ text: 'Architecture', link: '/guides/resources/architecture' },
-						{ text: 'File descriptors', link: '/guides/resources/file-descriptors' },
-						{
-							text: 'Introduction to Linux epoll',
-							link: '/guides/resources/introduction-to-linux-epoll',
-						},
-						{ text: 'HTTP', link: '/guides/resources/http' },
-						{ text: 'MIME Types', link: '/guides/resources/mime-types' },
 						{
 							text: 'TCP/IP Model',
 							link: '/guides/resources/tcp-ip-model',
 						},
 						{ text: 'TCP', link: '/guides/resources/tcp' },
 						{ text: 'Sockets', link: '/guides/resources/sockets' },
+						{
+							text: 'Introduction to Linux epoll',
+							link: '/guides/resources/introduction-to-linux-epoll',
+						},
+						{ text: 'HTTP', link: '/guides/resources/http' },
 						// { text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },
+						// { text: 'File descriptors', link: '/guides/resources/file-descriptors' },
+
+						// { text: 'MIME Types', link: '/guides/resources/mime-types' },
 					],
 				},
 				{
