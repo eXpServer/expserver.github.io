@@ -1,1 +1,1 @@
-# Stage 13: HTTP Specification
+# Stage 13: Config & Session Modules

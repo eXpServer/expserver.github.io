@@ -1,1 +1,1 @@
-# Stage 21: Multiprocess Architecture
+# Stage 21: Caching

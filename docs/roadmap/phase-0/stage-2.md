@@ -168,9 +168,9 @@ hello
 olleh
 ```
 
-## Exercises
+## Experiments
 
-### Exercise #1
+### Experiment #1
 
 What would happen when multiple clients try and connect to the same server? Let us test it out!
 
@@ -188,23 +188,27 @@ Meanwhile, client #1 remains connected. To verify the connection, we can send an
 
 Think of why this is happening. We will fix it in the next stage.
 
-### Exercise #2
+### Experiment #2
 
-Did you notice how the server closed when the client disconnected?
+Did you notice what happened when you closed the connected client instance? The sever also terminated with it. But what if the server wants to keep serving other clients?
 
-TODO
+Modify the code such that the server does not terminate immedietly after a client disconnects.
 
-Ask them to fix the issue
-
-Test cases to test the code
+::: info HINT
+Changes are needed where the server accepts the client connection using `accept()`.
+:::
 
 ## Conclusion
 
 Congratulations! You have written a TCP client from the ground up which connected with a TCP server with the ability to send and receive messages.
 
-There are two methods to solve the above problem:
+Recall the problem from [Experiment #1](/roadmap/phase-0/stage-2#experiment-1). This limitation can be fixed using using two different methods:
 
-1. With threading
-2. With epoll
+1. With [multi-threading](<https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>)
+2. With [epoll](https://en.wikipedia.org/wiki/Epoll)
 
-In the next stage we will work with threading.
+In web severs like [Apache](https://en.wikipedia.org/wiki/Apache_HTTP_Server), multi-threading was used for serving clients simultaneously. Each incoming client request is typically assigned to a separate thread, allowing the server to serve multiple clients concurrently without blocking or slowing down other requests.
+
+Whereas in [Nginx](https://en.wikipedia.org/wiki/Nginx), a more recent web server compared to Apache, uses an event-driven architecture, which relies on epoll. Instead of creating a new thread for every new connection, a single thread is sufficient to handle multiple clients simultaneously.
+
+In the next stage we will build a server with multi-threading to solve the cuncurrency issue.

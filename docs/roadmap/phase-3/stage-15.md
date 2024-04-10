@@ -1,1 +1,1 @@
-# Stage 15: Directory Browsing
+# Stage 15: IP Whitelist/Blacklist
