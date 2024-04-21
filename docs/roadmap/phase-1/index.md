@@ -14,7 +14,7 @@ Congratulations on completion of Phase 0! Let’s take a look at what we have do
 
 Phase 0 gave us an introduction to Linux socket programming and an understanding of how client-server communications take place. Using this knowledge, from Phase 1 onwards we will start to build the actual eXpServer.
 
-::: tip Pre-Requisite Reading
+::: tip PRE-REQUISITE READING
 Now is a good time to understand the capabilities and architecture of eXpServer. Read the following [Architecture](/guides/resources/architecture) document before proceeding further.
 :::
 
@@ -36,7 +36,7 @@ In order to maintain consistency, the documentation will be providing the expect
 
 ## Memory Management, Error Handling & Logging
 
-In Phase 0, we prioritised readability and simplicity over proper error handling and memory management.
+In Phase 0, we did not look into error handling and memory management. We will address these going further.
 
 As a web server is a software that is expected to run for long intervals of time without shutting down, memory leaks in the code can lead to huge consumption of system resources, which is inefficient and can lead to the OS killing the process.
 
@@ -44,9 +44,9 @@ As a web server deals with a lot of asynchronous system calls and network commun
 
 Thus, from this phase onwards,
 
-- High importance is given to proper memory management. If memory is allocated, it has to be freed after its use.
+- If memory is allocated, it has to be freed after its use.
 - Errors from any function calls should be handled properly
-- To help with debugging and understanding the order of function invocations, we will be thoroughly logging messages throughout the code using the provided `xps_logger` utility. Read about and get the source code for `xps_logger` [here](/guides/references/xps_logger).
+- To help with debugging and understanding the order of function invocations, we will be logging messages throughout the code using the provided `xps_logger` utility. Read about it and get the source code for `xps_logger` [here](/guides/references/xps_logger).
 
 ::: tip
 Third-party tools such as [Valgrind](https://en.wikipedia.org/wiki/Valgrind) can help to find any memory leaks in the application we write.

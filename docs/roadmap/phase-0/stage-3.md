@@ -265,4 +265,6 @@ Here is the expected output:
 
 ## Conclusion
 
-The server is now capable of handling multiple clients simultaneously using the _epoll_ I/O event notification mechanism in Linux. In the next stage, we'll develop a simple TCP proxy that will receive data from one connection and forward it to another.
+The server is now capable of handling multiple clients simultaneously using the _epoll_ I/O event notification mechanism in Linux. Recall that this is one of the method that can be done to provide concurrency.
+
+In the next stage, we will explore the other method - [multi-threading](<https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>). The server will be using UDP sockets for connection. Both multi-threading and [UDP protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) will not be used in the subsequent stages of the roadmap to build eXpServer. Thus skipping this stage will not affect the continuity of the subsequent stages of the project. However, these are important concepts in networking. Hence these ideas are explored.

@@ -186,16 +186,16 @@ Meanwhile, client #1 remains connected. To verify the connection, we can send an
 
 ![3_client.png](/assets/stage-2/3_client.png)
 
-Think of why this is happening. We will fix it in the next stage.
+Think of why this is happening. We will fix it in the next stage. Close client #1 and try to send a string from client #2 to the server. Observe what happened and move to Experiment #2.
 
 ### Experiment #2
 
-Did you notice what happened when you closed the connected client instance? The sever also terminated with it. But what if the server wants to keep serving other clients?
+Did you notice what happened when you closed the connected client instance? The sever also terminated with it. But what if we want the server to keep serving other clients?
 
 Modify the code such that the server does not terminate immedietly after a client disconnects.
 
 ::: info HINT
-Changes are needed where the server accepts the client connection using `accept()`.
+A while loop around the accept and recv-send loop could help.
 :::
 
 ## Conclusion
@@ -207,8 +207,8 @@ Recall the problem from [Experiment #1](/roadmap/phase-0/stage-2#experiment-1). 
 1. With [multi-threading](<https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>)
 2. With [epoll](https://en.wikipedia.org/wiki/Epoll)
 
-In web severs like [Apache](https://en.wikipedia.org/wiki/Apache_HTTP_Server), multi-threading was used for serving clients simultaneously. Each incoming client request is typically assigned to a separate thread, allowing the server to serve multiple clients concurrently without blocking or slowing down other requests.
+In web severs like [Apache](https://en.wikipedia.org/wiki/Apache_HTTP_Server), multi-threading was used for serving multiple clients simultaneously. Each incoming client request is typically assigned to a separate thread, allowing the server to serve multiple clients concurrently without blocking or slowing down other requests.
 
-Whereas in [Nginx](https://en.wikipedia.org/wiki/Nginx), a more recent web server compared to Apache, uses an event-driven architecture, which relies on epoll. Instead of creating a new thread for every new connection, a single thread is sufficient to handle multiple clients simultaneously.
+Whereas [Nginx](https://en.wikipedia.org/wiki/Nginx), a more recent web server compared to Apache, uses an event-driven architecture, which relies on epoll. Instead of creating a new thread for every new connection, a single thread is sufficient to handle multiple clients simultaneously.
 
-In the next stage we will build a server with multi-threading to solve the cuncurrency issue.
+eXpServer uses the latter method to achieve concurrency. In the next stage we will modify our TCP server to handle multiple clients using epoll.
