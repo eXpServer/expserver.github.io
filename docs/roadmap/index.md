@@ -29,32 +29,32 @@ The eXpServer project comprises 22 stages, organized into 5 phases. Prior to the
 ### Phase 1: Building the core of eXpServer by creating reusable modules
 
 - [Overview](phase-1/)
-- [Stage 5: Server & Client Modules](phase-1/stage-5)
-- [Stage 6: Core & Loop Modules](phase-1/stage-6)
-- [Stage 7: TCP Module](phase-1/stage-7)
-- [Stage 8: Upstream Module](phase-1/stage-8)
-- [Stage 9: File Module](phase-1/stage-9)
+- [Stage 6: Server & Client Modules](phase-1/stage-6)
+- [Stage 7: Core & Loop Modules](phase-1/stage-7)
+- [Stage 8: TCP Module](phase-1/stage-8)
+- [Stage 9: Upstream Module](phase-1/stage-9)
+- [Stage 10: File Module](phase-1/stage-10)
 
 ### Phase 2: Implementing HTTP support
 
 - [Overview](phase-2/)
-- [Stage 10: HTTP Parser](phase-2/stage-10)
-- [Stage 11: HTTP Req & Res Modules](phase-2/stage-11)
-- [Stage 12: Config & Session Modules](phase-2/stage-12)
-- [Stage 13: HTTP Specification](phase-2/stage-13)
+- [Stage 11: HTTP Parser](phase-2/stage-11)
+- [Stage 12: HTTP Req & Res Modules](phase-2/stage-12)
+- [Stage 13: Config & Session Modules](phase-2/stage-13)
+- [Stage 14: HTTP Specification](phase-2/stage-14)
 
 ### Phase 3: Adding features to eXpServer
 
 - [Overview](phase-3/)
-- [Stage 14: IP Whitelist/Blacklist](phase-3/stage-14)
-- [Stage 15: Directory Browsing](phase-3/stage-15)
-- [Stage 16: Gzip Compression](phase-3/stage-16)
-- [Stage 17: Load Balancing](phase-3/stage-17)
-- [Stage 18: Rate Limiting & Timeout](phase-3/stage-18)
+- [Stage 15: IP Whitelist/Blacklist](phase-3/stage-15)
+- [Stage 16: Directory Browsing](phase-3/stage-16)
+- [Stage 17: Gzip Compression](phase-3/stage-17)
+- [Stage 18: Load Balancing](phase-3/stage-18)
+- [Stage 19: Rate Limiting & Timeout](phase-3/stage-19)
 
 ### Phase 4: Advanced features and multiprocess architecture
 
 - [Overview](phase-4/)
-- [Stage 19: Transport Layer Security (TLS)](phase-4/stage-19)
-- [Stage 20: Caching](phase-4/stage-20)
-- [Stage 21: Multiprocess Architecture](phase-4/stage-21)
+- [Stage 20: Transport Layer Security (TLS)](phase-4/stage-20)
+- [Stage 21: Caching](phase-4/stage-21)
+- [Stage 22: Multiprocess Architecture](phase-4/stage-22)
