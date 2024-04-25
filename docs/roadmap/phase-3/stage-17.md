@@ -1,1 +1,1 @@
-# Stage 17: Gzip Compression
+# Stage 17: IP Whitelist/Blacklist

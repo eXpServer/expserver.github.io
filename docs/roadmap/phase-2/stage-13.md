@@ -1,1 +1,1 @@
-# Stage 13: Config & Session Modules
+# Stage 13: HTTP Response Module

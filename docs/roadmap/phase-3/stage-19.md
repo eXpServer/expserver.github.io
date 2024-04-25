@@ -1,1 +1,1 @@
-# Stage 19: Rate Limiting & Timeout
+# Stage 19: Load Balancing

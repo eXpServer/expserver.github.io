@@ -51,7 +51,7 @@ A detailed view of the _structs_ and _functions_ present in each module will be 
 
 ### `xps_core`
 
-The `xps_core` module serves as the container to which [instances](<https://en.wikipedia.org/wiki/Instance_(computer_science)>) of all other modules are attached. It can be thought of as an instance of eXpServer.
+The `xps_core` module serves as the container to which [instances](<https://en.wikipedia.org/wiki/Instance_(computer_science)>) of all other modules are attached. It can be thought of as an instance of eXpServer itself.
 
 ### `xps_loop`
 
@@ -59,7 +59,7 @@ The `xps_loop` module contains the [event loop](https://en.wikipedia.org/wiki/Ev
 
 ### `xps_config`
 
-The `xps_config` module is responsible for reading and parsing the configuration file, the path to which is provided as a [command line argument](https://en.wikipedia.org/wiki/Command-line_interface#Arguments). The configuration file is written and parsed using [Lua](<https://en.wikipedia.org/wiki/Lua_(programming_language)>) into a configuration _struct_ and stored in the `xps_core` instance.
+The `xps_config` module is responsible for reading and parsing the configuration file, the path to which is provided as a [command line argument](https://en.wikipedia.org/wiki/Command-line_interface#Arguments). The configuration file will be a JSON file with a specific structure. It is parsed using [parson](https://github.com/kgabis/parson), a 3rd party JSON parser. After parsing, it is stored in the `xps_core` instance as a configuration _struct_.
 
 ### `xps_listener`
 
@@ -93,7 +93,7 @@ Read more about _pipes_ below.
 
 ## xps_pipes
 
-Pipes in eXpServer are the links that allow uni-directional [controlled flow](<https://en.wikipedia.org/wiki/Flow_control_(data)>) of bytes from one node to another. An xps_pipe is an instance of `xps_pipe_t` type and is attached to a source instance of type `xps_pipe_source_t` on one end and a sink instance of type `xps_pipe_sink_t` on the other.
+Pipes in eXpServer are the links that allow uni-directional [controlled flow](<https://en.wikipedia.org/wiki/Flow_control_(data)>) of bytes from one node to another. An `xps_pipe` is an instance of `xps_pipe_t` type and is attached to a source instance of type `xps_pipe_source_t` on one end and a sink instance of type `xps_pipe_sink_t` on the other.
 
 Let us take a look at an example
 
@@ -124,7 +124,7 @@ Now let us look at how this works
 In our case,
 
 - If the source is writing to the pipe faster than the sink is reading it, then the pipe buffer will fill up and reach above the buffer threshold. If that happens, even if the source is ready, `handler_cb()` on the source will not be invoked, there by ‘blocking’ the source from writing to the pipe.
-- Similarly, if the sink is reading from the pipe faster than the source is writing to it, then, when the pipe becomes empty the `handler_cb()` on the sink will not be invoked even if the sink is ready, there by ‘blocking’ the sink from reading from the pipe
+- Similarly, if the sink is reading from the pipe faster than the source is writing to it, then, when the pipe becomes empty, the `handler_cb()` on the sink will not be invoked even if the sink is ready, thereby ‘blocking’ the sink from reading from the pipe
 
 ### Isolation of Logic
 

@@ -80,23 +80,23 @@ export default defineConfig({
 									link: '/roadmap/phase-0/stage-0.md',
 								},
 								{
-									text: 'Stage 1: TCP server',
+									text: 'Stage 1: TCP Server',
 									link: '/roadmap/phase-0/stage-1',
 								},
 								{
-									text: 'Stage 2: TCP client',
+									text: 'Stage 2: TCP Client',
 									link: '/roadmap/phase-0/stage-2',
 								},
 								{
-									text: 'Stage 3: Epoll',
+									text: 'Stage 3: Linux epoll',
 									link: '/roadmap/phase-0/stage-3',
 								},
 								{
-									text: 'Stage 4: UDP server with multi-threading',
+									text: 'Stage 4: UDP Multi-threading',
 									link: '/roadmap/phase-0/stage-4',
 								},
 								{
-									text: 'Stage 5: TCP proxy',
+									text: 'Stage 5: TCP Proxy',
 									link: '/roadmap/phase-0/stage-5',
 								},
 							],
@@ -110,24 +110,28 @@ export default defineConfig({
 									link: '/roadmap/phase-1/',
 								},
 								{
-									text: 'Stage 6: Server & Client module',
+									text: 'Stage 6: Listener & Connection Modules',
 									link: '/roadmap/phase-1/stage-6',
 								},
 								{
-									text: 'Stage 7: Core & Loop module',
+									text: 'Stage 7: Core & Loop Modules',
 									link: '/roadmap/phase-1/stage-7',
 								},
 								{
-									text: 'Stage 8: TCP module',
+									text: 'Stage 8: Pipe Module',
 									link: '/roadmap/phase-1/stage-8',
 								},
 								{
-									text: 'Stage 9: Upstream module',
+									text: 'Stage 9: Upstream Module',
 									link: '/roadmap/phase-1/stage-9',
 								},
 								{
 									text: 'Stage 10: File module',
 									link: '/roadmap/phase-1/stage-10',
+								},
+								{
+									text: 'Stage 11: Session Module',
+									link: '/roadmap/phase-1/stage-11',
 								},
 							],
 						},
@@ -140,20 +144,20 @@ export default defineConfig({
 									link: '/roadmap/phase-2/',
 								},
 								{
-									text: 'Stage 11: HTTP parser',
-									link: '/roadmap/phase-2/stage-11',
-								},
-								{
-									text: 'Stage 12: HTTP req & HTTP res',
+									text: 'Stage 12: HTTP Request Module',
 									link: '/roadmap/phase-2/stage-12',
 								},
 								{
-									text: 'Stage 13: Config & Session module',
+									text: 'Stage 13: HTTP Response Module',
 									link: '/roadmap/phase-2/stage-13',
 								},
 								{
-									text: 'Stage 14: HTTP Spec',
+									text: 'Stage 14: Config Module',
 									link: '/roadmap/phase-2/stage-14',
+								},
+								{
+									text: 'Stage 15: HTTP Specification',
+									link: '/roadmap/phase-2/stage-15',
 								},
 							],
 						},
@@ -166,24 +170,24 @@ export default defineConfig({
 									link: '/roadmap/phase-3/',
 								},
 								{
-									text: 'Stage 15: IP whitelist & blacklist',
-									link: '/roadmap/phase-3/stage-15',
-								},
-								{
-									text: 'Stage 16: Directory browsing',
+									text: 'Stage 16: Directory Browsing',
 									link: '/roadmap/phase-3/stage-16',
 								},
 								{
-									text: 'Stage 17: Compression',
+									text: 'Stage 17: IP Whitelist/Blacklist',
 									link: '/roadmap/phase-3/stage-17',
 								},
 								{
-									text: 'Stage 18: Load balancing',
+									text: 'Stage 18: Gzip Compression',
 									link: '/roadmap/phase-3/stage-18',
 								},
 								{
-									text: 'Stage 19: Rate limiting & timeouts',
+									text: 'Stage 19: Load Balancing',
 									link: '/roadmap/phase-3/stage-19',
+								},
+								{
+									text: 'Stage 20: Request timeouts',
+									link: '/roadmap/phase-3/stage-20',
 								},
 							],
 						},
@@ -196,16 +200,20 @@ export default defineConfig({
 									link: '/roadmap/phase-4/',
 								},
 								{
-									text: 'Stage 20: TLS',
-									link: '/roadmap/phase-4/stage-20',
-								},
-								{
-									text: 'Stage 21: Caching',
+									text: 'Stage 21: Metrics',
 									link: '/roadmap/phase-4/stage-21',
 								},
 								{
-									text: 'Stage 22: Multiprocess Architecture',
+									text: 'Stage 22: Multiprocess',
 									link: '/roadmap/phase-4/stage-22',
+								},
+								{
+									text: 'Stage 23: Caching',
+									link: '/roadmap/phase-4/stage-23',
+								},
+								{
+									text: 'Stage 24: Transport Layer Security (TLS)',
+									link: '/roadmap/phase-4/stage-24',
 								},
 							],
 						},

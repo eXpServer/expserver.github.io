@@ -1,1 +1,1 @@
-# Stage 22: Multiprocess Architecture
+# Stage 22: Multiprocess

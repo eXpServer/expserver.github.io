@@ -1,1 +1,1 @@
-# Stage 18: Load Balancing
+# Stage 18: Gzip Compression
