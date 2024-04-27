@@ -2,7 +2,8 @@
 
 A type-safe dynamic array implementation for C.
 
-https://github.com/rxi/vec
+This library is a copy of the work at https://github.com/rxi/vec and is Copyrighted by [rxi](https://rxi.github.io/) (c) 2014.
+[MIT License](https://github.com/rxi/vec/blob/master/LICENSE)
 
 ## Installation
 
@@ -517,8 +518,3 @@ vec_foreach_ptr(&v, val, i) {
 
 Iterates the value pointers of the vector from last to first. See
 `vec_foreach_ptr()`
-
-## License
-
-This library is free software; you can redistribute it and/or modify it under
-the terms of the MIT license.

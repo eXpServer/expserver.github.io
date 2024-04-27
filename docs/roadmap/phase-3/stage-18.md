@@ -1,1 +1,1 @@
-# Stage 18: Rate Limiting & Timeout
+# Stage 18: Gzip Compression

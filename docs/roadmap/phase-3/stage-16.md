@@ -1,1 +1,1 @@
-# Stage 16: Gzip Compression
+# Stage 16: Directory Browsing

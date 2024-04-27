@@ -51,7 +51,7 @@ A detailed view of the _structs_ and _functions_ present in each module will be 
 
 ### `xps_core`
 
-The `xps_core` module serves as the container to which [instances](<https://en.wikipedia.org/wiki/Instance_(computer_science)>) of all other modules are attached. It can be thought of as an instance of eXpServer.
+The `xps_core` module serves as the container to which [instances](<https://en.wikipedia.org/wiki/Instance_(computer_science)>) of all other modules are attached. It can be thought of as an instance of eXpServer itself.
 
 ### `xps_loop`
 
@@ -59,7 +59,7 @@ The `xps_loop` module contains the [event loop](https://en.wikipedia.org/wiki/Ev
 
 ### `xps_config`
 
-The `xps_config` module is responsible for reading and parsing the configuration file, the path to which is provided as a [command line argument](https://en.wikipedia.org/wiki/Command-line_interface#Arguments). The configuration file is written and parsed using [Lua](<https://en.wikipedia.org/wiki/Lua_(programming_language)>) into a configuration _struct_ and stored in the `xps_core` instance.
+The `xps_config` module is responsible for reading and parsing the configuration file, the path to which is provided as a [command line argument](https://en.wikipedia.org/wiki/Command-line_interface#Arguments). The configuration file will be a JSON file with a specific structure. It is parsed using [parson](https://github.com/kgabis/parson), a 3rd party JSON parser. After parsing, it is stored in the `xps_core` instance as a configuration _struct_.
 
 ### `xps_listener`
 
@@ -71,11 +71,11 @@ The `xps_connection` module creates instances for TCP connections, be it a clien
 
 ### `xps_session`
 
-An `xps_sesion` instance is created in the previously mentioned `listener_connection_handler()` function at the same time a new client connection is accepted. The session instance is the orchestrator that handles the client requests. It will parse the incoming bytes from the client TCP connection using the `xps_http` module. Based on the parsed HTTP request, the session instance will lookup the configuration to determine whether it should serve a file or reverse proxy the request. On deciding, an `xps_file` instance or an `xps_upstream` instance is created and attached using `xps_pipe` to the session instance. Then the bytes flow between the _client_ and corresponding _file_ or _upstream_ through the _session_ instance.
+An `xps_sesion` instance is created in the previously mentioned `listener_connection_handler()` function at the same time a new client connection is accepted. The session instance is the orchestrator that handles the client requests. It will parse the incoming bytes from the client TCP connection using the `xps_http` module. Based on the parsed HTTP request, the session instance will lookup the configuration to determine whether it should serve a file or reverse proxy the request. On deciding, an `xps_file` instance or an `xps_upstream` instance is created and attached using `xps_pipe` to the session instance. Then the bytes flow between the _client_ and corresponding _file_ or _upstream server_ through the _session_ instance.
 
 ### `xps_http`
 
-The `xps_http` module contains 2 _struct types_: `xps_http_req` and `xps_http_res` . `xps_http_req` takes in a [data buffer](https://en.wikipedia.org/wiki/Data_buffer) from the client and parses it according to the [HTTP specification](https://www.rfc-editor.org/rfc/rfc9110) to create the request instance. `xps_http_res` takes in a [HTTP response code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) and sets up a response instance with appropriate [HTTP headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields). These _types_ also come with a [serialize](https://en.wikipedia.org/wiki/Serialization) function which will convert the _struct_ to a _buffer_ that can be transmitted to the _connection_.
+The `xps_http` module contains 2 _struct types_: `xps_http_req` and `xps_http_res` . `xps_http_req` takes in a data buffer which is essentially a char array allocated using `malloc()` from the client and parses it according to the [HTTP specification](https://www.rfc-editor.org/rfc/rfc9110) to create the request instance. `xps_http_res` takes in a [HTTP response code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) and sets up a response instance with appropriate [HTTP headers](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields). These _types_ also come with a [serialize](https://en.wikipedia.org/wiki/Serialization) function which will convert the _struct_ to a _buffer_ that can be transmitted to the _connection_.
 
 ### `xps_file`
 
@@ -91,9 +91,9 @@ The `xps_pipe` module serves as a link between various nodes, such as `xps_conne
 
 Read more about _pipes_ below.
 
-## Pipes
+## xps_pipes
 
-Pipes in eXpServer are the links that allow uni-directional [controlled flow](<https://en.wikipedia.org/wiki/Flow_control_(data)>) of bytes from one node to another. A pipe is an instance of `xps_pipe_t` type and is attached to a source instance of type `xps_pipe_source_t` on one end and a sink instance of type `xps_pipe_sink_t` on the other.
+Pipes in eXpServer are the links that allow uni-directional [controlled flow](<https://en.wikipedia.org/wiki/Flow_control_(data)>) of bytes from one node to another. An `xps_pipe` is an instance of `xps_pipe_t` type and is attached to a source instance of type `xps_pipe_source_t` on one end and a sink instance of type `xps_pipe_sink_t` on the other.
 
 Let us take a look at an example
 
@@ -109,8 +109,8 @@ Now let us look at how this works
 - When a pipe is created, it is added to a list of pipes present in the core.
 - With each iteration of the event loop, a `handle_pipes()` function is invoked.
 - The `handle_pipes()` function will iterate over all the pipes in core and checks for the following conditions
-  - If the pipe is writable ie. amount of bytes in pipe buffer is less than the pipe buffer threshold AND if the source is ready ie. source has some data to write to the pipe, then a callback function - `handler_cb()` on the source is invoked which will proceed to write to the pipe.
-  - If the pipe is readable ie. amount of bytes in pipe buffer is greater than 0 AND if sink is ready ie. sink is available to read some data from the pipe, then a callback function - `handler_cb()` on the sink is invoked which will proceed to read from the pipe.
+  - If the pipe is writable i.e. amount of bytes in pipe buffer is less than the pipe buffer threshold AND if the source is ready i.e. source has some data to write to the pipe, then a callback function - `handler_cb()` on the source is invoked which will proceed to write to the pipe.
+  - If the pipe is readable i.e. amount of bytes in pipe buffer is greater than 0 AND if sink is ready i.e. sink is available to read some data from the pipe, then a callback function - `handler_cb()` on the sink is invoked which will proceed to read from the pipe.
   - If the pipe has no source and sink attached to it, then the pipe is destroyed
   - If the pipe has a source and no sink, a callback function - `close_cb()` on the source will be invoked which will notify the source that there is no sink attached to it and can destroy its instance if it wants to.
   - If the pipe has a sink and no source AND the pipe is not readable, then a callback function - `close_cb()` on the sink will be invoked which will notify the sink that there is no source attached to it and there is nothing left to read from the pipe and hence can destroy its instance if it wants to.
@@ -124,10 +124,10 @@ Now let us look at how this works
 In our case,
 
 - If the source is writing to the pipe faster than the sink is reading it, then the pipe buffer will fill up and reach above the buffer threshold. If that happens, even if the source is ready, `handler_cb()` on the source will not be invoked, there by ‘blocking’ the source from writing to the pipe.
-- Similarly, if the sink is reading from the pipe faster than the source is writing to it, then, when the pipe becomes empty the `handler_cb()` on the sink will not be invoked even if the sink is ready, there by ‘blocking’ the sink from reading from the pipe
+- Similarly, if the sink is reading from the pipe faster than the source is writing to it, then, when the pipe becomes empty, the `handler_cb()` on the sink will not be invoked even if the sink is ready, thereby ‘blocking’ the sink from reading from the pipe
 
 ### Isolation of Logic
 
 The problem with of having a central entity, say the event loop, read directly from the file FD and write directly to the socket FD is that the logic associated with a particular module will be spread across multiple modules. This can lead to unmaintainable code and increased complexity when extending eXpServer with additional modules.
 
-With the pipe approach, module logic is encapsulated within them with their data endpoints being exposed in the form of sources and sinks. This means that any module with a source can be attached to any other module with sink providing a easy interface for inter module communication.
+With the pipe approach, module logic is encapsulated within them with their data endpoints being exposed in the form of sources and sinks. This means that any module with a source can be attached to any other module with sink providing an easy interface for inter module communication.

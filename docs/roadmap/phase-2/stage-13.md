@@ -1,1 +1,1 @@
-# Stage 13: HTTP Specification
+# Stage 13: HTTP Response Module
