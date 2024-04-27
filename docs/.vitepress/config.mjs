@@ -35,6 +35,7 @@ export default defineConfig({
 					collapsed: false,
 					items: [
 						{ text: 'Architecture', link: '/guides/resources/architecture' },
+						{ text: 'Coding Conventions', link: '/guides/resources/coding-conventions' },
 						{
 							text: 'TCP/IP Model',
 							link: '/guides/resources/tcp-ip-model',
@@ -208,12 +209,8 @@ export default defineConfig({
 									link: '/roadmap/phase-4/stage-22',
 								},
 								{
-									text: 'Stage 23: Caching',
+									text: 'Stage 23: Transport Layer Security (TLS)',
 									link: '/roadmap/phase-4/stage-23',
-								},
-								{
-									text: 'Stage 24: Transport Layer Security (TLS)',
-									link: '/roadmap/phase-4/stage-24',
 								},
 							],
 						},
