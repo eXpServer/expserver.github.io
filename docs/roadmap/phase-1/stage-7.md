@@ -96,7 +96,7 @@ Find below the updated `xps.h` file. New additions to the file are indicated in 
 
 Let’s have a clear picture before we move forward with the code.
 
-![core.png](/assets/stage-6/core.png)
+<!-- ![core.png](/assets/stage-6/core.png) -->
 
 - The main function will create an instance of a core, and start it by providing the number of listening sockets.
 - The core will be responsible for spinning up the servers and starting the loop.
