@@ -12,7 +12,7 @@ Each stage builds upon the previous one, ensuring a systematic approach to the p
 
 2. **Informative links**: Resources under these links are for more information about a particular concept. The information may not be necessary at that point and you may proceed with the roadmap without visiting these links.
 
-The eXpServer project comprises 22 stages, organized into 5 phases. Prior to the commencement of each phase, participants receive an overview detailing what to anticipate in that phase and summarizing their progress up to that point.
+The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the commencement of each phase, participants receive an overview detailing what to anticipate in that phase and summarizing their progress up to that point.
 
 ## Stages
 
@@ -58,5 +58,4 @@ The eXpServer project comprises 22 stages, organized into 5 phases. Prior to the
 - [Overview](phase-4/)
 - [Stage 21: Metrics](phase-4/stage-22)
 - [Stage 22: Multiprocess](phase-4/stage-22)
-- [Stage 23: Caching](phase-4/stage-23)
-- [Stage 24: Transport Layer Security (TLS)](phase-4/stage-24)
+- [Stage 23: Transport Layer Security (TLS)](phase-4/stage-23)

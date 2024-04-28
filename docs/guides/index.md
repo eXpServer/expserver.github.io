@@ -8,6 +8,7 @@ The guides feature supplementary documentation intended for your reference as yo
 ## Resources
 
 - [Architecture](/guides/resources/architecture)
+- [Coding Conventions](/guides/resources/coding-conventions)
 - [TCP/IP Model](/guides/resources/tcp-ip-model)
 - [TCP](/guides/resources/tcp)
 - [Sockets](/guides/resources/sockets)
