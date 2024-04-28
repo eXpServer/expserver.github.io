@@ -2,6 +2,19 @@
 
 In order to maintain consistency while developing eXpServer, we will be following a set of [coding conventions](https://en.wikipedia.org/wiki/Coding_conventions). Even though it is possible to develop eXpServer without following these exact conventions, the roadmap has been laid out with the expectation that these conventions will be followed.
 
+## Header Files
+
+In Phase 0, our codebase was compact and self-contained. Functions were developed within individual files and utilized exclusively within those contexts. However, as our project will grow in size and complexity, there will be a need to share code across various files. This is where header files come in.
+
+We will have two types of headers files in eXpServer
+
+- `xps.h`: This acts as the global header file, containing constants, other header includes, declarations etc. that are used across all modules in the project. `xps.h` will be included in all other files in the project
+- `xps_<module>.h`: Each module in the project will have its own header file, such as `xps_listener.h` and `xps_connection.h`. These module-specific header files will contain struct definitions, function prototypes etc. related to the respective modules. To make these declarations globally available, we will include the module's header file in `xps.h`.
+
+::: tip NOTE
+Almost all header files we use in building eXpServer will be given to you. This will act as a blueprint to the functions that will have to be implemented and contain the struct definitions to be used. Keep in mind that even though we provide the header files, you can freely modify them to aid in your implementation.
+:::
+
 ## Modules
 
 eXpServer is developed in the form of modules. A module will comprise of a `.h` and `.c` file, eg: `xps_listener.h` and `xps_listener.c`. The header files will contain struct definitions, [function prototypes](https://en.wikipedia.org/wiki/Function_prototype) and other declarations. The C files will contain definitions for the functions.
