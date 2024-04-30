@@ -7,12 +7,15 @@ The guides feature supplementary documentation intended for your reference as yo
 
 ## Resources
 
-- [Architecture](/guides/resources/architecture)
-- [Coding Conventions](/guides/resources/coding-conventions)
-- [TCP/IP Model](/guides/resources/tcp-ip-model)
-- [TCP](/guides/resources/tcp)
-- [Sockets](/guides/resources/sockets)
-- [Linux epoll](/guides/resources/introduction-to-linux-epoll)
+✅ Reviewed
+🟡 To be reviewed
+
+- ✅ [Architecture](/guides/resources/architecture)
+- 🟡 [Coding Conventions](/guides/resources/coding-conventions)
+- ✅ [TCP/IP Model](/guides/resources/tcp-ip-model)
+- ✅ [TCP](/guides/resources/tcp)
+- ✅ [Sockets](/guides/resources/sockets)
+- ✅ [Linux epoll](/guides/resources/introduction-to-linux-epoll)
 - [HTTP](/guides/resources/http)
 
 ## References

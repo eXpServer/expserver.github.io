@@ -16,21 +16,24 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 
 ## Stages
 
+✅ Reviewed
+🟡 To be reviewed
+
 ### Phase 0: Introduction to Linux socket programming
 
-- [Overview](phase-0/)
-- [Stage 0: Setup](phase-0/stage-0)
-- [Stage 1: TCP Server](phase-0/stage-1)
-- [Stage 2: TCP Client](phase-0/stage-2)
-- [Stage 3: Linux epoll](phase-0/stage-3)
+- ✅ [Overview](phase-0/)
+- ✅ [Stage 0: Setup](phase-0/stage-0)
+- ✅ [Stage 1: TCP Server](phase-0/stage-1)
+- ✅ [Stage 2: TCP Client](phase-0/stage-2)
+- ✅ [Stage 3: Linux epoll](phase-0/stage-3)
 - [Stage 4: UDP with Multi-threading](phase-0/stage-4)
-- [Stage 5: TCP Proxy](phase-0/stage-5)
+- ✅ [Stage 5: TCP Proxy](phase-0/stage-5)
 
 ### Phase 1: Building the core of eXpServer by creating reusable modules
 
-- [Overview](phase-1/)
-- [Stage 6: Listener & Connection Modules](phase-1/stage-6)
-- [Stage 7: Core & Loop Modules](phase-1/stage-7)
+- 🟡 [Overview](phase-1/)
+- 🟡 [Stage 6: Listener & Connection Modules](phase-1/stage-6)
+- 🟡 [Stage 7: Core & Loop Modules](phase-1/stage-7)
 - [Stage 8: Pipe Module](phase-1/stage-8)
 - [Stage 9: Upstream Module](phase-1/stage-9)
 - [Stage 10: File Module](phase-1/stage-10)
