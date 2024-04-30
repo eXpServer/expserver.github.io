@@ -20,7 +20,6 @@ The guides feature supplementary documentation intended for your reference as yo
 
 ## References
 
-- [vec](/guides/references/vec)
-- [xps_buffer](/guides/references/xps_buffer)
-- [xps_logger](/guides/references/xps_logger)
-- [xps_utils](/guides/references/xps_utils)
+- ✅ [vec](/guides/references/vec)
+- 🟡 [xps_logger](/guides/references/xps_logger)
+- 🟡 [xps_utils](/guides/references/xps_utils)
