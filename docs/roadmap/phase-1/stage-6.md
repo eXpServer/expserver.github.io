@@ -2,21 +2,21 @@
 
 ## Recap
 
--
+- In Phase 1 overview we familiarised ourselves with eXpServer [Architecture](/guides/resources/architecture) and [Coding Conventions](/guides/resources/coding-conventions)
 
 ## Learning Objectives
 
 - Understand the structure of a module in eXpServer
 - Implement the rudimentary form of listener & connection modules
 - Get familiar with memory management, error handling, logging and other coding conventions.
-- Make eXpServer listen on multiple ports, receive client messages, reverse and send them back
+- Make eXpServer listen on multiple ports, receive client messages, reverse the strings and send them back
 
 ---
 
 ::: tip PRE-REQUISITE READING
 
-- Read about the eXpServer Architecture
-- Read the coding conventions for eXpServer
+- Read about the eXpServer [Architecture](/guides/resources/architecture)
+- Read the [Coding Conventions](/guides/resources/coding-conventions) for eXpServer
 
 :::
 
@@ -40,7 +40,7 @@ We will group listener and connection modules under the category _network_. Crea
 
 ### `xps.h`
 
-As previously mentioned, `xps.h` serves as a global header file and contains declarations common to all modules. Create a file named `xps.h` under the `expserver/src` folder and copy the following content into it.
+`xps.h` serves as a global header file and contains declarations common to all modules. Create a file named `xps.h` under the `expserver/src` folder and copy the following content into it.
 
 ::: details **expserver/src/xps.h**
 
@@ -130,7 +130,7 @@ We will be constantly modifying/adding to this file in each stage to accommodate
 
 ### `main.c`
 
-`main()` function in `main.c` is the starting point of eXpServer. It’s main objective is to spin up listener(s) and run the event loop. In this stage, `main.c` will also contain implementation of _loop,_ which will be modularized in the upcoming stage.
+`main()` function in `main.c` is the starting point of eXpServer. It’s main objective is to spin up listener(s) and run the event loop. In this stage, `main.c` will also contain implementation of _event_ _loop,_ which will be modularized in the upcoming stage.
 
 Here is the outline of `main.c` . You can find its explanation below.
 
@@ -160,19 +160,19 @@ int main() {
 }
 
 int xps_loop_create() {
-  /* create a loop instance and return epoll FD */
+	/* create a loop instance and return epoll FD */
 }
 
 void xps_loop_attach(int epoll_fd, int fd, int events) {
-  /* attach fd to epoll */
+	/* attach fd to epoll */
 }
 
 void xps_loop_detach(int epoll_fd, int fd) {
-  /* detach fd from epoll */
+	/* detach fd from epoll */
 }
 
 void xps_loop_run(int epoll_fd) {
-  /* run the event loop */
+	/* run the event loop */
 }
 ```
 
@@ -225,7 +225,7 @@ We will search through the `listeners` and `connections` list to find a matching
 
 ```c
 void xps_loop_run(int epoll_fd) {
-  while (1) {
+	while (1) {
     logger(LOG_DEBUG, "xps_loop_run()", "epoll wait");
     int n_ready_fds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, -1);
     logger(LOG_DEBUG, "xps_loop_run()", "epoll wait over");
@@ -234,7 +234,7 @@ void xps_loop_run(int epoll_fd) {
     for (int i = 0; i < n_ready_fds; i++) {
       int curr_fd = events[i].data.fd;
 
-    // Checking if curr_fd is of a listener
+			// Checking if curr_fd is of a listener
       xps_listener_t *listener = NULL;
       for (int i = 0; i < listeners.length; i++) {
         xps_listener_t *curr = listeners.data[i];
@@ -255,8 +255,8 @@ void xps_loop_run(int epoll_fd) {
 
       if (connection)
         xps_connection_read_handler(connection);
-    }
-  }
+		}
+	}
 }
 ```
 
@@ -266,9 +266,9 @@ Let us move onto building the listener module.
 
 ---
 
-### `xps_listener.c` & `xps_listener.h`
+### `xps_listener.h`
 
-An `xps_listener` is an instance of a listening socket in eXpServer. It listens for incoming client connections, accepts them and creates a `xps_connection` instances.
+An `xps_listener` is an instance of a listening socket in eXpServer. It listens for incoming client connections, accepts them and creates `xps_connection` instances.
 
 The code below has the contents of the header file for `xps_listener`. Have a look at it and make a copy of it in your codebase.
 
@@ -307,16 +307,18 @@ Each listener instance has the following data:
 
 ---
 
+### `xps_listener.c`
+
 Create a file named `xps_listener.c` under the network folder. This file will contain the definitions of all functions related to `xps_listener` module.
 
 As we know, each module will have create and destroy functions. The purpose of `xps_listener_create()` is to:
 
-- Create and setup a socket instance
+- Create and setup a socket
 - Allocate memory and initialize `xps_listener_t` instance
 - Attach the listener to loop
 - Add the listener to the global `listeners` list
 
-The function takes in an epoll FD, host address (IP) and port and returns a pointer of type `xps_listener_t`.
+The function takes in an epoll FD, host address (IP) and port and returns a pointer of type `xps_listener_t` on success or `NULL` on error.
 
 ::: details **expserver/src/network/xps_listener.c**
 
@@ -368,7 +370,7 @@ xps_listener_t *xps_listener_create(int epoll_fd, const char *host, u_int port) 
     return NULL;
   }
 
-  // Create & allocate memory for a listener instance
+	// Create & allocate memory for a listener instance
   xps_listener_t *listener = malloc(sizeof(xps_listener_t));
   if (listener == NULL) {
     logger(LOG_ERROR, "xps_listener_create()", "malloc() failed for 'listener'");
@@ -385,7 +387,7 @@ xps_listener_t *xps_listener_create(int epoll_fd, const char *host, u_int port) 
   // Attach listener to loop
   xps_loop_attach(epoll_fd, sock_fd, EPOLLIN);
 
-  // Add listener to global listeners list
+	// Add listener to global listeners list
   vec_push(&listeners, listener);
 
   logger(LOG_DEBUG, "xps_listener_create()", "created listener on port %d", port);
@@ -396,10 +398,10 @@ xps_listener_t *xps_listener_create(int epoll_fd, const char *host, u_int port) 
 
 :::
 
-In the above code, we see the use of two utility functions. These functions are defined in `xps_utilities.c`.
+In the above code, we see the use of two utility functions. These functions are defined in `xps_utils.c`.
 
 - `is_valid_port(port)`: Utility function to check if a port number is valid (0 - 65535). Read more from here.
-- `xps_getaddrinfo(host, port)`: Utility function to do a DNS query and get address for given host and port. Read more from here.
+- `xps_getaddrinfo(host, port)`: Utility function to do a DNS query and get address for given host and port combination. Read more from here.
 
 ---
 
@@ -414,8 +416,9 @@ Let us move onto the `xps_listener_destroy()` function. When a listener instance
 
 ```c
 void xps_listener_destroy(xps_listener_t *listener) {
+
   // Validate params
-  assert(listener != NULL);
+	assert(listener != NULL);
 
   // Detach listener from loop
   xps_loop_detach(listener->epoll_fd, listener->sock_fd);
@@ -443,16 +446,17 @@ void xps_listener_destroy(xps_listener_t *listener) {
 :::
 
 ::: danger **Why are we setting `NULL` in the listeners list?**
+
 You might have thought why it is necessary to set to `NULL` in the listeners list instead of removing the listener pointer from the list altogether. The reason is that, the `xps_listener_destroy()` function could be called from a loop that is iterating over the _listeners_ list. If we remove something from the list while we are iterating over it, it could cause the items to shift with in the list and interfere with the iteration. Thus we will set the pointer to `NULL` every time we destroy any instance which is part of a list.
 
 **But if we keep setting pointers to `NULL` instead of removing them, won’t the list size keep growing?**
-
 Yes, it will keep growing. In order to remedy this, we will keep track of a `NULL` counter eg: `n_null_listeners` and increment it every time we set an item to `NULL` in the list. When the count goes above a certain threshold we will clear all the `NULL`s from the list together when it is safe to do so. This functionality is not part of the current stage and will be implemented in the upcoming stages.
+
 :::
 
 ---
 
-When a client tries to connect to a listener, we get a notification from the epoll. Recall that `xps_loop_run()` in `main.c` calls `xps_listener_connection_handler()` to handle the listener event. This function is responsible for accepting the client connection and creating an instance of `xps_connection_t` using `xps_connection_create()`.
+When a client tries to connect to a listener, we get a notification from the epoll. Recall that `xps_loop_run()` in `main.c` calls `xps_listener_connection_handler()` to handle the listener event. This function is responsible for accepting the client connection and creating an instance of `xps_connection_t` using `xps_connection_create()` function.
 
 ::: details **expserver/src/network/xps_listener.c**
 
@@ -502,7 +506,7 @@ With that, the listener module is done. Let us have a quick recap of what we hav
 
 Let’s move forward and implement the `xps_connection` module.
 
-### `xps_connection.c` & `xps_connection.h`
+### `xps_connection.h`
 
 `xps_connection` module is the encapsulation of all TCP connection related functionalities in eXpServer. In this stage we will implement a rudimentary form of connection module and will expand on it in later stages.
 
@@ -539,6 +543,8 @@ Each connection instance will have the following:
 - `xps_listener_t *listener`: Pointer to listener instance associated with the connection instance
 - `char *remote_ip`: String representation of the client’s IP address
 
+### `xps_connection.c`
+
 Lets begin with the _create_ and _destroy_ functions. Hopefully you have a general idea of what it is responsible for:
 
 - `xps_connection_t *xps_connection_create()` is responsible for creating a connection instance by allocating it the required memory and attaching it to the event loop.
@@ -548,8 +554,6 @@ Lets begin with the _create_ and _destroy_ functions. Hopefully you have a gener
 
 ```c
 xps_connection_t *xps_connection_create(int epoll_fd, int sock_fd) {
-
-  /* validate params */
 
   xps_connection_t *connection = /* allocate memory dynamically */
   if (connection == NULL) {
@@ -593,15 +597,17 @@ void xps_connection_destroy(xps_connection_t *connection) {
 
 :::
 
-`get_remote_ip()` is a utility function that takes in the socket FD to return the IP using `getpeername()` function. Read more about the utility here.
+- `get_remote_ip()` is a utility function that takes in a socket FD and returns the IP address string using `[getpeername()](https://man7.org/linux/man-pages/man2/getpeername.2.html)` function. Read more about the utility here.
 
 ::: warning
-When you have a struct containing dynamically allocated memory, free the memory inside the struct before freeing the struct instance itself. Notice what we did for the connection instance above.
+
+When you have a struct containing dynamically allocated memory, free any pointers inside the struct before freeing the struct instance itself. Notice what we did for the connection instance above.
 
 `epoll_fd` and `sock_fd` are of type int (not dynamically allocated) and need not be freed. The `listener` instance also shouldn't be destroyed as it may be serving other connections. Whereas `remote_ip` is a dynamically allocated character string, which needs to be deallocated before we free the connection instance.
+
 :::
 
-When we get a read event on a connection instance, `xps_loop_run()` calls the `xps_connection_read_handler()` function in `main.c`. The function receives data from the client, reverses the message and sends it back, similar to how we did in Phase 0.
+When we get a read event on a connection instance, `xps_loop_run()` calls the `xps_connection_read_handler()` function in `main.c`. The function receives data from the client, reverses the message and sends it back, similar to what we did in Phase 0.
 
 ::: details **expserver/src/network/xps_connection.c**
 
@@ -610,7 +616,7 @@ void xps_connection_read_handler(xps_connection_t *connection) {
 
   /* validate params */
 
-  long read_n = /* receive data from client using recv */
+  long read_n = /* read data from client using recv() */
 
   if (read_n < 0) {
     logger(LOG_ERROR, "xps_connection_read_handler()", "recv() failed");
@@ -651,7 +657,9 @@ void xps_connection_read_handler(xps_connection_t *connection) {
 :::
 
 ::: tip NOTE
+
 Observe the use of `xps_connection_destroy()` when an error occurs.
+
 :::
 
 ---
@@ -683,7 +691,7 @@ After compiling, it should give an output file named `xps`. Start eXpServer usin
 ```
 
 ::: tip NOTE
-Utilise the `xps_logger` utility and GDB to debug your code in case of warnings and errors. The debug logs will not show up unless the environment variable `XPS_DEBUG` is set to “1”.
+Utilise the `xps_logger` utility and GDB to debug your code. The debug logs will not show up unless the environment variable `XPS_DEBUG` is set to “1”.
 Use the following command to set `XPS_DEBUG`:
 
 ```bash
@@ -722,21 +730,21 @@ Let us do a detailed test to check if everything is working as expected.
 
 ### Function Call Order
 
-Here is the rough function call order for Stage 6. This is provide an overview of how the code will execute. Keep in mind this is not the actual execution order as it is dependent on external factors such as client connections.
+Here is the rough function call order for Stage 6. This will provide an informal overview of how the code will execute. Keep in mind this is not the actual execution order as it is dependent on external factors such as client connections. A similar _Function Call Order_ will be provided at the beginning of each stage from now on so that we can have a rough idea of the code flow.
 
-```text
+```c
 main()
-  loop_create()
-  xps_listener_create()
-    xps_loop_attach()
-  xps_loop_run()
-    epoll_wait()
-    xps_listener_connection_handler()
-      xps_connection_create()
-    xps_connection_read_handler()
-      send()
-      recv()
-      xps_connection_destroy()
+	loop_create()
+	xps_listener_create()
+		xps_loop_attach()
+	xps_loop_run()
+		epoll_wait()
+		xps_listener_connection_handler()
+			xps_connection_create()
+		xps_connection_read_handler()
+			send()
+			recv()
+			xps_connection_destroy()
 ```
 
 ## Conclusion
