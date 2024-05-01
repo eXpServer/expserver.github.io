@@ -8,7 +8,7 @@ In Phase 0, our codebase was compact and self-contained. Functions were develope
 
 We will have two types of headers files in eXpServer
 
-- `xps.h`: This acts as the global header file, containing constants, other header includes, declarations etc. that are used across all modules in the project. `xps.h` will be included in all other files in the project
+- `xps.h`: This acts as the global header file, containing constants, other header includes, declarations etc. that are used across all modules in the project. `xps.h` will be included in all other files in the project.
 - `xps_<module>.h`: Each module in the project will have its own header file, such as `xps_listener.h` and `xps_connection.h`. These module-specific header files will contain struct definitions, function prototypes etc. related to the respective modules. To make these declarations globally available, we will include the module's header file in `xps.h`.
 
 ::: tip NOTE
@@ -23,12 +23,12 @@ eXpServer is developed in the form of modules. A module will comprise of a `.h` 
 
 A typical pattern that we will be seeing in modules is the _create_ and _destroy_ functions. For example, the `xps_listener` module has `xps_listener_t *xps_listener_create(...)` and `void xps_listener_destory(xps_listener_t *listener)` functions. These functions are responsible for the following:
 
-- The _create_ functions will allocate memory and initialize the struct for the respective modules, `xps_listener_t` in this example. On success it will return a pointer to the instance and on error it will return `NULL` . Hence the calling function can detect an error by checking if the returned value is `NULL` or not.
-- The _destroy_ functions will accept a pointer to an instance of the module struct, `xps_listener_t` in this case, to release memory and properly de-initialize any associated values. Since the destroy functions are always expected to succeed, it will not return any errors.
+- The _create_ functions allocate memory and initialize the struct for the respective modules, `xps_listener_t` in this example. On success it will return a pointer to the instance and on error it will return `NULL` . Hence the calling function can detect an error by checking if the returned value is `NULL` or not.
+- The _destroy_ functions accept a pointer to an instance of the module struct, `xps_listener_t` in this case, to release memory and properly de-initialize any associated values. Since the destroy functions are always expected to succeed, it will not return any errors.
 
 ### **Other Module Functions**
 
-Apart from the create and destroy functions, there could be other functions associated with the module, that can be called from anywhere in the code. Thus they are also declared in the modules’ header file, and its definition in the C file. The function names are prefixed with `xps_`.
+Apart from the create and destroy functions, there could be other functions associated with the module, that can be called from anywhere in the code. Thus they are also declared in the respective modules’ header file, and its definition in the C file. The function names are prefixed with `xps_`.
 
 ### Helper Functions
 
@@ -49,15 +49,15 @@ When writing a _create_ function for a module which allocates memory, an accompa
 - If a function returns a string that should not be modified, then its should be returned as a `const char *`.
   - eg: `const char *find_a(const char *str)`. Here the function finds the first occurrence of letter ‘a’ in the string `str`. Since it is a pointer to a byte in the string that should not be modified, it is returned as a `const char *`.
 - If a function returns `char *`, that signifies the function has internally allocated memory using `malloc()`. It is the responsibility of the calling function to free that memory.
-  - eg: `char * str_dup(const char *str)`. Here the function takes in a string and duplicates it. Internally `str_dup()` will allocate memory and copy over the contents from `str` and return a `char *` pointer to the newly allocated string.
+  - eg: `char *str_dup(const char *str)`. Here the function takes in a string and duplicates it. Internally `str_dup()` will allocate memory and copy over the contents from `str` and return a `char *` pointer to the newly allocated string. It is the responsibility of the caller function to deallocate the string.
 
-> ::: info NOTE
-> Memory leaks are hard to detect. Small leaks will only make an observable impact when the program is run for a long time. Hence the use of third party tools like [Valgrind](https://valgrind.org/) will be helpful in debugging memory issues in our code.
-> :::
+::: tip NOTE
+Memory leaks are hard to detect. Small leaks will only make an observable impact when the program is run for a long time. Hence the use of third party tools like [Valgrind](https://valgrind.org/) will be helpful in debugging memory issues in our code.
+:::
 
 ## Error Handling
 
-Unlike more modern languages, error handling is not a built in feature of the C programming language. Hence, there are a set of conventions followed in-order to indicate a function call has resulted in an error. Let us see what they are.
+There are a set of conventions followed in-order to indicate whether a function call has resulted in an error. Let us see what they are.
 
 ### System Calls
 
@@ -73,21 +73,21 @@ If a function is intended to perform a task that could fail, it should return an
 
 ### Pointer Return with Error Code
 
-When a function needs to return a pointer to an instance and report an error code, it's not possible in C to return more than one value directly. In such cases, the return type of the function will be a pointer, and a reference to an integer, `int *error`, is passed to the function by the calling function. On error, NULL is returned, and the error integer is set to a valid error code.
+When a function needs to return a pointer to an instance and report an error code, it's not possible in C to return more than one value directly. In such cases, the return type of the function will be a pointer, and a reference to an integer, `int *error`, is passed to the function by the calling function. On error, `NULL` is returned, and the error integer is set to a valid error code.
 
-For example: `xps_file_t xps_file_create(..., int *error)`. On successful creation of the file instance, a valid pointer will be returned, and `*error` will be set to `OK`. In case of an error, `NULL` is returned, and `*error` is set to a valid error code such as `E_NOTFOUND`.
+For example: `xps_file_t xps_file_create(..., int *error)`. On successful creation of the file instance, a valid pointer will be returned, and `*error` will be set to `E_SUCCESS`. In case of an error, `NULL` is returned, and `*error` is set to a valid error code such as `E_NOTFOUND`.
 
 ### Validating Function Params
 
-When writing functions, start by validating the params first. You can use the [`assert()` macro](https://www.gnu.org/software/gawk/manual/html_node/Assert-Function.html) for this. Assert will stop the code execution and print the error if the expression is false. For example
+When writing functions, start by validating the params first. You can use the [`assert()` macro](https://www.gnu.org/software/gawk/manual/html_node/Assert-Function.html) for this. Assert will stop the code execution and print the error if the expression is `false`. For example
 
 ```c
 // Check if str has n 'a' in it
 int has_n_a(const char *str, int n) {
-	assert(str != NULL);
-	assert(n >= 0);
+  assert(str != NULL);
+  assert(n >= 0);
 
-	...
+  ...
 }
 ```
 
@@ -125,11 +125,11 @@ xps_listener_t *xps_listner_create(...) {
 
 ## Logging
 
-To help with debugging and understanding the order of function invocations, we will be logging messages throughout the code using the provided `xps_logger` utility. There are primarily 4 levels of logging, `LOG_INFO`, `LOG_WARNING`,`LOG_ERROR` and `LOG_DEBUG` .
+To help with debugging and understanding the order of function invocations, we will be logging messages throughout the code using the provided `xps_logger` utility. There are primarily 4 levels of logging, `LOG_INFO`, `LOG_WARNING`,`LOG_ERROR` and `LOG_DEBUG`.
 
-![Screenshot 2024-04-27 at 15.36.17.png](/assets/resources/logs.png)
+![logs.png](/assets/resources/logs.png)
 
-Read more about and get the source code for `xps_logger` [here](https://www.notion.so/xps_logger-9c8f4eb874ff4b0db31d2783197a7708?pvs=21).
+Read more `xps_logger` and get its source code [here](/guides/references/xps_logger).
 
 ## Naming Convention
 

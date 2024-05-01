@@ -1,6 +1,6 @@
 # Phase 1 Overview
 
-Congratulations on completion of Phase 0! Let’s take a look at what we have done till now.
+Congratulations on the completion of Phase 0. Let’s take a look at what we have done till now.
 
 ## Recap of Phase 0
 
@@ -12,7 +12,7 @@ Congratulations on completion of Phase 0! Let’s take a look at what we have do
 
 ## What to expect in Phase 1
 
-Phase 0 gave us an introduction to Linux socket programming and an understanding of how client-server communications take place. Using this knowledge, from Phase 1 onwards we will start to build the actual eXpServer.
+Phase 0 gave us an introduction to Linux socket programming, Linux epoll, event loop and an understanding of how client-server communications take place. Using this knowledge, from Phase 1 onwards we will start to build eXpServer.
 
 ::: tip PRE-REQUISITE READING
 Now is a good time to understand the capabilities and architecture of eXpServer. Read the following [Architecture](/guides/resources/architecture) document before proceeding further.
@@ -34,6 +34,6 @@ In order to maintain consistency, the documentation will be providing the expect
 
 ![phase-1-overview-filestructure.png](/assets/phase-1-overview/filestructure.png)
 
-- We will be using a library called `vec` that provides a dynamic array implementation. Read about and get the source code for `vec` [here](/guides/references/vec).
-- `xps_logger` module provides a function to print log messages for debugging and other purposes. Read about and get the source code for `xps_logger` [here](/guides/references/xps_logger).
-- From this point onward, the code will be independent of what was done in the previous stage. Begin by creating a folder named `src` within `expserver`.
+- We will be using a library called `vec` that provides a dynamic array implementation. Read about `vec` and get its source code [here](/guides/references/vec).
+- `xps_logger` module provides a function to print log messages for debugging and other purposes. Read about `xps_logger` and get its source code [here](/guides/references/xps_logger).
+- From this point onward, the code will be independent of what was done in the previous stage. Begin by creating a folder named `src` within the `expserver` folder.

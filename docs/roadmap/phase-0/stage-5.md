@@ -311,7 +311,7 @@ int main() {
 
 :::
 
-::: warning
+::: tip NOTE
 There is no restriction to just these functions. Feel free to create additional helper functions as needed to suit your requirements.
 :::
 
@@ -378,7 +378,9 @@ Keep testing the code by navigating across the file sever, and opening files. Ma
 
 ### Experiment #1
 
-In our `handle_client()` function, we modified the send() functionality. Try switching this out for the old approach that we used in Stage 3 and test if everything works properly.
+In our `handle_client()` function, we modified the `send()` functionality. Try switching this out for the old approach that we used in Stage 3 and test if everything works properly.
+
+🟡 EXPLAIN A BIT MORE
 
 ## Conclusion
 

@@ -28,6 +28,8 @@ At the end of Phase 0, we were able to serve multiple clients simultaneously usi
 
 In this stage we will create a module called `xps_listener` which will allow eXpServer to listen on multiple ports simultaneously. We achieve this by introducing the concept of ‘listeners’. A listener can be thought of as a TCP server (from Phase 0), bound to a single port.
 
+We will utilize _netcat_ as a client for this stage to connect to eXpServer to send messages.
+
 ### File Structure for Stage 6
 
 ![filestructure.png](/assets/stage-6/filestructure.png)
@@ -71,7 +73,7 @@ typedef unsigned char u_char;
 typedef unsigned int u_int;
 typedef unsigned long u_long;
 
-// Structs
+// Structures
 struct xps_listener_s;
 struct xps_connection_s;
 
@@ -113,10 +115,10 @@ Let us have a brief look at what are included in the file:
   Usage of these will be explained at appropriate parts of the stage.
 - **Data types:**
   - We use `u_char` for data buffers (array of bytes). For example: `u_char buff[1000];`
-  - `u_int` and `u_long` are used if the values of the integer cannot be < 0.
-- **Structs:**
-  Declarations of various structs that we use to encapsulate data associated with a module.
-- **Typedefs for structs:**
+  - `u_int` and `u_long` are used if the values are non-negative integers.
+- **Structures:**
+  Declarations of various structures that we use to encapsulate data associated with a module. Presently, we have these two structures
+- **Typedefs for Structures:**
   In order to reduce code length we typedef struct names. For instance, instead of writing `struct xps_listener_s` we can simply write `xps_listener_t` once it is typedef'd.
 - [**Function typedefs**](https://en.wikipedia.org/wiki/Typedef#Function_pointers)
 - **Temporary declarations:**
@@ -126,13 +128,13 @@ Let us have a brief look at what are included in the file:
 
 As `xps.h` has all the headers and declarations that we need for all the modules, we will only have to import `xps.h` into each file instead of importing individual headers.
 
-We will be constantly modifying/adding to this file in each stage to accommodate for newer functions, structs, types, constants, headers etc.
+We will be constantly modifying/adding to this file in each stage to accommodate for newer functions, Structures, types, constants, headers etc.
 
 ### `main.c`
 
-`main()` function in `main.c` is the starting point of eXpServer. It’s main objective is to spin up listener(s) and run the event loop. In this stage, `main.c` will also contain implementation of _event_ _loop,_ which will be modularized in the upcoming stage.
+`main()` function in `main.c` is the starting point of eXpServer. It’s main objective is to spin up listener(s) and run the event loop. In this stage, `main.c` contains the implementation of _event_ _loop,_ which will be modularized in the upcoming stage.
 
-Here is the outline of `main.c` . You can find its explanation below.
+Here is the outline of `main.c`. You can find its explanation below.
 
 ::: details **expserver/src/main.c**
 
@@ -149,6 +151,10 @@ int main() {
 
   epoll_fd = /* create an event loop instance using xps_loop_create() */
 
+  // Init lists
+  vec_init(&listeners);
+  vec_init(&connections);
+
   // Create listeners on ports 8001, 8002, 8003
   for (int port = 8001; port <= 8003; port++) {
     xps_listener_create(epoll_fd, "0.0.0.0", port);
@@ -160,19 +166,19 @@ int main() {
 }
 
 int xps_loop_create() {
-	/* create a loop instance and return epoll FD */
+  /* create a loop instance and return epoll FD */
 }
 
 void xps_loop_attach(int epoll_fd, int fd, int events) {
-	/* attach fd to epoll */
+  /* attach fd to epoll */
 }
 
 void xps_loop_detach(int epoll_fd, int fd) {
-	/* detach fd from epoll */
+  /* detach fd from epoll */
 }
 
 void xps_loop_run(int epoll_fd) {
-	/* run the event loop */
+  /* run the event loop */
 }
 ```
 
@@ -200,7 +206,7 @@ There are four functions associated with the loop, all of which we have seen in 
 
 The implementation of all these functions remain the same except for `xps_loop_run()`.
 
-### `xps_loop_run()`
+#### `xps_loop_run()`
 
 In Stage 5, we had three types of events that could occur in epoll:
 
@@ -208,10 +214,10 @@ In Stage 5, we had three types of events that could occur in epoll:
 - Read event on the connection socket
 - Read event on the upstream socket
 
-Since this stage involves receiving a message from the client, reversing it and sending it back, we will not be needing upstream. `xps_upstream` module will be implemented in Stage 9.
+Since this stage involves receiving a message from the client, reversing it and sending it back, we will not be needing upstream. Upstream will have its own module (`xps_upstream`) and will be implemented in Stage 9.
 
 - **Read event on listening socket:**
-  When a read event occurs on a listener, we will call a function `xps_listener_connection_handler()` (which will be implemented in `xps_listener` module) to handle it. This function is responsible for accepting the connection and creating an instance of `xps_connection`.
+  When a read event occurs on a listener, we will call a function `xps_listener_connection_handler()` (which will be implemented in `xps_listener` module) to handle it. This function will be responsible for accepting the connection and creating an instance of `xps_connection`.
 - **Read event on connection socket:**
   When a read event occurs on a connection, we will call a function `xps_connection_read_handler()` (will be implemented in `xps_connection` module) to handle it. This function will read the message from the client, and send back the reversed string.
 
@@ -221,11 +227,11 @@ To distinguish between them, we rely on the lists of listeners (`vec_void_t list
 
 We will search through the `listeners` and `connections` list to find a matching FD we received from the epoll event.
 
-::: details **expserver/src/main.c**
+::: details **expserver/src/main.c** : `xps_loop_run()`
 
 ```c
 void xps_loop_run(int epoll_fd) {
-	while (1) {
+  while (1) {
     logger(LOG_DEBUG, "xps_loop_run()", "epoll wait");
     int n_ready_fds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, -1);
     logger(LOG_DEBUG, "xps_loop_run()", "epoll wait over");
@@ -234,7 +240,7 @@ void xps_loop_run(int epoll_fd) {
     for (int i = 0; i < n_ready_fds; i++) {
       int curr_fd = events[i].data.fd;
 
-			// Checking if curr_fd is of a listener
+      // Checking if curr_fd is of a listener
       xps_listener_t *listener = NULL;
       for (int i = 0; i < listeners.length; i++) {
         xps_listener_t *curr = listeners.data[i];
@@ -255,8 +261,8 @@ void xps_loop_run(int epoll_fd) {
 
       if (connection)
         xps_connection_read_handler(connection);
-		}
-	}
+    }
+  }
 }
 ```
 
@@ -732,7 +738,7 @@ Let us do a detailed test to check if everything is working as expected.
 
 Here is the rough function call order for Stage 6. This will provide an informal overview of how the code will execute. Keep in mind this is not the actual execution order as it is dependent on external factors such as client connections. A similar _Function Call Order_ will be provided at the beginning of each stage from now on so that we can have a rough idea of the code flow.
 
-```c
+```text
 main()
 	loop_create()
 	xps_listener_create()

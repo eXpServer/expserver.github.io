@@ -123,11 +123,11 @@ Now let us look at how this works
 
 In our case,
 
-- If the source is writing to the pipe faster than the sink is reading it, then the pipe buffer will fill up and reach above the buffer threshold. If that happens, even if the source is ready, `handler_cb()` on the source will not be invoked, there by ‘blocking’ the source from writing to the pipe.
+- If the source is writing to the pipe faster than the sink is reading it, then the pipe buffer will fill up and reach above the buffer threshold. If that happens, even if the source is ready, `handler_cb()` on the source will not be invoked, thereby ‘blocking’ the source from writing to the pipe.
 - Similarly, if the sink is reading from the pipe faster than the source is writing to it, then, when the pipe becomes empty, the `handler_cb()` on the sink will not be invoked even if the sink is ready, thereby ‘blocking’ the sink from reading from the pipe
 
 ### Isolation of Logic
 
-The problem with of having a central entity, say the event loop, read directly from the file FD and write directly to the socket FD is that the logic associated with a particular module will be spread across multiple modules. This can lead to unmaintainable code and increased complexity when extending eXpServer with additional modules.
+The problem with having a central entity, say the event loop, read directly from the file FD and write directly to the socket FD is that the logic associated with a particular module will be spread across multiple modules. This can lead to unmaintainable code and increased complexity when extending eXpServer with additional modules.
 
 With the pipe approach, module logic is encapsulated within them with their data endpoints being exposed in the form of sources and sinks. This means that any module with a source can be attached to any other module with sink providing an easy interface for inter module communication.

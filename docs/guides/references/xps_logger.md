@@ -99,13 +99,13 @@ void logger(xps_log_level_t level, const char *function_name, const char *format
 
 ### **Environment Variable for Debugging**
 
-Logging behavior can be controlled using the `XPS_DEBUG` environment variable. Log messages of level `DEBUG` will be printed on the terminal only when `XPS_DEBUG` is set to “1”.
+Logging behavior can be controlled using the `XPS_DEBUG` environment variable. Log messages of level `DEBUG` will be printed on the terminal only when `XPS_DEBUG` env var is set to “1”.
 
 ```bash
 export XPS_DEBUG=1
 ```
 
-You can unset it using the command:
+You can unset it using the following command:
 
 ```bash
 unset XPS_DEBUG
