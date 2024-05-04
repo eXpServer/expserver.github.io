@@ -37,29 +37,6 @@ Checks if a port number is within the valid range of 0 to 65535 (inclusive).
 bool is_valid_port(u_int port) { return port >= 0 && port <= 65535; }
 ```
 
-### `make_socket_non_blocking()`
-
-Makes a socket non-blocking by modifying its file descriptor flags using the `fcntl` system call. It returns an error code if unsuccessful.
-
-```c
-int make_socket_non_blocking(u_int sock_fd) {
-  int flags = fcntl(sock_fd, F_GETFL, 0);
-  if (flags < 0) {
-    logger(LOG_ERROR, "make_socket_non_blocking()", "failed to get flags");
-    perror("Error message");
-    return E_FAIL;
-  }
-
-  if (fcntl(sock_fd, F_SETFL, flags | O_NONBLOCK) < 0) {
-    logger(LOG_ERROR, "make_socket_non_blocking()", "failed to set flags");
-    perror("Error message");
-    return E_FAIL;
-  }
-
-  return OK;
-}
-```
-
 ### `xps_getaddrinfo()`
 
 Resolves the given host and port to an IPv4 address using `[getaddrinfo()](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html)`, and returns a pointer to the resulting `addrinfo` structure.
@@ -99,9 +76,32 @@ struct addrinfo *xps_getaddrinfo(const char *host, u_int port) {
 }
 ```
 
+### `make_socket_non_blocking()`
+
+Makes a socket non-blocking by modifying its file descriptor flags using the `fcntl` system call. It returns an error code if unsuccessful.
+
+```c
+int make_socket_non_blocking(u_int sock_fd) {
+  int flags = fcntl(sock_fd, F_GETFL, 0);
+  if (flags < 0) {
+    logger(LOG_ERROR, "make_socket_non_blocking()", "failed to get flags");
+    perror("Error message");
+    return E_FAIL;
+  }
+
+  if (fcntl(sock_fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+    logger(LOG_ERROR, "make_socket_non_blocking()", "failed to set flags");
+    perror("Error message");
+    return E_FAIL;
+  }
+
+  return OK;
+}
+```
+
 ### `get_remote_ip()`
 
-Retrieves the IP address of the remote peer connected to the given socket file descriptor `sock_fd`. It uses `[getpeername()](https://man7.org/linux/man-pages/man2/getpeername.2.html)` to get the peer's address, then converts it from binary to text using `[inet_ntop()](https://man7.org/linux/man-pages/man3/inet_ntop.3.html)`.
+Retrieves the IP address of the remote peer connected to the given socket file descriptor `sock_fd`. It uses [`getpeername()`](https://man7.org/linux/man-pages/man2/getpeername.2.html) to get the peer's address, then converts it from binary to text using [`inet_ntop()`](https://man7.org/linux/man-pages/man3/inet_ntop.3.html).
 
 ```c
 char *get_remote_ip(u_int sock_fd) {
