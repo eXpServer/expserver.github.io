@@ -11,7 +11,7 @@ The guides feature supplementary documentation intended for your reference as yo
 🟡 To be reviewed
 
 - ✅ [Architecture](/guides/resources/architecture)
-- 🟡 [Coding Conventions](/guides/resources/coding-conventions)
+- ✅ [Coding Conventions](/guides/resources/coding-conventions)
 - ✅ [TCP/IP Model](/guides/resources/tcp-ip-model)
 - ✅ [TCP](/guides/resources/tcp)
 - ✅ [Sockets](/guides/resources/sockets)
@@ -21,5 +21,6 @@ The guides feature supplementary documentation intended for your reference as yo
 ## References
 
 - ✅ [vec](/guides/references/vec)
-- 🟡 [xps_logger](/guides/references/xps_logger)
+- ✅ [xps_logger](/guides/references/xps_logger)
+- 🟡 [xps_buffer](/guides/references/xps_buffer)
 - 🟡 [xps_utils](/guides/references/xps_utils)

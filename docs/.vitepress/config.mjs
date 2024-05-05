@@ -59,6 +59,7 @@ export default defineConfig({
 					items: [
 						{ text: 'vec', link: '/guides/references/vec' },
 						{ text: 'xps_logger', link: '/guides/references/xps_logger' },
+						{ text: 'xps_buffer', link: '/guides/references/xps_buffer' },
 						{ text: 'xps_utils', link: '/guides/references/xps_utils' },
 					],
 				},
