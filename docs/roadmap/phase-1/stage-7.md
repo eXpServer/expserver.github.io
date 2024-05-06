@@ -18,11 +18,21 @@ In this stage, we will be modularizing the code further by creating two new modu
 1. `xps_core` module
 2. `xps_loop` module
 
-The core module, as its name implies, will act as the central hub of the server, where all components will be connected to, including the loop. The `main()` function in `main.c` will create an instance of core and subsequently ‘starts’ it. The core should take care of everything else from that point onwards.
+With the integration of these modules, modifications to the `xps_listener` and `xps_connection` modules will be necessary. Furthermore, the `main.c` file will see a significant cleanup with the extraction of loop-related functions into a separate loop module.
 
 ### File structure
 
 ![filestructure.png](/assets/stage-7/filestructure.png)
+
+### Design
+
+Adding to the modularization of eXpServer, in this stage, we design and implement two new modules named `xps_core` and `xps_loop`.
+
+`xps_core` acts as the central hub of eXpServer, managing all other modules. It is responsible for initializing the event loop, managing listeners and connections. It coordinates the startup, shutdown, and runtime behaviour of eXpServer. It’s design focuses on modularity and scalability.
+
+The `xps_loop` module implements an event loop using the epoll mechanism for handling I/O events. It monitors FD’s for read and write events, dispatching callbacks for event handling. Each `xps_loop` instance is attached to a core instance.
+
+![design.png](/assets/stage-7/design.png)
 
 ## Implementation
 
@@ -33,9 +43,11 @@ Let’s have a clear picture before we move forward with the code.
 - The loop module will include functions related to creating and destroying loop instances, running them, attaching and detaching events to the loop, and handling those events.
 - **A loop belongs to a core.** So when the core is destroyed, the loop is destroyed along with it.
 
+![implementation.png](/assets/stage-7/implementation.png)
+
 ### `xps.h`
 
-Find below the updated `xps.h` file. New additions to the file are indicated in green:
+Find below the updated `xps.h` file. New additions to the file are indicated in green, and the red indicates lines which are removed:
 
 ::: details **expserver/src/xps.h**
 
@@ -116,197 +128,37 @@ void xps_loop_run(int epoll_fd); // [!code --]
 
 - Added `signal.h` header to use a interrupt signal handler.
 - Added error code constants, each representing a specific error condition.
-- Added new struct declarations, typedefs and headers related to `xps_core` and `xps_loop` modules.
+- Added new structure declarations, typedefs and headers related to `xps_core` and `xps_loop` modules.
 - Added a function type `xps_handler_t` which is the type for callback functions used throughout eXpServer.
 - Removed temporary declarations.
 
 ::: tip NOTE
-
-You are free to modify the code in any file you want, including the `xps.h` file. The documentation is just a here to guide and nudge you in the right direction and not restrict you in any way. Feel free to add new functions, global variables, constants, structs etc. Just make sure to retain the content you write when you are copying code snippets like above.
-
+You are free to modify the code in any file you want, including the `xps.h` file. The documentation is just a here to guide and nudge you in the right direction and not restrict you in any way. Feel free to add new functions, global variables, constants, structures etc. Just make sure to retain the content you write when you are copying code snippets like above.
 :::
+
+---
 
 ### `main.c`
 
-As we are modularizing all the code to its own modules, the main function will boil down to the following:
+In the previous stage, we had the implementation of loop inside the `main.c` file. This will be removed as we will be building a separate module for it (`xps_loop`). Additionally, we’ve seen how `xps_core` plays a major role in orchestrating all the modules in eXpServer.
 
-::: details **expserver/src/main.c**
+So now, all `main.c` has to do is create `xps_core` instance and ‘start’ it:
 
-```c
-#include "xps.h"
-
-xps_core_t *core;
-
-void sigint_handler(int signum);
-
-int main() {
-	signal(SIGINT, sigint_handler);
-
-  // Create core
-  core = xps_core_create();
-
-  // Start core
-  xps_core_start(core);
-}
-
-void sigint_handler(int signum) {
-	logger(LOG_WARNING, "sigint_handler()", "SIGINT received");
-
-	xps_core_destroy(core);
-
-	exit(EXIT_SUCCESS);
-}
+```text
+main()
+  create core instance
+  start core
 ```
 
-:::
-
-- The `sigint_handler()` function is designed to capture the `SIGINT` signal from the operating system. Normally, `SIGINT` occurs when `Ctrl + C` is pressed in the terminal running eXpServer. The `signal()` function assigns `sigint_handler()` as the handler function to intercept the signal and respond accordingly. When an interrupt signal is received, the program control will transfer to the handler function, causing the control flow to exit the event loop. Within `sigint_handler()`, the core is destroyed, resulting in the termination of all associated instances before exiting the process.
-
-### `xps_core.h`
-
-We will put both loop and core modules into a folder named `core` in `expserver/src`.
-
-`xps_core` is a module which is the container of all data related to eXpServer. An instance of `xps_core` can be thought of as in instance of eXpServer itself. We will design modules such that it will directly or indirectly be attached to an `xps_core` instance. Hence destroying core will result in destruction of all other instances. We will get more clarity after looking at the declarations in `xps_core.h`.
-
-The code below has the contents of the header file for `xps_core`. Have a look at it and make a copy of it in your codebase.
-
-::: details **expserver/src/core/xps_core.h**
-
-```c
-#ifndef XPS_CORE_H
-#define XPS_CORE_H
-
-#include "../xps.h"
-
-struct xps_core_s {
-  xps_loop_t *loop;
-  vec_void_t listeners;
-  vec_void_t connections;
-  u_int n_null_listeners;
-  u_int n_null_connections;
-};
-
-xps_core_t *xps_core_create();
-void xps_core_destroy(xps_core_t *core);
-void xps_core_start(xps_core_t *core);
-
-#endif
-```
-
-:::
-
-`struct xps_core_s` acts as a wrapper for all data related to a core instance. Below are the members of the struct:
-
-- `xps_loop_t *loop`: Pointer to instance of loop belonging to the core
-- `vec_void_t listeners`: List of all the listeners attached to the core
-- `vec_void_t connections`: List of all the connection instances created by the listeners
-- `u_int n_null_listeners`: Number of pointers in listeners set to `NULL`
-- `u_int n_null_connections`: Number of pointers in connections set to `NULL`
-
-::: warning
-`n_null_listeners` and `n_null_connections` are number of pointers in their respective lists set to `NULL` as mentioned in Stage 6. When the values of these variables go above `DEFAULT_NULLS_THRESH` from `xps.h`, we will clear all the `NULL` pointers from the lists within `xps_loop_run()` function.
-:::
+Implementation of this requires functions from the loop and core modules. So lets work on that first.
 
 ---
 
-### `xps_core.c`
+### `xps_loop` Module
 
-**xps_core_create()**
+`xps_loop` module which implements the event loop is one of the most integral parts eXpServer. In this stage will will implement the base of `xps_loop`. It will be updated to support other modules such as `xps_pipe` and `xps_timer` in later stages.
 
-Core comes with its own set of _create_ and _destroy_ functions. `xps_core_create()` allocates memory for the core instance, creates a loop instance using `xps_loop_create()` and initializes all the values for the core object.
-
-::: details **expserver/src/core/xps_core.c**
-
-```c
-xps_core_t *xps_core_create() {
-
-  xps_core_t *core = /* allocate memory using malloc() */
-  /* handle error where core == NULL */
-
-  xps_loop_t *loop = xps_loop_create(core);
-  /* handle error where loop == NULL */
-
-  // Init values
-  core->loop = /* fill this */
-  vec_init(&(core->listeners));
-  /* initialize core->connections */
-  core->n_null_listeners = 0;
-  /* initialize core->n_null_connections */
-
-  logger(LOG_DEBUG, "xps_core_create()", "created core");
-
-  return core;
-}
-```
-
-:::
-
----
-
-**xps_core_destroy()**
-
-When a core is destroyed, eXpServer essentially goes down. Therefore, the destroy function of the core should destroy all listener and connection instances attached to the core, destroy the loop instance, and deallocate memory for the core instance itself.
-
-::: details **expserver/src/core/xps_core.c**
-
-```c
-void xps_core_destroy(xps_core_t *core) {
-
-  /* validate params */
-
-  // Destroy connections
-  for (int i = 0; i < core->connections.length; i++) {
-    xps_connection_t *connection = core->connections.data[i];
-    if (connection != NULL)
-      xps_connection_destroy(connection);
-  }
-  vec_deinit(&(core->connections));
-
-  /* destory all the listeners and de-initialize core->listeners */
-
-  xps_loop_destroy(core->loop);
-
-  /* free core instance */
-
-  logger(LOG_DEBUG, "xps_core_destroy()", "destroyed core");
-}
-```
-
-:::
-
----
-
-**xps_core_start()**
-
-As we saw in the `main()` function in `main.c`, we need a function to start the core. ‘Starting’ the core involves creating the listeners and running the event loop. From there the loop will take care of all the event handling.
-
-::: details **expserver/src/core/xps_core.c**
-
-```c
-void xps_core_start(xps_core_t *core) {
-
-  /* validate params */
-
-  logger(LOG_DEBUG, "xps_start()", "starting core");
-
-  /* create listeners from port 8001 to 8004 */
-
-  // Run loop
-  xps_loop_run(core->loop);
-}
-```
-
-:::
-
-### Milestone #1
-
-- We have completed the implementation of `xps_core` module
-
-With the core in place, we can move onto the loop module.
-
-### `xps_loop.h`
-
-`xps_loop` module which implements the event loop is one of the most integral parts eXpServer. In this stage will will implement the base of `xps_loop` . It will be updated to support other modules such as `xps_pipe` and `xps_timer` in later stages.
+#### `xps_loop.h`
 
 The code below has the contents of the header file for `xps_loop`. Have a look at it and make a copy of it in your codebase.
 
@@ -353,19 +205,17 @@ void xps_loop_run(xps_loop_t *loop);
 - `vec_void_t events`: Array to hold pointers to `loop_event_t` structs
 - `u_int n_null_events`: Number of `NULL` events
 
-Apart from this, we observe that there is a struct (`struct loop_event_s`) just for loop events. Given below is an explanation of the struct’s fields. A more detailed explanation for `loop_event` is provided in the **xps_loop.c** section.
+Apart from this, we observe that there is a struct (`struct loop_event_s`) just for loop events. Given below is an explanation of the structure’s fields. A more detailed explanation for `loop_event` is provided in the [xps_loop.c](#xps-loop-c) section.
 
 - `u_int fd`: FD associated with the event
 - `xps_handler_t read_cb`: Callback function to be called when a read event occurs on the the associated FD
 - `void *ptr`: It is a pointer to the instance which is attached to the loop. (Will be clear as we move further)
 
-::: info NOTE
-
+::: tip NOTE
 `struct loop_event_s` will be used locally, i.e. within the loop module only. Thus we place the typedef to `loop_event_t` in `xps_loop.h` and not in `xps.h`.
-
 :::
 
-### `xps_loop.c`
+#### `xps_loop.c`
 
 **loop_event_create()** & **loop_event_destroy()**
 
@@ -397,7 +247,11 @@ typedef void (*xps_handler_t)(void *ptr);
 - `read_cb`: Callback function to be called when read event occurs
 - `ptr`: Pointer to instance of `xps_listener_t` or `xps_connection_t`
 
-A pointer to an instance to `loop_event_t` will be assigned to `e.data.ptr` . So, when we get a notification after `epoll_wait()` we can typecast `e.data.ptr` to `loop_event_t` and access the callback function(s). Currently there is only the read callback. In upcoming stages we will be adding `write_cb` and `close_cb` both of type `xps_handler_t` . Looking at the typedef for `xps_handler_t` you can see that it is a function that takes a void pointer. We will pass the `ptr` from `loop_event_t` when we call the callback(s). The callback functions are assigned such that, they will know to typecast `ptr` appropriately to `xps_listener_t *` or `xps_connection_t *`. This will be more clear later in the stage where we talk about changes to listener and connection module. Given below is the code for `loop_event_create()` and `loop_event_destory()`. These functions are called within the loop module and hence does not have the `xps_` prefix.
+A pointer to an instance to `loop_event_t` will be assigned to `e.data.ptr` . So, when we get a notification after `epoll_wait()` we can typecast `e.data.ptr` to `loop_event_t` and access the callback function(s).
+
+Currently there is only the read callback. In upcoming stages we will be adding `write_cb` and `close_cb` both of type `xps_handler_t` . Looking at the typedef for `xps_handler_t` you can see that it is a function that takes a void pointer. We will pass the `ptr` from `loop_event_t` when we call the callback(s). The callback functions are assigned such that, they will know to typecast `ptr` appropriately to `xps_listener_t *` or `xps_connection_t *`. This will be more clear later in the stage where we talk about changes to listener and connection module.
+
+Given below is the code for `loop_event_create()` and `loop_event_destory()`. These functions are called within the loop module and hence does not have the `xps_` prefix.
 
 ::: details **expserver/src/core/xps_loop.c**
 
@@ -436,7 +290,7 @@ We can now move on to implement the _create_ and _destroy_ functions.
 
 Function prototypes are given for each function in the `xps_loop.h` file. Try to implement them.
 
-::: warning NOTE
+::: tip NOTE
 A function prototypes outlines the essential details of a function including its name, parameters and return type. This prototype serves as a reference for how the function should be called. From now onwards, you will be responsible for writing the function definitions according to the prototypes given in the header files. The documentation will describe the requirements for the functions and explain any new concepts required in its implementation.
 :::
 
@@ -454,7 +308,7 @@ A function prototypes outlines the essential details of a function including its
  */
 xps_loop_t *xps_loop_create(xps_core_t *core) {
 
-	/* fill this */
+  /* fill this */
 
 }
 
@@ -468,7 +322,7 @@ xps_loop_t *xps_loop_create(xps_core_t *core) {
  */
 void xps_loop_destroy(xps_loop_t *loop) {
 
-	/* fill this */
+  /* fill this */
 
 }
 
@@ -487,7 +341,7 @@ void xps_loop_destroy(xps_loop_t *loop) {
  */
 int xps_loop_attach(xps_loop_t *loop, u_int fd, int event_flags, void *ptr, xps_handler_t read_cb) {
 
-	/* fill this */
+  /* fill this */
 
 }
 
@@ -504,7 +358,7 @@ int xps_loop_attach(xps_loop_t *loop, u_int fd, int event_flags, void *ptr, xps_
  */
 int xps_loop_detach(xps_loop_t *loop, u_int fd) {
 
-	/* fill this */
+  /* fill this */
 
 }
 ```
@@ -563,9 +417,155 @@ void xps_loop_run(xps_loop_t *loop) {
 
 Reading the `xps_loop_run()` function provides more clarity about how the callback function is invoked on receiving an event from epoll.
 
-::: warning NOTE
-Notice how we are searching throught the list `loop→events` to see if `*curr_event` is present in it. This is because, a previous event that we have processed in the for loop could have resulted in a connection instance getting destroyed. Since the `loop→epoll_events` was populated when that connection instance was available, we have to keep checking `loop→events` after processing each event to see if it is still present or has been set to `NULL` on destruction.
+::: tip NOTE
+Notice how we are searching through the list `loop→events` to see if `*curr_event` is present in it. This is because, a previous event that we have processed in the for loop could have resulted in a connection instance getting destroyed. Since the `loop→epoll_events` was populated when that connection instance was available, we have to keep checking `loop→events` after processing each event to see if it is still present or has been set to `NULL` on destruction.
 :::
+
+---
+
+### Milestone #1
+
+Quick recap:
+
+- We have completed the implementation of `xps_loop` module with all its necessary functions
+- Each loop instance is attached to a core instance
+
+So lets move onto implementing core next.
+
+---
+
+### `xps_core` Module
+
+`xps_core` is a module which is the container of all data related to eXpServer. An instance of `xps_core` can be thought of as in instance of eXpServer itself. We will design modules such that it will directly or indirectly be attached to an `xps_core` instance. Hence destroying core will result in destruction of all other instances. We will get more clarity after looking at the declarations in `xps_core.h`.
+
+#### `xps_core.h`
+
+The code below has the contents of the header file for `xps_core`. Have a look at it and make a copy of it in your codebase.
+
+::: details **expserver/src/core/xps_core.h**
+
+```c
+#ifndef XPS_CORE_H
+#define XPS_CORE_H
+
+#include "../xps.h"
+
+struct xps_core_s {
+  xps_loop_t *loop;
+  vec_void_t listeners;
+  vec_void_t connections;
+  u_int n_null_listeners;
+  u_int n_null_connections;
+};
+
+xps_core_t *xps_core_create();
+void xps_core_destroy(xps_core_t *core);
+void xps_core_start(xps_core_t *core);
+
+#endif
+```
+
+:::
+
+`struct xps_core_s` acts as a wrapper for all data related to a core instance. Below are the members of the struct:
+
+- `xps_loop_t *loop`: Pointer to instance of loop belonging to the core
+- `vec_void_t listeners`: List of all the listeners attached to the core
+- `vec_void_t connections`: List of all the connection instances created by the listeners
+- `u_int n_null_listeners`: Number of pointers in listeners set to `NULL`
+- `u_int n_null_connections`: Number of pointers in connections set to `NULL`
+
+::: warning
+`n_null_listeners` and `n_null_connections` are number of pointers in their respective lists set to `NULL` as mentioned in Stage 6. When the values of these variables go above `DEFAULT_NULLS_THRESH` from `xps.h`, we will clear all the `NULL` pointers from the lists within `xps_loop_run()` function.
+:::
+
+---
+
+#### `xps_core.c`
+
+**xps_core_create()**
+
+Core comes with its own set of _create_ and _destroy_ functions. `xps_core_create()` allocates memory for the core instance, creates a loop instance using `xps_loop_create()` and initializes all the values for the core object.
+
+::: details **expserver/src/core/xps_core.c**
+
+```c
+xps_core_t *xps_core_create() {
+
+  xps_core_t *core = /* allocate memory using malloc() */
+  /* handle error where core == NULL */
+
+  xps_loop_t *loop = /* create loop instance */
+  /* handle error where loop == NULL */
+
+  // Init values
+  core->loop = /* fill this */
+  vec_init(&(core->listeners));
+  /* initialize core->connections */
+  core->n_null_listeners = 0;
+  /* initialize core->n_null_connections */
+
+  logger(LOG_DEBUG, "xps_core_create()", "created core");
+
+  return core;
+}
+```
+
+:::
+
+**xps_core_destroy()**
+
+When a core is destroyed, eXpServer essentially goes down. Therefore, the destroy function of the core should destroy all listener and connection instances attached to the core, destroy the loop instance, and deallocate memory for the core instance itself.
+
+::: details **expserver/src/core/xps_core.c**
+
+```c
+void xps_core_destroy(xps_core_t *core) {
+
+  /* validate params */
+
+  // Destroy connections
+  for (int i = 0; i < core->connections.length; i++) {
+    xps_connection_t *connection = core->connections.data[i];
+    if (connection != NULL)
+      xps_connection_destroy(connection);
+  }
+  vec_deinit(&(core->connections));
+
+  /* destory all the listeners and de-initialize core->listeners */
+
+  /* destory loop attached to core */
+
+  /* free core instance */
+
+  logger(LOG_DEBUG, "xps_core_destroy()", "destroyed core");
+}
+```
+
+:::
+
+**xps_core_start()**
+
+As we saw in the `main()` function in `main.c`, we need a function to start the core. ‘Starting’ the core involves creating the listeners and running the event loop. From there the loop will take care of all the event handling.
+
+::: details **expserver/src/core/xps_core.c**
+
+```c
+void xps_core_start(xps_core_t *core) {
+
+  /* validate params */
+
+  logger(LOG_DEBUG, "xps_start()", "starting core");
+
+  /* create listeners from port 8001 to 8004 */
+
+  /* run the loop */
+}
+```
+
+:::
+
+---
 
 ### Changes to `xps_listener` & `xps_connection`
 
@@ -655,22 +655,23 @@ void listener_connection_handler(void *ptr); // [!code ++]
 
 xps_listener_t *xps_listener_create(...) {
 
-	...
+  ...
 
-	xps_loop_attach(epoll_fd, sock_fd, EPOLLIN); // [!code --]
-	xps_loop_attach(core->loop, sock_fd, EPOLLIN, listener, listener_connection_handler); // [!code ++]
+  xps_loop_attach(epoll_fd, sock_fd, EPOLLIN); // [!code --]
+  xps_loop_attach(core->loop, sock_fd, EPOLLIN, listener, listener_connection_handler); // [!code ++]
 
-	...
+  ...
+
 }
 
 /* modify xps_listener_destory() */
 
 xps_listener_connection_handler(xps_listener_t *listener) { // [!code --]
 void listener_connection_handler(void *ptr) { // [!code ++]
-	assert(ptr != NULL); // [!code ++]
-	xps_listener_t *listener = ptr; // [!code ++]
+  assert(ptr != NULL); // [!code ++]
+  xps_listener_t *listener = ptr; // [!code ++]
 
-	...
+  ...
 
 }
 ```
@@ -678,14 +679,93 @@ void listener_connection_handler(void *ptr) { // [!code ++]
 ::: warning Modify connection module as done for listener
 :::
 
+### `main.c` Continued
+
+With the modules in place, implementation of `main.c` is straight forward.
+
+When operating eXpServer, a common method to terminate the program is by pressing `Ctrl + C` on the keyboard. This action triggers a signal named `SIGINT` from the operating system, prompting the program to shutdown within the terminal.
+
+When you terminate a program abruptly (for instance, by just closing the terminal or killing the process), it may leave behind resources that haven't been properly cleaned up. This could lead to memory leaks.
+
+So we need a way a way to know when `Ctrl + C` is pressed so that we can take care of destroying instance that maybe holding memory. This is possible with the help of the `[signal()](https://man7.org/linux/man-pages/man2/signal.2.html)` function provided by `signal.h` header.
+
+We pass a handler function (`signal_handler`) to the signal function, that will be called when the program receives a `SIGINT`.
+
+When an interrupt signal is received, the program control will transfer to the handler function, causing the control flow to exit the event loop. Within `sigint_handler()`, the core is destroyed, resulting in the termination of all associated instances before exiting the process.
+
+::: details **expserver/src/main.c**
+
+```c
+#include "xps.h"
+
+xps_core_t *core;
+
+void sigint_handler(int signum);
+
+int main() {
+  signal(SIGINT, sigint_handler);
+
+  core = /* create core instace */
+
+  /* 'start' core instance */
+
+}
+
+void sigint_handler(int signum) {
+  logger(LOG_WARNING, "sigint_handler()", "SIGINT received");
+
+  xps_core_destroy(core);
+
+  exit(EXIT_SUCCESS);
+}
+```
+
+:::
+
 ---
 
 ### Milestone #2
+
+Time to test the code!
+
+Since we did not modify the functionality of the server, this milestone will is similar to [Milestone #2 from Stage 6](/roadmap/phase-1/stage-6#milestone-2). Follow the same steps and make sure you get the same result.
 
 ## Experiment
 
 ### Experiment #1
 
-Right now, the code by default creates four listeners on port 8001 to 8004. Modify the `main.c` code to pass in the port numbers of the listeners to be created.
+Right now, the code by default creates four listeners on port 8001 to 8004.
+
+```c
+void xps_core_start(xps_core_t *core) {
+
+  ...
+
+  /* create listeners from port 8001 to 8004 */
+
+  ...
+
+}
+```
+
+Modify the core module and `main.c` to pass the port numbers of the listerners to be created as an array.
+
+```c
+int main() {
+
+	...
+
+  xps_core_start(core, [8000, 8001, 8002, 8003])
+
+  ...
+
+}
+```
+
+Modify the `main.c` code to pass in the port numbers of the listeners to be created.
+
+The expected output is identical to [Milestone #2](#milestone-2).
 
 ## Conclusion
+
+With this, we've established the core module to which nearly all other modules will interface. In the next stage, we'll construct the architecture enabling communication between all modules in eXpServer.
