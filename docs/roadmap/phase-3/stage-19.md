@@ -1,1 +1,1 @@
-# Stage 19: Load Balancing
+# Stage 19: Gzip Compression
