@@ -214,9 +214,15 @@ void handle_client(int conn_sock_fd) {
 Find the upstream socket associated with `conn_sock_fd` and route table and start sending the message that we received from the client.
 
 ::: tip NOTE
-There is a noticeable change to the `send()` function compared to the last stage. The drawback with the old approach will appear when we are sending large amounts of data due to limitations in buffer size and network conditions. We will look into this in an exercise at the end.
+There is a noticeable change to how we call the `send()` system call compared to the past stages. In the previous stages we did not check for the return value of `send()`. On success, `send()` system call returns the no. of bytes copied from the user buffer `buff` to the TCP socket's kernel buffer.
 
-The new approach allows us to handle large data by sending it in smaller chunks, and lets us handle any errors.
+- Return value could be the same as total size of the user buffer indicating the entire user buffer was copied to the kernel buffer.
+- Return value could be less than the total size of the user buffer indicating only partial user buffer was copied to the kernel buffer.
+- Return value could be -1 indicating an error. We will start to handle errors properly from Phase 1 onwards.
+
+If the entire buffer is not copied to the kernel buffer then we have to retry `send()` with the rest of the buffer. This is why we have a while loop setup with a pointer offsetted buffer in the call to `send()`.
+
+The full documentation for systems calls are available in the form of man pages (manual pages). Take a look at the man page for `send()` [here](https://man7.org/linux/man-pages/man2/send.2.html).
 :::
 
 ---
@@ -373,14 +379,6 @@ The proxy should go back to the `epoll_wait` state and wait for more events.
 ```
 
 Keep testing the code by navigating across the file sever, and opening files. Make sure the proxy does not exit out of the program.
-
-## Experiments
-
-### Experiment #1
-
-In our `handle_client()` function, we modified the `send()` functionality. Try switching this out for the old approach that we used in Stage 3 and test if everything works properly.
-
-🟡 EXPLAIN A BIT MORE
 
 ## Conclusion
 

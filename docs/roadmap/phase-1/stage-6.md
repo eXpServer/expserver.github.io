@@ -170,7 +170,7 @@ loop_run()
 
 Implementation of `main.c` requires functions from the listener module and the connection module. So lets work on those modules first and come back to this.
 
-### `xps_listener.h` & `xps_listener.c`
+### `xps_listener` Module
 
 An `xps_listener` is an instance of a listening socket in eXpServer. It listens for incoming client connections, accepts them and creates `xps_connection` instances.
 
@@ -403,13 +403,13 @@ With that, the listener module is done. Let us have a quick recap of what we hav
 
 - We have created an `xps_listener` module with three functions:
   - `xps_listener_create()` takes a host and port and creates a listener instance.
-  - `xps_listener_destroy()` takes in a listener instance, deallocates the memory, closes the associated socket and performs other related operations.
+  - `xps_listener_destroy()` takes in a listener instance, de-allocates the memory, closes the associated socket and performs other related operations.
   - `xps_listener_connection_handler()` is responsible for accepting client connections.
 - To create multiple listeners, all we have to do is call `xps_listener_create()` with different ports.
 
 ---
 
-### `xps_connection.h` & `xps_connection.c`
+### `xps_connection` Module
 
 `xps_connection` module is the encapsulation of all TCP connection related functionalities in eXpServer. In this stage we will implement a rudimentary form of connection module and will expand on it in later stages.
 
@@ -453,7 +453,7 @@ Each connection instance has the following data:
 Let us begin with the _create_ and _destroy_ functions. Hopefully you have a general idea of what it is responsible for:
 
 - `xps_connection_t *xps_connection_create()` is responsible for creating a connection instance by allocating it the required memory and attaching the created instance to the event loop.
-- `void xps_connection_destroy()` takes in a connection and destroys it by detaching it from the loop and deallocating the memory consumed by it.
+- `void xps_connection_destroy()` takes in a connection and destroys it by detaching it from the loop and de-allocating the memory consumed by it.
 
 ::: details **expserver/src/network/xps_connection.c**
 
@@ -507,7 +507,7 @@ void xps_connection_destroy(xps_connection_t *connection) {
 ::: warning
 When you have a struct containing dynamically allocated memory, free any pointers inside the struct before freeing the struct instance itself. Notice what we did for the connection instance above.
 
-`epoll_fd` and `sock_fd` are of type int (not dynamically allocated) and need not be freed. The `listener` instance also shouldn't be destroyed as it may be serving other connections. Whereas `remote_ip` is a dynamically allocated character string, which needs to be deallocated before we free the connection instance.
+`epoll_fd` and `sock_fd` are of type int (not dynamically allocated) and need not be freed. The `listener` instance also shouldn't be destroyed as it may be serving other connections. Whereas `remote_ip` is a dynamically allocated character string, which needs to be de-allocated before we free the connection instance.
 :::
 
 With the connection instances attached to the epoll, we will get notification from the event loop if there is a read event. To handle this, we’ll create a function `xps_connection_read_handler()` to receive data from the client, reverse the string and send it back; similar to what we did in Phase 0. Think about where `xps_connection_read_handler()` will be called.
@@ -727,7 +727,7 @@ After compiling, it should give an output file named `xps`. Start eXpServer usin
 ```
 
 ::: note NOTE
-Utilise the `xps_logger` utility and GDB to debug your code. The debug logs will not show up unless the environment variable `XPS_DEBUG` is set to “1”.
+Utilize the `xps_logger` utility and GDB to debug your code. The debug logs will not show up unless the environment variable `XPS_DEBUG` is set to “1”.
 Use the following command to set `XPS_DEBUG`:
 
 ```bash
@@ -785,4 +785,4 @@ main()
 
 ## Conclusion
 
-With that, we have completed the modularisation of listeners and connections. In the next stage, we will create the loop and core modules.
+With that, we have completed the modularization of listeners and connections. In the next stage, we will create the loop and core modules.
