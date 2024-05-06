@@ -20,11 +20,11 @@ Before we get into the implementation of the proxy, lets have a look at what we 
 
 Open a terminal and navigate to the folder you want to serve. Run the following command below to start a simple python file server:
 
-This command starts [Python's inbuilt HTTP server module](https://docs.python.org/3/library/http.server.html) which will serve the files in the folder it started in.
-
 ```bash
 python -m http.server 3000
 ```
+
+This command starts [Python's inbuilt HTTP server module](https://docs.python.org/3/library/http.server.html) which will serve the files in the folder it started in.
 
 Now that the local file server is running on port 3000, we can connect to it using a browser by going to `localhost:3000`.
 
@@ -36,7 +36,7 @@ Right now, the client (web browser), is directly accessing the file server. Our 
 
 ![implementation.png](/assets/stage-4/implementation.png)
 
-There will be few major changes in the structure of the code from previous stage where we wrote the entire implementation in `main()`. Thus, for this stage, we recommended working on a new separate file; let’s call it `tcp_proxy.c`.
+There will be some changes in the structure of the code from previous stage where we wrote the entire implementation in `main()`. Thus, for this stage, we recommended working on a new separate file; lets call it `tcp_proxy.c`.
 
 In addition to the previous definitions in `tcp_server.c`, add a global definition at the top of the file for the upstream port number that we will be serving the python file server from.
 
@@ -69,7 +69,7 @@ void loop_run(int epoll_fd) {
 }
 ```
 
-Let’s focus on `loop_run(int epoll_fd)` now. In the previous stage, we had epoll events from two sources; the listen socket and the connection socket. Now there will be another socket that we will be adding to our epoll called as the **upstream socket**.
+Let’s focus on `loop_run(int epoll_fd)` now. In the previous stage, we had epoll events from two sources; the listen socket and the connection socket. Now there will be another socket that we will be adding to our epoll called the **upstream socket**.
 
 The python file server is the upstream server in our case. When a user connects to the TCP proxy server to access files from the upstream server, the TCP proxy server will open a connection to the upstream server. All the communication sent to the proxy by the client will be relayed to the file server, and similarly data sent by the file server to the proxy (intended for the client) will be sent through this connection.
 
@@ -79,21 +79,21 @@ The figure below illustrates the three different events that could occur in epol
 
 ```c
 void loop_run(int epoll_fd) {
-	while (1) {
-		printf("[DEBUG] Epoll wait\n");
+  while (1) {
+    printf("[DEBUG] Epoll wait\n");
 
-		/* epoll wait */
+    /* epoll wait */
 
-		for (...) {
-			if (/* event is on listen socket*/)
-				accept_connection(); // we will implement this later
-			else if (/* event is on connection socket */)
-				handle_client(); // we will implement this later
-			else if (/* event is on upstream socket */)
-				handle_upstream(); // we will implement this later
+    for (...) {
+      if (/* event is on listen socket*/)
+        accept_connection(); // we will implement this later
+      else if (/* event is on connection socket */)
+        handle_client(); // we will implement this later
+      else if (/* event is on upstream socket */)
+        handle_upstream(); // we will implement this later
+    }
 
-		}
-	}
+  }
 }
 ```
 
@@ -124,7 +124,7 @@ Now that we have that, we are ready to start accepting connection; so lets write
 
 ### `accept_connection()`
 
-`accept_connection()` takes `listen_sock_fd` as a param and do the following
+`accept_connection()` takes `listen_sock_fd` as a parameter and do the following
 
 - Accept the client connection and create the connection socket FD `conn_sock_fd`
 - Add the connection socket to epoll to monitor for events using `epoll_ctl()`
@@ -196,7 +196,7 @@ void handle_client(int conn_sock_fd) {
     return;
   }
 
-  /* print client message (helpful during milestone#2) */
+  /* print client message (helpful for Milestone #2) */
 
   /* find the right upstream socket from the route table */
 
@@ -222,10 +222,8 @@ There is a noticeable change to how we call the `send()` system call compared to
 
 If the entire buffer is not copied to the kernel buffer then we have to retry `send()` with the rest of the buffer. This is why we have a while loop setup with a pointer offsetted buffer in the call to `send()`.
 
-The full documentation for systems calls are available in the form of man pages (manual pages). Take a look at the man page for `send()` [here](https://man7.org/linux/man-pages/man2/send.2.html).
+The full documentation for system calls are available in the form of man pages (manual pages). Take a look at the man page for `send()` [here](https://man7.org/linux/man-pages/man2/send.2.html).
 :::
-
----
 
 When there are messages to be read from the upstream server, the `handle_upstream()` function kicks in and takes over.
 
@@ -242,7 +240,7 @@ void handle_upstream(int upstream_sock_fd) {
   if (read_n <= 0) {
     close(upstream_sock_fd);
     return;
-	}
+  }
 
   /* find the right client socket from the route table */
 
@@ -258,13 +256,13 @@ With encapsulation of code into multiple functions, our main function will look 
 ```c
 int main() {
 
-	listen_socket_fd = /* create server using server_create() */
+  listen_socket_fd = /* create server using server_create() */
 
-	epoll_fd = /* create loop instance using loop_create() */
+  epoll_fd = /* create loop instance using loop_create() */
 
-	/* attach server to event loop using loop_attach() */
+  /* attach server to event loop using loop_attach() */
 
-	/* start event loop with loop_run() */
+  /* start event loop with loop_run() */
 
 }
 ```
@@ -279,46 +277,46 @@ At the end, our code will have a structure similar to this:
 /* any helper functions you might write */
 
 int connect_upstream() {
-	/* connect to upstream server */
+  /* connect to upstream server */
 }
 
 void accept_connection(int listen_sock_fd) {
-	/* accept client connection */
+  /* accept client connection */
 }
 
 void handle_client(int conn_sock_fd) {
-	/* handle client */
+  /* handle client */
 }
 
 void handle_upstream(int upstream_sock_fd) {
-	/* handle upstream */
+  /* handle upstream */
 }
 
 int create_loop() {
-	/* return new epoll instance */
+  /* return new epoll instance */
 }
 
 void loop_attach(int epoll_fd, int fd, int events) {
-	/* attach fd to epoll */
+  /* attach fd to epoll */
 }
 
 int create_server() {
-	/* create listening socket and return it */
+  /* create listening socket and return it */
 }
 
 void loop_run(int epoll_fd) {
-	/* infinite loop and for loop*/
+  /* infinite loop and for loop*/
 }
 
 int main() {
-	/* initialize proxy */
+  /* initialize proxy */
 }
 ```
 
 :::
 
 ::: tip NOTE
-There is no restriction to just these functions. Feel free to create additional helper functions as needed to suit your requirements.
+There is no restriction to just these functions. Feel free to create additional helper functions as needed to suit your requirements. For example, you could write a helper function to lookup the route table to find matching sockets.
 :::
 
 ---
@@ -380,8 +378,14 @@ The proxy should go back to the `epoll_wait` state and wait for more events.
 
 Keep testing the code by navigating across the file sever, and opening files. Make sure the proxy does not exit out of the program.
 
+## Experiments
+
+### Experiments #1
+
+🟡 Screenshots with sample files and python server. Open the files and take more ss (three windows)
+
 ## Conclusion
 
 This marks the end of Phase 0.
 
-The learning doesn't stop here though as in the next phase, as we’ll start building eXpServer. Phase 0 laid the foundation as to what is about to come next. Read more about Phase 1 [here](/roadmap/phase-1/).
+Phase 0 laid the foundation as to what is about to come next. Starting from the next phase, we start building eXpServer. Read more about Phase 1 [here](/roadmap/phase-1/).

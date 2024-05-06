@@ -143,7 +143,7 @@ You are free to modify the code in any file you want, including the `xps.h` file
 In the previous stage, we had the implementation of loop inside the `main.c` file. This will be removed as we will be building a separate module for the event loop - `xps_loop`. Additionally, `xps_core` is the central hub to which all other instances will be attached.
 So, now all `main.c` has to do is create `xps_core` instance and ‘start’ it:
 
-```text
+```pseudocode
 main()
   create core instance
   start core

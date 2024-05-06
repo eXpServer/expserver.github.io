@@ -2,29 +2,22 @@
 
 ## Recap
 
-- In Phase 1 overview we familiarised ourselves with eXpServer [Architecture](/guides/resources/architecture) and [Coding Conventions](/guides/resources/coding-conventions)
+- In Phase 1 overview we familiarised ourselves with eXpServer's [Architecture](/guides/resources/architecture) and [Coding Conventions](/guides/resources/coding-conventions)
 
 ## Learning Objectives
 
 - Understand the structure of a module in eXpServer
-- Implement the rudimentary form of listener & connection modules
+- Implement rudimentary forms of listener & connection modules
 - Get familiar with memory management, error handling, logging and other coding conventions.
 - Make eXpServer listen on multiple ports, receive client messages, reverse the strings and send them back
-
-::: tip PRE-REQUISITE READING
-
-- Read about the eXpServer [Architecture](/guides/resources/architecture)
-- Read the [Coding Conventions](/guides/resources/coding-conventions) for eXpServer
-
-:::
 
 ## Introduction
 
 As we’ve seen in the Overview of Phase 1, from this phase onwards we start building eXpServer from the ground up. We will be utilizing our learning from Phase 0 to implement a more sophisticated web server.
 
-At the end of Phase 0, we were able to serve multiple clients simultaneously using Linux epoll. The server was bound to a single port, and all incoming connections were through that particular port. However, web servers are generally capable of listening on multiple ports simultaneously.
+At the end of Phase 0, we were able to serve multiple clients simultaneously using Linux epoll. The server was bound to a single port, and all incoming connections were through that particular port. However, web servers are generally capable of listening on multiple ports concurrently.
 
-In this stage we will create a module called `xps_listener` which will allow eXpServer to listen on multiple ports simultaneously. We achieve this by introducing the concept of ‘listeners’. A listener can be thought of as a TCP server (from Phase 0), bound to a single port.
+In this stage we will create a module called `xps_listener` which will allow eXpServer to listen on multiple ports simultaneously. We achieve this by introducing the concept of ‘listeners’. A 'listener' can be thought of as a TCP server (from Phase 0), bound to a single port.
 
 We will utilize _netcat_ as a client for this stage to connect to eXpServer to send messages.
 
@@ -36,13 +29,13 @@ We will group listener and connection modules under the category _network_. Crea
 
 ## Design
 
-The main objective of Stage 6 is to enable eXpServer to listen on multiple ports simultaneously. This involves designing and implementing a module called `xps_listener`. Each instance of `xps_listener` module contains a socket with is bound to a specific host and port, and it is responsible for listening to incoming network connections on it.
+The main objective of Stage 6 is to enable eXpServer to listen on multiple ports simultaneously. This involves designing and implementing a module called `xps_listener`. Each instance of `xps_listener` module contains a socket which is bound to a specific host and port, and it is responsible for listening to incoming network connections on it.
 
-This modularization will allow eXpServer to create multiple listeners each bound to a different ports.
+This modularization will allow eXpServer to create multiple listeners each bound to different ports.
 
-When an `xps_listener` instance gets a client connection, an instance of `xps_connection` is created. `xps_connection` module is responsible for managing individual TCP connections between the server and clients. It encapsulates functionality related to creating, managing, and destroying individual connections.
+When an `xps_listener` instance gets a client connection, an instance of `xps_connection` is created. `xps_connection` module is responsible for managing individual TCP connections between the server and clients. It encapsulates functionality related to creating, managing, and destroying connection instances.
 
-![design.png](/assets/stage-6/design.png)
+<!-- ![design.png](/assets/stage-6/design.png) -->
 
 ## Implementation
 
@@ -125,10 +118,10 @@ Let us have a brief look at what are included in the file:
   - We use `u_char` for data buffers (array of bytes). For example: `u_char buff[1000];`
   - `u_int` and `u_long` are used if the values of the integer cannot be < 0.
 - **Structures:**
-  Declarations of various structures that we use to encapsulate data associated with a module. Presently, we have these two structures.
-- **Typedefs for structures:**
+  Declarations of various structures that we use to encapsulate data associated with a module. Presently, we have these two structures, i.e. `struct xps_listener_s` and `struct xps_connection_s`.
+- [**Typedefs' for structures:**](https://en.wikipedia.org/wiki/Typedef#Structures_and_structure_pointers)
   In order to reduce code length we typedef structure names. For instance, instead of writing `struct xps_listener_s` we can simply write `xps_listener_t` once it is typedef'd.
-- [**Function typedefs**](https://en.wikipedia.org/wiki/Typedef#Function_pointers)
+- [**Typedefs' for functions**](https://en.wikipedia.org/wiki/Typedef#Function_pointers)
 - **Temporary declarations:**
   Declarations of global variables and functions defined in `main.c` that will be used in other files. These declarations will be eventually moved to its corresponding module header files in later stages.
 - **xps headers:**
@@ -145,11 +138,11 @@ We will be constantly modifying/adding to this file in each stage to accommodate
 `main.c` will contain the following:
 
 - `main()`; starting point of eXpServer. It’s main objective is to spin up listener(s) and run the event loop.
-- Implementation of event loop and its functions. This will be modularized in the upcoming stage.
+- Implementation of event loop and its functions.
 
 Let us have a look at the high level outline of `main.c`:
 
-```text
+```pseudocode
 main()
   create event loop
   create listeners, each listening on different ports
@@ -230,7 +223,7 @@ The function takes in an epoll FD, host address (IP) and port and returns a poin
 ```c
 xps_listener_t *xps_listener_create(int epoll_fd, const char *host, u_int port) {
   assert(host != NULL);
-  assert(is_valid_port(port));
+  assert(is_valid_port(port)); // Will be explained later
 
   // Create socket instance
   int sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
@@ -250,7 +243,7 @@ xps_listener_t *xps_listener_create(int epoll_fd, const char *host, u_int port) 
   }
 
   // Setup listener address
-  struct addrinfo *addr_info = xps_getaddrinfo(host, port);
+  struct addrinfo *addr_info = xps_getaddrinfo(host, port); // Will be explained later
   if (addr_info == NULL) {
     logger(LOG_ERROR, "xps_listener_create()", "xps_getaddrinfo() failed");
     close(sock_fd);
@@ -258,14 +251,14 @@ xps_listener_t *xps_listener_create(int epoll_fd, const char *host, u_int port) 
   }
 
   // Binding to port
-  if (bind(/* fill this */) < 0) {
+  if (bind(sock_fd, addr_info->ai_addr, addr_info->ai_addrlen) < 0) {
     logger(LOG_ERROR, "xps_listener_create()", "failed to bind() to %s:%u", host, port);
     perror("Error message");
-    freeaddrinfo(addr_info);
+    freeaddrinfo(addr_info); // Will be explained later
     close(sock_fd);
     return NULL;
   }
-  freeaddrinfo(addr_info);
+  freeaddrinfo(addr_info); // Will be explained later
 
   // Listening on port
   if (listen(sock_fd, DEFAULT_BACKLOG) < 0) {
@@ -305,7 +298,7 @@ xps_listener_t *xps_listener_create(int epoll_fd, const char *host, u_int port) 
 
 After creating the socket, allocating memory for listener and initializing values, we use `xps_loop_attach()` function (will be implemented in `main.c`) to attach the listener instance to the event loop.
 
-Additionally, to keep track of all the created listeners, we add the created listeners to a list we maintain named `vec_void_t listeners` in `main.c`, defined globally under _temporary declarations_ in `xps.h`. The purpose of this will be apparent when we implement `xps_loop_run()` in `main.c`.
+Additionally, to keep track of all the created listeners, we add the created listeners to a list we maintain named `vec_void_t listeners` in `main.c`, defined globally and declared under _temporary declarations_ in `xps.h`. The purpose of this will be apparent when we implement `xps_loop_run()` in `main.c`.
 
 In the above code, we see the use of two utility functions. These functions are defined in `xps_utils.c`.
 
@@ -355,10 +348,11 @@ void xps_listener_destroy(xps_listener_t *listener) {
 :::
 
 ::: warning **Why are we setting `NULL` in the listeners list?**
-You might have thought why it is necessary to set to `NULL` in the listeners list instead of removing the listener pointer from the list altogether. The reason is that, the `xps_listener_destroy()` function could be called from a loop that is iterating over the _listeners_ list. If we remove something from the list while we are iterating over it, it could cause the items to shift with in the list and interfere with the iteration. Thus we will set the pointer to `NULL` every time we destroy any instance which is part of a list.
+You might have thought why it is necessary to set to `NULL` in the listeners list instead of removing the listener pointer from the list altogether. The reason is that, the _listeners_ list could be accessed from another part of the code. We will see the use of this in the next stage.
 
-**But if we keep setting pointers to `NULL` instead of removing them, won’t the list size keep growing?**
-Yes, it will keep growing. In order to remedy this, we will keep track of a `NULL` counter eg: `n_null_listeners` and increment it every time we set an item to `NULL` in the list. When the count goes above a certain threshold we will clear all the `NULL`s from the list together when it is safe to do so. This functionality is not part of the current stage and will be implemented in the upcoming stages.
+**But how would we stop the `NULL` entries from accumulating?**
+
+We will keep track of a `NULL` counter eg: `n_null_listeners` and increment it every time we set an item to `NULL` in the list. When the count goes above a certain threshold we will do a _compaction_ on the list by clearing all the `NULL` entries when it is safe to do so. This functionality is not part of the current stage and will be implemented in the upcoming stages.
 :::
 
 With the listeners attached to the event loop using `xps_loop_attach()`, when a client tries to connect to a listener, we will get a notification from the epoll. To handle this, we’ll create a function `xps_listener_connection_handler()`. This function is responsible to accept the incoming client connection and to create an instance of `xps_connection_t` using `xps_connection_create()` function. Think about where `xps_listener_connection_handler()` may be called.
@@ -381,7 +375,7 @@ void xps_listener_connection_handler(xps_listener_t *listener) {
   }
 
   // Creating connection instance
-  xps_connection_t *client = xps_connection_create(listener->epoll_fd, conn_sock_fd);
+  xps_connection_t *client = xps_connection_create(listener->epoll_fd, conn_sock_fd); // Will be implemented later
   if (client == NULL) {
     logger(LOG_ERROR, "xps_listener_connection_handler()", "xps_connection_create() failed");
     close(conn_sock_fd);
@@ -411,7 +405,7 @@ With that, the listener module is done. Let us have a quick recap of what we hav
 
 ### `xps_connection` Module
 
-`xps_connection` module is the encapsulation of all TCP connection related functionalities in eXpServer. In this stage we will implement a rudimentary form of connection module and will expand on it in later stages.
+`xps_connection` module is the encapsulation of all TCP connection related functionalities in eXpServer. In this stage we will implement a rudimentary form of the connection module and will expand on it in the later stages.
 
 #### `xps_connection.h`
 
@@ -445,7 +439,7 @@ Each connection instance has the following data:
 
 - `int epoll_fd`: epoll FD that the connection socket is attached to
 - `int sock_fd`: Socket FD of the connection
-- `xps_listener_t *listener`: Pointer tos listener instance associated with the connection instance
+- `xps_listener_t *listener`: Pointer to the listener instance associated with the connection instance
 - `char *remote_ip`: String representation of the client’s IP address
 
 #### `xps_connection.c`
@@ -726,7 +720,7 @@ After compiling, it should give an output file named `xps`. Start eXpServer usin
 [INFO] main() : Server listening on port 8004
 ```
 
-::: note NOTE
+::: tip NOTE
 Utilize the `xps_logger` utility and GDB to debug your code. The debug logs will not show up unless the environment variable `XPS_DEBUG` is set to “1”.
 Use the following command to set `XPS_DEBUG`:
 
@@ -742,7 +736,7 @@ unset XPS_DEBUG
 
 :::
 
-Let us do a detailed test to check if everything is working as expected.
+Let us do a detailed test to check if everything works as expected.
 
 1. Open four terminals. One terminal is for eXpServer and the others will be _netcat_ clients connecting to the server. Start a netcat client on port 8001, and send a message to the server. The server will receive the message and send the reversed message back to the client.
 
@@ -752,7 +746,7 @@ Let us do a detailed test to check if everything is working as expected.
 
    ![milestone2-2.png](/assets/stage-6/milestone2-2.png)
 
-3. Now, to check if another client can connect to a port that is being used by another client, start a netcat client and connect it to either 8001 or 8002 and observe. Sending a message will give the same result as the above two cases.
+3. Now, to check if another client can connect to a port that is being used by a client, start a netcat client and connect it to either 8001 or 8002 and observe. Sending a message will give the same result as the above two cases.
 
    ![milestone2-3.png](/assets/stage-6/milestone2-3.png)
 
@@ -764,11 +758,15 @@ Let us do a detailed test to check if everything is working as expected.
 
    ![milestone2-5.png](/assets/stage-6/milestone2-5.png)
 
+::: danger Test
+Try the same test with 4 clients and 3 ports.
+:::
+
 ### Function Call Order
 
 Here is the rough function call order for Stage 6. This will provide an informal overview of how the code will execute. Keep in mind this is not the actual execution order as it is dependent on external factors such as client connections. _Function Call Orders_ will be provided at the beginning of each stage from now on so that we can have a rough idea of the code flow.
 
-```text
+```pseudocode
 main()
   loop_create()
   xps_listener_create()

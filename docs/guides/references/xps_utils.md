@@ -39,13 +39,35 @@ bool is_valid_port(u_int port) { return port >= 0 && port <= 65535; }
 
 ### `xps_getaddrinfo()`
 
-Resolves the given host and port to an IPv4 address using `[getaddrinfo()](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html)`, and returns a pointer to the resulting `addrinfo` structure.
+Resolves the given host and port to an IPv4 address using [`getaddrinfo()`](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html), and returns a pointer to the resulting `addrinfo` structure.
 
-The `getaddrinfo()` function provided by the [<netdb.h>](https://pubs.opengroup.org/onlinepubs/7908799/xns/netdb.h.html) header used to perform [DNS](https://en.wikipedia.org/wiki/Domain_Name_System) lookup to resolve a hostname and service name to a set of socket addresses.
+The `getaddrinfo()` function provided by the [<netdb.h>](https://pubs.opengroup.org/onlinepubs/009695399/basedefs/netdb.h.html) header used to perform [DNS](https://en.wikipedia.org/wiki/Domain_Name_System) lookup to resolve a hostname and service name to a set of socket addresses.
+
+```c
+struct addrinfo {
+  int              ai_flags;
+  int              ai_family;
+  int              ai_socktype;
+  int              ai_protocol;
+  socklen_t        ai_addrlen;
+  struct sockaddr *ai_addr;
+  char            *ai_canonname;
+  struct addrinfo *ai_next;
+};
+```
+
+Given above is the definintion for `struct addrinfo`. A call to `getaddrinfo(host, port_str, &hints, &result)` will return a linked list of all the resolved addresses. A given `host` and `port` combination could have multiple addresses. For example, the host `google.com` could resolve to multiple IP addresses.
+
+We are only interested in the `ai_addr` field as it is taken by `bind()` system call to bind to the particular addresss.
+
+[`inet_ntop()`](https://man7.org/linux/man-pages/man3/inet_ntop.3.html) provided by [<arpa/inet.h>](https://pubs.opengroup.org/onlinepubs/7908799/xns/arpainet.h.html) converts the IPv4 address in binary form to text form.
+
+The memory for `struct addrinfo *` is dynamically allocated by `getaddrinfo()`. Hence a corresponding free funciton, `freeaddrinfo()` is used to free the memory.
 
 ```c
 struct addrinfo *xps_getaddrinfo(const char *host, u_int port) {
   assert(host != NULL);
+  assert(is_valid_port(port));
 
   struct addrinfo hints, *result;
   memset(&hints, 0, sizeof(struct addrinfo));
@@ -78,10 +100,11 @@ struct addrinfo *xps_getaddrinfo(const char *host, u_int port) {
 
 ### `make_socket_non_blocking()`
 
-Makes a socket non-blocking by modifying its file descriptor flags using the `fcntl` system call. It returns an error code if unsuccessful.
+Makes a socket non-blocking by modifying its file descriptor flags using the [`fcntl`](https://man7.org/linux/man-pages/man2/fcntl.2.html) system call. It returns an error code if unsuccessful.
 
 ```c
 int make_socket_non_blocking(u_int sock_fd) {
+  // Get the current socket flags
   int flags = fcntl(sock_fd, F_GETFL, 0);
   if (flags < 0) {
     logger(LOG_ERROR, "make_socket_non_blocking()", "failed to get flags");
@@ -89,6 +112,7 @@ int make_socket_non_blocking(u_int sock_fd) {
     return E_FAIL;
   }
 
+  // Set flags with O_NONBLOCK
   if (fcntl(sock_fd, F_SETFL, flags | O_NONBLOCK) < 0) {
     logger(LOG_ERROR, "make_socket_non_blocking()", "failed to set flags");
     perror("Error message");

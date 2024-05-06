@@ -70,7 +70,7 @@ Webservers construct their own HTTP headers so the `Content-Type` is included 
 
 A MIME type most commonly consists of just two parts: a *type* and a *subtype*, separated by a slash (`/`) — with no whitespace between:
 
-```text
+```pseudocode
 type/subtype;parameter=value
 ```
 

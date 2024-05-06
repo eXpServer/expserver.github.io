@@ -17,7 +17,7 @@ The guides feature supplementary documentation intended for your reference as yo
 - ✅ [Sockets](/guides/resources/sockets)
 - ✅ [Linux epoll](/guides/resources/introduction-to-linux-epoll)
 - [Blocking & Non-Blocking Sockets](/guides/resources/blocking-and-non-blocking-sockets)
-- [HTTP](/guides/resources/http)
+- 🟡 [HTTP](/guides/resources/http)
 
 ## References
 
