@@ -205,7 +205,7 @@ void xps_loop_run(xps_loop_t *loop);
 - `vec_void_t events`: Array to hold pointers to `loop_event_t` structs
 - `u_int n_null_events`: Number of `NULL` events
 
-Apart from this, we observe that there is a struct (`struct loop_event_s`) just for loop events. Given below is an explanation of the structure’s fields. A more detailed explanation for `loop_event` is provided in the [xps_loop.c](#xps-loop-c) section.
+Apart from this, we observe that there is a struct (`struct loop_event_s`) just for loop events. Given below is an explanation of the structure’s fields. A more detailed explanation for `loop_event` is provided in the [xps_loop.c](/roadmap/phase-1/stage-7#xps-loop-c) section.
 
 - `u_int fd`: FD associated with the event
 - `xps_handler_t read_cb`: Callback function to be called when a read event occurs on the the associated FD
@@ -616,7 +616,7 @@ void xps_listener_connection_handler(xps_listener_t *listener); // [!code --]
 #include "../xps.h"
 
 struct xps_connection_s {
-	int epoll_fd; // [!code --]
+  int epoll_fd; // [!code --]
   xps_core_t *core; // [!code ++]
   u_int sock_fd;
   xps_listener_t *listener;
@@ -753,7 +753,7 @@ Modify the core module and `main.c` to pass the port numbers of the listerners t
 ```c
 int main() {
 
-	...
+  ...
 
   xps_core_start(core, [8000, 8001, 8002, 8003])
 
