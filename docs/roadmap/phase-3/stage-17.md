@@ -1,1 +1,1 @@
-# Stage 17: IP Whitelist/Blacklist
+# Stage 17: Directory Browsing

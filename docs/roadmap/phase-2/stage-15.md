@@ -1,1 +1,1 @@
-# Stage 15: HTTP Specification
+# Stage 15: Config Module
