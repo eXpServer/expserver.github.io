@@ -30,7 +30,7 @@ Adding to the modularization of eXpServer, in this stage, we design and implemen
 
 `xps_core` acts as the central hub of eXpServer, managing all other modules. It is responsible for initializing the event loop, managing listeners and connections. It coordinates the startup, shutdown, and runtime behaviour of eXpServer. It’s design focuses on modularity and scalability.
 
-The `xps_loop` module implements an event loop using the epoll mechanism for handling I/O events. It monitors FD’s for read and write events, dispatching callbacks for event handling. Each `xps_loop` instance is attached to a core instance.
+The `xps_loop` module implements the event loop using the epoll mechanism for handling I/O events. It monitors FDs for read and write events, dispatching callbacks for event handling. Each `xps_loop` instance belongs to a core instance.
 
 ![design.png](/assets/stage-7/design.png)
 
@@ -47,7 +47,7 @@ Let’s have a clear picture before we move forward with the code.
 
 ### `xps.h`
 
-Find below the updated `xps.h` file. New additions to the file are indicated in green, and the red indicates lines which are removed:
+Find below the updated `xps.h` file. New additions to the file are indicated in green and removals are indicated in red:
 
 ::: details **expserver/src/xps.h**
 
@@ -77,7 +77,7 @@ Find below the updated `xps.h` file. New additions to the file are indicated in 
 #define DEFAULT_NULLS_THRESH 32 // [!code ++]
 
 // Error constants
-#define OK 0            // OK  // [!code ++]
+#define E_SUCCESS 0     // Success  // [!code ++]
 #define E_FAIL -1       // Un-recoverable error  // [!code ++]
 #define E_AGAIN -2      // Try again  // [!code ++]
 #define E_NEXT -3       // Do next  // [!code ++]
@@ -126,7 +126,7 @@ void xps_loop_run(int epoll_fd); // [!code --]
 
 :::
 
-- Added `signal.h` header to use a interrupt signal handler.
+- Added `signal.h` header to use a [signal handler](https://en.wikipedia.org/wiki/C_signal_handling).
 - Added error code constants, each representing a specific error condition.
 - Added new structure declarations, typedefs and headers related to `xps_core` and `xps_loop` modules.
 - Added a function type `xps_handler_t` which is the type for callback functions used throughout eXpServer.
@@ -140,9 +140,8 @@ You are free to modify the code in any file you want, including the `xps.h` file
 
 ### `main.c`
 
-In the previous stage, we had the implementation of loop inside the `main.c` file. This will be removed as we will be building a separate module for it (`xps_loop`). Additionally, we’ve seen how `xps_core` plays a major role in orchestrating all the modules in eXpServer.
-
-So now, all `main.c` has to do is create `xps_core` instance and ‘start’ it:
+In the previous stage, we had the implementation of loop inside the `main.c` file. This will be removed as we will be building a separate module for the event loop - `xps_loop`. Additionally, `xps_core` is the central hub to which all other instances will be attached.
+So, now all `main.c` has to do is create `xps_core` instance and ‘start’ it:
 
 ```text
 main()
@@ -156,7 +155,7 @@ Implementation of this requires functions from the loop and core modules. So let
 
 ### `xps_loop` Module
 
-`xps_loop` module which implements the event loop is one of the most integral parts eXpServer. In this stage will will implement the base of `xps_loop`. It will be updated to support other modules such as `xps_pipe` and `xps_timer` in later stages.
+`xps_loop` module which implements the event loop is one of the most integral parts eXpServer. In this stage we will implement the basic form of `xps_loop`. It will be updated to support other modules such as `xps_pipe` and `xps_timer` in later stages.
 
 #### `xps_loop.h`
 
@@ -291,7 +290,7 @@ We can now move on to implement the _create_ and _destroy_ functions.
 Function prototypes are given for each function in the `xps_loop.h` file. Try to implement them.
 
 ::: tip NOTE
-A function prototypes outlines the essential details of a function including its name, parameters and return type. This prototype serves as a reference for how the function should be called. From now onwards, you will be responsible for writing the function definitions according to the prototypes given in the header files. The documentation will describe the requirements for the functions and explain any new concepts required in its implementation.
+A function prototype outlines the essential details of a function including its name, parameters and return type. This prototype serves as a reference for how the function should be called. From now onwards, you will be responsible for writing the function definitions according to the prototypes given in the header files. The documentation will describe the requirements for the functions and explain any new concepts required in its implementation.
 :::
 
 ::: details **expserver/src/core/xps_loop.c**
@@ -476,7 +475,7 @@ void xps_core_start(xps_core_t *core);
 - `u_int n_null_connections`: Number of pointers in connections set to `NULL`
 
 ::: warning
-`n_null_listeners` and `n_null_connections` are number of pointers in their respective lists set to `NULL` as mentioned in Stage 6. When the values of these variables go above `DEFAULT_NULLS_THRESH` from `xps.h`, we will clear all the `NULL` pointers from the lists within `xps_loop_run()` function.
+`n_null_listeners` and `n_null_connections` are number of pointers in their respective lists set to `NULL` as mentioned in Stage 6. When the values of these variables go above `DEFAULT_NULLS_THRESH` from `xps.h`, we will clear all the `NULL` pointers from the lists within `xps_loop_run()` function. This `NULL` filtering will be done in a later stage.
 :::
 
 ---
@@ -676,7 +675,8 @@ void listener_connection_handler(void *ptr) { // [!code ++]
 }
 ```
 
-::: warning Modify connection module as done for listener
+::: tip TODO
+Modify connection module as done for listener
 :::
 
 ### `main.c` Continued
@@ -685,9 +685,7 @@ With the modules in place, implementation of `main.c` is straight forward.
 
 When operating eXpServer, a common method to terminate the program is by pressing `Ctrl + C` on the keyboard. This action triggers a signal named `SIGINT` from the operating system, prompting the program to shutdown within the terminal.
 
-When you terminate a program abruptly (for instance, by just closing the terminal or killing the process), it may leave behind resources that haven't been properly cleaned up. This could lead to memory leaks.
-
-So we need a way a way to know when `Ctrl + C` is pressed so that we can take care of destroying instance that maybe holding memory. This is possible with the help of the `[signal()](https://man7.org/linux/man-pages/man2/signal.2.html)` function provided by `signal.h` header.
+We need a way to know when `Ctrl + C` is pressed so that we do a graceful shutdown by destroying the core instance which will inturn destroy all other instances. This is possible with the help of the [`signal()`](https://man7.org/linux/man-pages/man2/signal.2.html) function provided by `signal.h` header.
 
 We pass a handler function (`signal_handler`) to the signal function, that will be called when the program receives a `SIGINT`.
 
@@ -734,38 +732,100 @@ Since we did not modify the functionality of the server, this milestone will is 
 
 ### Experiment #1
 
-Right now, the code by default creates four listeners on port 8001 to 8004.
+- Create a C file `sender.c` with the following contents
+  ::: details **expserver/sender.c**
 
-```c
-void xps_core_start(xps_core_t *core) {
+  ```c
+  #include <arpa/inet.h>
+  #include <netdb.h>
+  #include <netinet/in.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <sys/socket.h>
+  #include <sys/types.h>
+  #include <unistd.h>
 
-  ...
+  #define PORT 8001
+  #define BUFFER_SIZE 1024
 
-  /* create listeners from port 8001 to 8004 */
+  int main() {
+  int sock = 0;
+  struct sockaddr_in serv_addr;
+  char buffer[BUFFER_SIZE] = {0};
+  char input[BUFFER_SIZE];
 
-  ...
+  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+  perror("Socket creation error");
+  return -1;
+  }
 
-}
-```
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_port = htons(PORT);
 
-Modify the core module and `main.c` to pass the port numbers of the listerners to be created as an array.
+  if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+  perror("Invalid address/ Address not supported");
+  return -1;
+  }
 
-```c
-int main() {
+  if (connect(sock, (struct sockaddr \*)&serv_addr, sizeof(serv_addr)) < 0) {
+  perror("Connection failed");
+  return -1;
+  }
 
-	...
+  while (1) {
+  printf("Enter message to send: ");
+  fgets(input, BUFFER_SIZE, stdin);
 
-  xps_core_start(core, [8000, 8001, 8002, 8003])
+      // Send message to the server
+      int send_result = send(sock, input, strlen(input), 0);
+      if (send_result == -1)
+        perror("Send failed");
+      else
+        printf("Message sent to server\n");
 
-  ...
+  }
 
-}
-```
+  close(sock);
+  return 0;
+  }
+  ```
 
-Modify the `main.c` code to pass in the port numbers of the listeners to be created.
+  :::
 
-The expected output is identical to [Milestone #2](#milestone-2).
+- `sender.c` will connect to `localhost:8001`. It will then read from `stdin` and send it to the server listening on port `8001`. However, `sender.c` will not `recv()` any data.
+- Build and run eXpServer in one terminal. It should be listening on ports 8001 to 8004.
+- Compile `sender.c` using the command
+  ```bash
+  gcc sender.c -o sender
+  ```
+- Now run sender using the command `./sender`. Enter inputs into the `sender` and make sure they are getting printed in eXpServer.
+  ![experiment1-1.png](/assets/stage-7/experiment1-1.png)
+- Now open a _netcat_ client and connection to port 8002 in eXpServer. Then send some messages. It should work as expected.
+  ![experiment1-2.png](/assets/stage-7/experiment1-2.png)
+- Close the running `sender`. Now `cat` a huge file and pipe it to `./sender` using the following command
+  ```bash
+  cat huge_file.dat | ./sender
+  ```
+  This should send a huge file to eXpServer and print a lot of random characters (binary data of the file) on the eXpServer terminal.
+  ![experiment1-3.png](/assets/stage-7/experiment1-3.png)
+- You should be able to notice that after a while the printing of random characters stops which neither the `sender` or eXpServer quitting.
+- Now try to connect a _netcat_ TCP client like before and send a message.
+  ![experiment1-4.png](/assets/stage-7/experiment1-4.png)
+- You should be able to notice that the _netcat_ client did not receive a response back. And the eXpServer terminal did not print a INFO log that says a new connection was accepted.
+
+**What is going on here?**
+
+The `sender` only sends data to eXpServer. It does not `recv()` data. Thus, when eXpServer is trying to send the reversed string back, it is not getting received. This will cause the kernel buffer to fill up. When the kernel buffer is full the call to `send()` will block the process as we are dealing with blocking network sockets. The process is blocked till the data in the kernel buffer is cleared. However this will not happen as `sender` does not receive any data. Thus the eXpServer process will block leading to no more connections being served.
+
+In a real life situation where the rate at which eXpServer is writing to a TCP socket is more than the rate at which data is received by the TCP client, the kernel buffer can fill up resulting in the server process being blocked intermittently. This leads to inefficient serving of connections.
+
+- Now quit the `sender` process. You should be able to see that eXpServer unblocked and served the connection from _netcat_ client.
+  ![experiment1-5.png](/assets/stage-7/experiment1-5.png)
 
 ## Conclusion
 
-With this, we've established the core module to which nearly all other modules will interface. In the next stage, we'll construct the architecture enabling communication between all modules in eXpServer.
+- In this stage we created the `xps_loop` and `xps_core` modules.
+- By doing Experiment #1 we found that blocking sockets causes inefficient connection handling.
+
+In the next stage we will use network sockets in non-blocking mode to mitigate problem of eXpServer process being blocked.
