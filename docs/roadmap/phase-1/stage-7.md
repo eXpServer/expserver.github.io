@@ -24,7 +24,7 @@ With the integration of these modules, modifications to the `xps_listener` and `
 
 ![filestructure.png](/assets/stage-7/filestructure.png)
 
-### Design
+## Design
 
 Adding to the modularization of eXpServer, in this stage, we design and implement two new modules named `xps_core` and `xps_loop`.
 

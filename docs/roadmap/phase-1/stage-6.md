@@ -16,7 +16,7 @@
 - Read about the eXpServer [Architecture](/guides/resources/architecture)
 - Read the [Coding Conventions](/guides/resources/coding-conventions) for eXpServer
 
-  :::
+:::
 
 ## Introduction
 
@@ -33,6 +33,16 @@ We will utilize _netcat_ as a client for this stage to connect to eXpServer to s
 ![filestructure.png](/assets/stage-6/filestructure.png)
 
 We will group listener and connection modules under the category _network_. Create a folder named `network` inside the `expserver/src` folder.
+
+## Design
+
+The main objective of Stage 6 is to enable eXpServer to listen on multiple ports simultaneously. This involves designing and implementing a module called `xps_listener`. Each instance of `xps_listener` module contains a socket with is bound to a specific host and port, and it is responsible for listening to incoming network connections on it.
+
+This modularization will allow eXpServer to create multiple listeners each bound to a different ports.
+
+When an `xps_listener` instance gets a client connection, an instance of `xps_connection` is created. `xps_connection` module is responsible for managing individual TCP connections between the server and clients. It encapsulates functionality related to creating, managing, and destroying individual connections.
+
+![design.png](/assets/stage-6/design.png)
 
 ## Implementation
 
@@ -131,8 +141,6 @@ We will be constantly modifying/adding to this file in each stage to accommodate
 ---
 
 ### `main.c`
-
-<< line here >>
 
 `main.c` will contain the following:
 

@@ -31,7 +31,7 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 
 ### Phase 1: Building the core of eXpServer by creating reusable modules
 
-- 🟡 [Overview](phase-1/)
+- ✅ [Overview](phase-1/)
 - 🟡 [Stage 6: Listener & Connection Modules](phase-1/stage-6)
 - 🟡 [Stage 7: Core & Loop Modules](phase-1/stage-7)
 - 🟡 [Stage 8: Non-Blocking Sockets](phase-1/stage-8)
