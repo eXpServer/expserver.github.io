@@ -71,7 +71,7 @@ The `xps_connection` module creates instances for TCP connections, be it a clien
 
 ### `xps_session`
 
-An `xps_sesion` instance is created in the previously mentioned `listener_connection_handler()` function at the same time a new client connection is accepted. The session instance is the orchestrator that handles the client requests. It will parse the incoming bytes from the client TCP connection using the `xps_http` module. Based on the parsed HTTP request, the session instance will lookup the configuration to determine whether it should serve a file or reverse proxy the request. On deciding, an `xps_file` instance or an `xps_upstream` instance is created and attached using `xps_pipe` to the session instance. Then the bytes flow between the _client_ and corresponding _file_ or _upstream server_ through the _session_ instance.
+An `xps_session` instance is created in the previously mentioned `listener_connection_handler()` function at the same time a new client connection is accepted. The session instance is the orchestrator that handles the client requests. It will parse the incoming bytes from the client TCP connection using the `xps_http` module. Based on the parsed HTTP request, the session instance will lookup the configuration to determine whether it should serve a file or reverse proxy the request. On deciding, an `xps_file` instance or an `xps_upstream` instance is created and attached using `xps_pipe` to the session instance. Then the bytes flow between the _client_ and corresponding _file_ or _upstream server_ through the _session_ instance.
 
 ### `xps_http`
 

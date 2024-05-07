@@ -8,7 +8,7 @@ epoll can be managed through three system calls, facilitating its creation, modi
 
 The core challenge in running a network service is the speed discrepancy between the server and client networks. Typically, a server handling a request involves reading the user's request (e.g., [HTTP GET](https://en.wikipedia.org/wiki/HTTP#Request_methods)), processing it, and then writing a response (e.g., an [HTML](https://en.wikipedia.org/wiki/HTML) page).
 
-```pseudocode
+```txt
 read user's request (eg. HTTP GET)
 server process request
 write a response (eg. HTML page with the requested info)
@@ -26,7 +26,7 @@ epoll enables a single thread or process to register interest in a vast array of
 
 epoll subtly alters the architecture of applications. Instead of a linear sequence of reading a request, handling it, and writing a response, we adopt a loop:
 
-```pseudocode
+```txt
 loop
   epoll_wait on all connections
   for each of the ready connections:

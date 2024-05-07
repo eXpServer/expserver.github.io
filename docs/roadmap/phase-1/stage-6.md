@@ -142,7 +142,7 @@ We will be constantly modifying/adding to this file in each stage to accommodate
 
 Let us have a look at the high level outline of `main.c`:
 
-```pseudocode
+```txt
 main()
   create event loop
   create listeners, each listening on different ports
@@ -766,7 +766,7 @@ Try the same test with 4 clients and 3 ports.
 
 Here is the rough function call order for Stage 6. This will provide an informal overview of how the code will execute. Keep in mind this is not the actual execution order as it is dependent on external factors such as client connections. _Function Call Orders_ will be provided at the beginning of each stage from now on so that we can have a rough idea of the code flow.
 
-```pseudocode
+```txt
 main()
   loop_create()
   xps_listener_create()
