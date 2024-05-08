@@ -34,7 +34,7 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 
 - ✅ [Overview](phase-1/)
 - ✅ [Stage 6: Listener & Connection Modules](phase-1/stage-6)
-- ✅ [Stage 7: Core & Loop Modules](phase-1/stage-7)
+- 🔴 [Stage 7: Core & Loop Modules](phase-1/stage-7)
 - 🟡 [Stage 8: Non-Blocking Sockets](phase-1/stage-8)
 - [Stage 9: epoll Edge Triggered](phase-1/stage-9)
 - [Stage 10: Pipe Module](phase-1/stage-10)

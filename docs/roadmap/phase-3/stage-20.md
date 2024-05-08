@@ -1,1 +1,1 @@
-# Stage 20: Load Balancing
+# Stage 20: Gzip Compression

@@ -1,1 +1,1 @@
-# Stage 17: Directory Browsing
+# Stage 17: HTTP Specification
