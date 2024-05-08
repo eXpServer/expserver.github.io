@@ -127,20 +127,24 @@ export default defineConfig({
 									link: '/roadmap/phase-1/stage-8',
 								},
 								{
-									text: 'Stage 9: Pipe Module',
+									text: 'Stage 9: epoll Edge Triggered',
 									link: '/roadmap/phase-1/stage-9',
 								},
 								{
-									text: 'Stage 10: Upstream Module',
+									text: 'Stage 10: Pipe Module',
 									link: '/roadmap/phase-1/stage-10',
 								},
 								{
-									text: 'Stage 11: File module',
+									text: 'Stage 11: Upstream Module',
 									link: '/roadmap/phase-1/stage-11',
 								},
 								{
-									text: 'Stage 12: Session Module',
+									text: 'Stage 12: File module',
 									link: '/roadmap/phase-1/stage-12',
+								},
+								{
+									text: 'Stage 13: Session Module',
+									link: '/roadmap/phase-1/stage-13',
 								},
 							],
 						},
@@ -153,20 +157,20 @@ export default defineConfig({
 									link: '/roadmap/phase-2/',
 								},
 								{
-									text: 'Stage 13: HTTP Request Module',
-									link: '/roadmap/phase-2/stage-13',
-								},
-								{
-									text: 'Stage 14: HTTP Response Module',
-									link: '/roadmap/phase-2/stage-14',
-								},
-								{
-									text: 'Stage 15: Config Module',
+									text: 'Stage 14: HTTP Request Module',
 									link: '/roadmap/phase-2/stage-15',
 								},
 								{
-									text: 'Stage 16: HTTP Specification',
+									text: 'Stage 15: HTTP Response Module',
+									link: '/roadmap/phase-2/stage-15',
+								},
+								{
+									text: 'Stage 16: Config Module',
 									link: '/roadmap/phase-2/stage-16',
+								},
+								{
+									text: 'Stage 17: HTTP Specification',
+									link: '/roadmap/phase-2/stage-17',
 								},
 							],
 						},
@@ -179,24 +183,24 @@ export default defineConfig({
 									link: '/roadmap/phase-3/',
 								},
 								{
-									text: 'Stage 17: Directory Browsing',
-									link: '/roadmap/phase-3/stage-17',
-								},
-								{
-									text: 'Stage 18: IP Whitelist/Blacklist',
+									text: 'Stage 18: Directory Browsing',
 									link: '/roadmap/phase-3/stage-18',
 								},
 								{
-									text: 'Stage 19: Gzip Compression',
+									text: 'Stage 19: IP Whitelist/Blacklist',
 									link: '/roadmap/phase-3/stage-19',
 								},
 								{
-									text: 'Stage 20: Load Balancing',
+									text: 'Stage 20: Gzip Compression',
 									link: '/roadmap/phase-3/stage-20',
 								},
 								{
-									text: 'Stage 21: Request timeouts',
+									text: 'Stage 21: Load Balancing',
 									link: '/roadmap/phase-3/stage-21',
+								},
+								{
+									text: 'Stage 22: Request timeouts',
+									link: '/roadmap/phase-3/stage-22',
 								},
 							],
 						},
@@ -209,16 +213,16 @@ export default defineConfig({
 									link: '/roadmap/phase-4/',
 								},
 								{
-									text: 'Stage 22: Metrics',
-									link: '/roadmap/phase-4/stage-22',
-								},
-								{
-									text: 'Stage 23: Multiprocess',
+									text: 'Stage 23: Metrics',
 									link: '/roadmap/phase-4/stage-23',
 								},
 								{
-									text: 'Stage 24: Transport Layer Security (TLS)',
+									text: 'Stage 24: Multiprocess',
 									link: '/roadmap/phase-4/stage-24',
+								},
+								{
+									text: 'Stage 25: Transport Layer Security (TLS)',
+									link: '/roadmap/phase-4/stage-25',
 								},
 							],
 						},
