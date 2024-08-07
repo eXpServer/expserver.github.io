@@ -51,6 +51,9 @@ export default defineConfig({
 							link: '/guides/resources/blocking-and-non-blocking-sockets',
 						},
 						{ text: 'HTTP', link: '/guides/resources/http' },
+						{ text: 'UDP', link: '/guides/resources/udp' },
+						{ text: 'Multi-threading', link: '/guides/resources/multi-threading' },
+						
 						// { text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },
 						// { text: 'File descriptors', link: '/guides/resources/file-descriptors' },
 

@@ -6,7 +6,7 @@ Sockets are the interface to use the [TCP protocol](https://en.wikipedia.org/wik
 
 ![socket.png](/assets/phase-0-overview/socket.png)
 
-Sockets in networking are typically classified into two types:
+The main two types of sockets in networking:
 
 - `SOCK_STREAM`: Stream sockets ensure that data is delivered in the order it was sent and without errors. For example web browsing ([HTTP](https://en.wikipedia.org/wiki/HTTP)), email ([STMP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)), etc use this socket type ([TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)).
 - `SOCK_DGRAM`: Datagram sockets send packets of data, called datagrams, without establishing a connection or ensuring delivery. For example video streaming, online gaming etc. use this socket type ([UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol)).

@@ -18,6 +18,8 @@ The guides feature supplementary documentation intended for your reference as yo
 - ✅ [Linux epoll](/guides/resources/introduction-to-linux-epoll)
 - [Blocking & Non-Blocking Sockets](/guides/resources/blocking-and-non-blocking-sockets)
 - 🟡 [HTTP](/guides/resources/http)
+- 🟡 [UDP](/guides/resources/udp)
+- 🟡 [Multi-threading](/guides/resources/multi-threading)
 
 ## References
 
