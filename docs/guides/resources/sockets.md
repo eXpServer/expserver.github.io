@@ -21,6 +21,77 @@ We will be using the following functions to setup TCP connections:
 
 ![socket-flow.png](/assets/resources/flow-of-events.png)
 
+::: details int socket()  *Create an endpoint for communication*
+
+| Argument Name | Argument Type | Description |
+| --- | --- | --- |
+| domain | int | Specifies the communication domain (e.g., AF_INET for IPv4). |
+| type | int | Specifies the communication semantics (e.g., SOCK_STREAM for TCP). |
+| protocol | int | Specifies a particular protocol to be used with the socket. (default 0) |
+
+:::
+::: details int bind()  *Binds a socket to a local address*
+    
+| Argument Name | Argument Type | Description |
+| --- | --- | --- |
+| sockfd | int | File descriptor of the socket to bind. |
+| addr | const struct sockaddr * | Pointer to a sockaddr structure that contains the address to bind to. |
+| addrlen | int / socklen_t | Size of the address structure. |
+
+:::
+::: details int listen()  *Listen for connections on a socket*
+    
+    
+| Argument Name | Argument Type | Description |
+| --- | --- | --- |
+| sockfd | int | File descriptor of the socket(server) to listen on. |
+| backlog | int | maximum length of the queue maintaining pending connections  |
+:::
+::: details int connect()  *Initiates a connection on a socket.*
+    
+    
+| Argument Name | Argument Type | Description |
+| --- | --- | --- |
+| sockfd | int | File descriptor of the socket(client).  |
+| addr | const struct sockaddr * | Pointer to a sockaddr structure that contains the address to connect to (server address). |
+| addrlen | int / socklen_t | Size of the address structure. |
+:::
+::: details int accept()  *Accepts an incoming connection on a listening socket.*
+    
+    
+| Argument Name | Argument Type | Description |
+| --- | --- | --- |
+| sockfd | int | File descriptor of the listening socket.  |
+| addr | const struct sockaddr * | Pointer to a sockaddr structure to receive the address of the connecting entity. |
+| addrlen | int / socklen_t | Size of the address structure. |
+:::
+::: details int send()  *Send a message on a socket*
+    
+    
+| Argument Name | Argument Type | Description |
+| --- | --- | --- |
+| sockfd | int | File descriptor of the connected socket.  |
+| buf | const void * | Pointer to he buffer containing the data to be sent. |
+| len | int | Length of the data to be sent. |
+| flags | int | Bitwise OR of flags controlling the operation(Default 0). |
+:::
+::: details int recv()  Recieves *a message from a socket*
+    
+| Argument Name | Argument Type | Description |
+| --- | --- | --- |
+| sockfd | int | File descriptor of the connected socket.  |
+| buf | const void * | Pointer to the buffer to receive the data. |
+| len | int | Length of the buffer. |
+| flags | int | Bitwise OR of flags controlling the operation(Default 0). |
+:::
+::: details int close()  *Closes a socket*
+    
+| Argument Name | Argument Type | Description |
+| --- | --- | --- |
+| sockfd | int | File descriptor of the socket to close.  |
+
+:::
+
 1. **Socket creation:** The process begins with the creation of a socket using the `socket()` system call. This call initializes a communication endpoint and returns a [file descriptor](https://en.wikipedia.org/wiki/File_descriptor).
 2. **Binding (optional):** In server applications, the socket may be bound to a specific address and port using the `bind()` system call. This step is necessary for servers to listen for incoming connections on a specific network interface and port. (Bind is optional for client sockets as the operating system assigns a local address and port automatically)
 3. **Listening (Server Only)**: Servers then enter a listening state using the `listen()` system call, indicating their readiness to accept incoming connections from clients.

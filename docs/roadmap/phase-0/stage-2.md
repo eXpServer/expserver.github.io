@@ -168,7 +168,12 @@ hello
 olleh
 ```
 
+
 ## Experiments
+
+::: tip Iterative and Concurrent Server
+An iterative server is a type of server that handles client connections sequentially. This means that the server processes one client request at a time, completing the entire interaction with one client before moving on to the next. This contrasts with a concurrent server, which can handle multiple client requests simultaneously.
+:::
 
 ### Experiment #1
 
@@ -195,8 +200,29 @@ Did you notice what happened when you closed the connected client instance? The 
 Modify the code such that the server does not terminate immedietly after a client disconnects.
 
 ::: info HINT
-A while loop around the accept and recv-send loop could help.
+- A while loop around the accept and recv-send loop could help.
+- Also break from the recv-send loop after each client disconnects.
 :::
+
+Now,let us verify our modified code.Follow the same procedure in Experiment 1.
+We can observe the following:
+1. The server is not closed even after terminating the first client.
+2. Now,client #2 gets connected to the server.
+
+Now,you can try connecting a new client after disconnecting the existing client. This can be repeated any number of times. So now the server is an iterative server. In the next stage we will make a concurrent server.
+
+### Experiment #3
+
+Now,we can modify the client code for creating multiple clients in a single execution of client code. We would be using fork system call to implement this.
+
+::: tip PRE-REQUISITE READING
+
+- Read about [Fork()](/guides/resources/fork)
+
+:::
+
+
+
 
 ## Conclusion
 

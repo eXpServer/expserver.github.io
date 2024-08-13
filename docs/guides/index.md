@@ -20,6 +20,8 @@ The guides feature supplementary documentation intended for your reference as yo
 - 🟡 [HTTP](/guides/resources/http)
 - 🟡 [UDP](/guides/resources/udp)
 - 🟡 [Multi-threading](/guides/resources/multi-threading)
+- 🟡 [Fork()](/guides/resources/fork)
+
 
 ## References
 
