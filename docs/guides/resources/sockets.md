@@ -21,7 +21,8 @@ We will be using the following functions to setup TCP connections:
 
 ![socket-flow.png](/assets/resources/flow-of-events.png)
 
-::: details int socket()  *Create an endpoint for communication*
+::: details int socket ( int domain, int type, int protocol )  
+*Create an endpoint for communication*
 
 | Argument Name | Argument Type | Description |
 | --- | --- | --- |
@@ -30,7 +31,8 @@ We will be using the following functions to setup TCP connections:
 | protocol | int | Specifies a particular protocol to be used with the socket. (default 0) |
 
 :::
-::: details int bind()  *Binds a socket to a local address*
+::: details int bind ( int sockfd, const struct sockaddr * addr, int addrlen )  
+*Binds a socket to a local address*
     
 | Argument Name | Argument Type | Description |
 | --- | --- | --- |
@@ -39,7 +41,8 @@ We will be using the following functions to setup TCP connections:
 | addrlen | int / socklen_t | Size of the address structure. |
 
 :::
-::: details int listen()  *Listen for connections on a socket*
+::: details int listen ( int sockfd, int backlog )  
+*Listen for connections on a socket*
     
     
 | Argument Name | Argument Type | Description |
@@ -47,25 +50,30 @@ We will be using the following functions to setup TCP connections:
 | sockfd | int | File descriptor of the socket(server) to listen on. |
 | backlog | int | maximum length of the queue maintaining pending connections  |
 :::
-::: details int connect()  *Initiates a connection on a socket.*
+::: details int connect( int sockfd, const struct sockaddr * addr, int addrlen )  
+*Initiates a connection on a socket.*
     
     
 | Argument Name | Argument Type | Description |
 | --- | --- | --- |
 | sockfd | int | File descriptor of the socket(client).  |
-| addr | const struct sockaddr * | Pointer to a sockaddr structure that contains the address to connect to (server address). |
+| addr | const struct sockaddr * | Pointer to a sockaddr structure that contains the server address to which the client wishes to connect to. |
 | addrlen | int / socklen_t | Size of the address structure. |
 :::
-::: details int accept()  *Accepts an incoming connection on a listening socket.*
+::: details int accept( int sockfd, const struct sockaddr * addr, int addrlen )  
+*Accepts an incoming connection on a listening socket.*
     
     
 | Argument Name | Argument Type | Description |
 | --- | --- | --- |
 | sockfd | int | File descriptor of the listening socket.  |
-| addr | const struct sockaddr * | Pointer to a sockaddr structure to receive the address of the connecting entity. |
+| addr | const struct sockaddr * | Pointer to a sockaddr structure to receive the address of the connecting entity (client).See the note below.|
 | addrlen | int / socklen_t | Size of the address structure. |
+
+Note: The fields of the sockaddr structure are filled by the OS kernel and returned after analysing the client connection details. Note that the client doesnot set this structure in the connect() system call.
 :::
-::: details int send()  *Send a message on a socket*
+::: details int send( int sockfd, const void * buf, int len, int flags )  
+*Send a message on a socket*
     
     
 | Argument Name | Argument Type | Description |
@@ -75,7 +83,8 @@ We will be using the following functions to setup TCP connections:
 | len | int | Length of the data to be sent. |
 | flags | int | Bitwise OR of flags controlling the operation(Default 0). |
 :::
-::: details int recv()  Recieves *a message from a socket*
+::: details int recv( int sockfd, const void * buf, int len, int flags )  
+Recieves *a message from a socket*
     
 | Argument Name | Argument Type | Description |
 | --- | --- | --- |
@@ -84,7 +93,8 @@ We will be using the following functions to setup TCP connections:
 | len | int | Length of the buffer. |
 | flags | int | Bitwise OR of flags controlling the operation(Default 0). |
 :::
-::: details int close()  *Closes a socket*
+::: details int close( int sockfd )  
+*Closes a socket*
     
 | Argument Name | Argument Type | Description |
 | --- | --- | --- |
@@ -94,7 +104,7 @@ We will be using the following functions to setup TCP connections:
 
 1. **Socket creation:** The process begins with the creation of a socket using the `socket()` system call. This call initializes a communication endpoint and returns a [file descriptor](https://en.wikipedia.org/wiki/File_descriptor).
 2. **Binding (optional):** In server applications, the socket may be bound to a specific address and port using the `bind()` system call. This step is necessary for servers to listen for incoming connections on a specific network interface and port. (Bind is optional for client sockets as the operating system assigns a local address and port automatically)
-3. **Listening (Server Only)**: Servers then enter a listening state using the `listen()` system call, indicating their readiness to accept incoming connections from clients.
+3. **Listening (Server Only)**: Server then enters the listening state using the `listen()` system call, indicating their readiness to accept incoming connections from clients.
 4. **Connection Establishment (Client)**: Clients initiate a connection to the server by using the `connect()` system call, specifying the server's address and port. This call establishes a connection to the server, allowing for data exchange.
 5. **Accepting Connections (Server):** Upon receiving a connection request from a client, the server accepts the connection using the `accept()` system call. This call creates a new socket specifically for communication with the client.
 6. **Data Exchange**: Once the connection is established, both the client and server can send and receive data using the `send()` and `recv()` system calls, respectively. Data sent by one party is received by the other, allowing for bidirectional communication.

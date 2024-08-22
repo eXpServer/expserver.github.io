@@ -54,8 +54,8 @@ Let us start by adding all the header includes and defines. The use of each head
 ```
 
 
-> [!IMPORTANT] !!MUST READ BEFORE PROCEED
-> - Read about [Sockets](/guides/resources/sockets)
+> [!IMPORTANT] IMPORTANT
+> - Read about [Sockets](/guides/resources/sockets) before proceeding further.
 
 **Setting up the server:**
 

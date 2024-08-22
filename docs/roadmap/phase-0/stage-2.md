@@ -204,12 +204,12 @@ Modify the code such that the server does not terminate immedietly after a clien
 - Also break from the recv-send loop after each client disconnects.
 :::
 
-Now,let us verify our modified code.Follow the same procedure in Experiment 1.
+Now, let us verify our modified code. Follow the same procedure in Experiment 1.
 We can observe the following:
 1. The server is not closed even after terminating the first client.
-2. Now,client #2 gets connected to the server.
+2. Now, client #2 gets connected to the server.
 
-Now,you can try connecting a new client after disconnecting the existing client. This can be repeated any number of times. So now the server is an iterative server. In the next stage we will make a concurrent server.
+Now, you can try connecting a new client after disconnecting the existing client. This can be repeated any number of times. So now the server is an iterative server. In the next stage we will make a concurrent server.
 
 ### Experiment #3
 

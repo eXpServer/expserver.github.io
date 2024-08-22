@@ -13,13 +13,12 @@
 
 At the end of [Stage 2](/roadmap/phase-0/stage-2), we noticed how the server is only able to cater to one client at a time. When the client disconnects, the server breaks out of the recv-send while loop and exits the program. Later in the exercises we modified the server to accept clients sequentially, one after the other.
 
-[TODO write about threads - stage-3]
 
-In this stage we will use another approach will to fix the drawbacks that we looked at in Stage 3. We will achieve this with the help of **_epoll_**.
+In this stage we will use another approach to fix the drawbacks that we looked at in Stage 3. We will achieve this with the help of **_epoll_**.
 
 ### epoll
 
-[epoll](https://en.wikipedia.org/wiki/Epoll) is a I/O event notification mechanism provided by the Linux kernel. It allows applications to efficiently monitor multiple file descriptors for various I/O events.
+[epoll](https://en.wikipedia.org/wiki/Epoll) is an I/O event notification mechanism provided by the Linux kernel. It allows applications to efficiently monitor multiple file descriptors for various I/O events.
 
 There are various [asynchronous I/O](https://en.wikipedia.org/wiki/Asynchronous_I/O) mechanisms available in operating systems. We have chosen epoll as it is the most widely used technique in modern applications.
 
@@ -147,7 +146,7 @@ while(1) {
 }
 ```
 
-When some event has ouccured on the FDs we that we added to the epoll, `epoll_wait()` returns the number of FD’s for which events have occurred. The events themselves will be stored in the `events[]`. We wraped this in an infinite loop to keep the server running indefinitely.
+When some event has ouccured on the FDs that we added to the epoll, `epoll_wait()` returns the number of FD’s for which events have occurred. The events themselves will be stored in the `events[]`. We wraped this in an infinite loop to keep the server running indefinitely.
 
 Now that we got the number of events, we have to iterate through the `events[]` array and proccess them. Since the epoll is only monitoring the listening socket right now the events will be from that only.
 
