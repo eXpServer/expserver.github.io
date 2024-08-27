@@ -306,4 +306,4 @@ int main() {
 ```
 ## Conclusion
 
-Now our UDP server is capable of handling multiple client requests simultaneously. Here we have achieved concurrency using multithreading. We are creating a new thread for each of the incoming client requests.In the previous stage we have seen how to make a server concurrent using epoll mechanism in which only a single thread is being used. Most of the modern web servers use epoll mechanism for obtaining concurrency.
+Now our UDP server is capable of handling multiple client requests simultaneously. Here we have achieved concurrency using multithreading. We are creating a new thread for each of the incoming client requests.In the previous stage we have seen how to make a server concurrent using epoll mechanism in which only a single thread is being used. Most of modern web servers use epoll mechanism for obtaining concurrency.
