@@ -40,7 +40,7 @@ export default defineConfig({
 							text: 'TCP/IP Model',
 							link: '/guides/resources/tcp-ip-model',
 						},
-						{ text: 'TCP', link: '/guides/resources/tcp' },
+						{ text: 'TCP Socket Programming', link: '/guides/resources/tcp-socket-programming' },
 						{ text: 'Sockets', link: '/guides/resources/sockets' },
 						{
 							text: 'Introduction to Linux epoll',
@@ -97,12 +97,16 @@ export default defineConfig({
 									link: '/roadmap/phase-0/stage-2',
 								},
 								{
-									text: 'Stage 3: Linux epoll',
+									text: 'Stage 3: UDP Multi-threading',
 									link: '/roadmap/phase-0/stage-3',
+									// text: 'Stage 3: Linux epoll',
+									// link: '/roadmap/phase-0/stage-3',
 								},
 								{
-									text: 'Stage 4: UDP Multi-threading',
+									text: 'Stage 4: Linux epoll',
 									link: '/roadmap/phase-0/stage-4',
+									// text: 'Stage 4: UDP Multi-threading',
+									// link: '/roadmap/phase-0/stage-4',
 								},
 								{
 									text: 'Stage 5: TCP Proxy',

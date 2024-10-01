@@ -1,4 +1,4 @@
-# Stage 3: Linux epoll
+# Stage 3: UDP with Multi-threading
 
 ## Recap
 
@@ -7,263 +7,307 @@
 
 ## Learning Objectives
 
-- We will modify our TCP server from [Stage 1](/roadmap/phase-0/stage-1) to serve multiple clients simultaneously.
+- We will implement a UDP server with multi-threading to handle multiple clients
+
+
+---
+
+::: tip PRE-REQUISITE READING
+
+- Read about [UDP](/guides/resources/udp.md)
+- Read about [multi-threading](/guides/resources/multi-threading.md)
+
+:::
 
 ## Introduction
 
 At the end of [Stage 2](/roadmap/phase-0/stage-2), we noticed how the server is only able to cater to one client at a time. When the client disconnects, the server breaks out of the recv-send while loop and exits the program. Later in the exercises we modified the server to accept clients sequentially, one after the other.
 
+Now we will use multithreading to implement the same. We can use **multithreading** along with either TCP or UDP protocol. In this stage we will use **UDP** (User Dtagram Protocol) which is a connectionless and unreliable protocol.
 
-In this stage we will use another approach to fix the drawbacks that we looked at in Stage 3. We will achieve this with the help of **_epoll_**.
+We will be using the following functions to setup UDP connections:
 
-### epoll
-
-[epoll](https://en.wikipedia.org/wiki/Epoll) is an I/O event notification mechanism provided by the Linux kernel. It allows applications to efficiently monitor multiple file descriptors for various I/O events.
-
-There are various [asynchronous I/O](https://en.wikipedia.org/wiki/Asynchronous_I/O) mechanisms available in operating systems. We have chosen epoll as it is the most widely used technique in modern applications.
+![udp_flow.png](/assets/resources/udp_flow.png)
 
 ## Implementation
+![udp_implementation.png](/assets/resources/udp_implementation.png)
 
-![implementation.png](/assets/stage-3/implementation.png)
+### UDP server
 
-Let us clearly understand the requirement once again. We have one single port that is listening for incoming client connections. Through this port, we want to be able to accept multiple clients, and cater to all of them simultaneously.
+ Create a file `udp_server.c` and place it inside `expserver/phase_0`. We would be implementing our server code here.
 
-Think of `tcp_server.c` as two parts:
+Let us start by adding all the headers mentioned in stage 1. In addition to these headers, add `#include <pthread.h>` , which provides the necessary functions and data types for creating and managing threads.
 
-1. **Setting up the server and waiting for clients**
+Now we can start with the creation of socket in the main function. 
 
-   - Creating the listening socket
-   - Binding the socket to a port
-   - Making the socket listen on the port
-
-2. **Accepting and serving clients**
-
-   - Accept client connection
-   - Revieve and send messages to client
-
-We will only be changing the part of the code where we are accepting the incoming client connections as the server setup does not need any change.
-
-The code until `listen()` will remain the same. The code snippet below is the only part that will require modification.
+In `socket()` function, for TCP protocol we used `SOCK_STREAM` as the type. Here, for UDP we will be using `SOCK_DGRAM`. Datagram sockets provide a connectionless, unreliable, and message-oriented form of communication.
 
 ```c
-// tcp_server.c
+int sockfd = socket(/*todo*/ , SOCK_DGRAM, /*todo*/);
+```
+Now, assign an address (consisting of an IP address and a port) to the socket using the data structure struct sockaddr_in  and then bind the socket created, as done in previous stages.
 
-while(1) {
-  int conn_sock_fd = accept(listen_sock_fd, (struct sockaddr *)&client_addr, &client_addr_len);
+::: tip IMPORTANT!
 
-  while(1) {
-    // recv() and send()
-    ...
-  }
+User Datagram Protocol (UDP) is a connectionless protocol that doesn't require a connection to be established between the source and destination before data is transmitted,i.e datagrams can come in any order from any source.Therefore, listen(), accept() and connect() system calls are not required in UDP. 
+
+:::
+
+::: tip IMPORTANT!
+
+We will be using sendto() and recvfrom() system calls, instead of send() and recv()  as used in TCP. Since we are not creating a connection socket, we use sendto() in order to specify the destination and recvfrom() to specify from where the data was received from.
+
+:::
+
+Now server is ready to receive messages from the clients. We can use recvfrom() to receive data from the client. 
+
+```C
+int n = recvfrom(sockfd, buffer, BUFF_SIZE, 0,(struct sockaddr*)&client_addr, &len);
+```
+
+recvfrom() function reads incoming data from the client and stores it in the character buffer, `buffer` .Upon successful reception, `recvfrom()` returns the number of bytes received, which is stored in the variable n.
+
+Now we have received the data from the client. To store the received data and client details we are creating a new data structure named `client_data_t` .
+
+```C
+typedef struct {
+    char message[BUFF_SIZE];
+    struct sockaddr_in client_addr;
+    int sockfd;
+    socklen_t addr_len;
+} client_data_t;
+```
+
+In the main function initialize a variable of type client_data_t , which will store the received data and client details.
+
+```C
+client_data_t* data = (client_data_t*)malloc(sizeof(client_data_t));
+        strcpy(data->message, buffer);
+        data->client_addr = client_addr;
+        data->sockfd = sockfd;
+        data->addr_len = len;
+```
+
+In the next step we will be creating a thread for handling the received request. We can use pthread_create() function for creating a new thread.
+
+```C
+pthread_create(&thread_id, NULL, handle_client, (void*)data)
+```
+
+pthread_create() function takes four arguments as follows.
+
+- **thread:** pointer to an unsigned integer value that returns the thread id of the thread created.
+- **attr:** pointer to a structure that is used to define thread attributes like detached state, scheduling policy, stack address, etc. Set to NULL for default thread attributes.
+- **handle_client:** pointer to a subroutine that is executed by the thread. The return type and parameter type of the subroutine must be of type void *. The function has a single attribute but if multiple values need to be passed to the function, a struct must be used.
+- **data:** pointer to void that contains the arguments to the function defined in the earlier argument.
+
+The thread created above will execute the handle_client function in which we are reversing the string and sending it back to the client. In this function we are passing an argument of type void*, which will be further typecasted to client_data_t* .
+
+Now we can see the handle_client function.
+
+```C
+void* handle_client(void* arg) {
+    client_data_t* data = (client_data_t*)arg;
+    printf("[CLIENT MESSAGE] %s",data->message);
+
+    // Reverse the string
+    /* todo */
+    
+    // Send back the reversed string
+    sendto(data->sockfd, data->message, strlen(data->message), 0,(struct sockaddr*)&(data->client_addr), data->addr_len);
+
+    free(data); // Free the allocated memory
+    pthread_exit(NULL);
 }
 ```
 
-The above code allowed us to connect to one client at a time and keep serving them indefinitely until the connection is broken.
+Here the sendto() function sends message to the client address without establishing a connection. After sending the message we can free the memory allocated to the argument of the function. At the end of handle_client, the thread can be terminated by calling pthread_exit().
 
-Now let us modify this section and use epoll to achieve our goal of concurrency.
+After successful termination of the thread, control will reach the main function where we will be detaching the created thread using pthread_detach() .
 
-::: tip PRE-REQUISITE READING
-Read the following [introduction to epoll](/guides/resources/introduction-to-linux-epoll) before proceeding further.
-:::
-
-First we’ll create an epoll instance using [`epoll_create1()`](https://man7.org/linux/man-pages/man2/epoll_create.2.html) given by the `<sys/epoll.h>` header. This returns a file descriptor (FD), and lets call it `epoll_fd`. Remember FD’s are just integers (unsigned integers, to be specific).
-
-```c
-int epoll_fd = epoll_create1(0);
+```C
+pthread_detach(thread_id);
 ```
+- **thread_id:** thread id of the thread that must be detached.
 
-We need _epoll_ to monitor specific FD’s that we are interested in and notify us if there are any events on it.
-`struct epoll_event` is a structure provided by the `<sys/epoll.h>` that specifies event related data that epoll provides. We will be using an `event` variable and an `events` array of `struct epoll_event` type for the following purposes
+Our final code will look like this.
+```C
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <pthread.h>
 
-1. `event` - to setup a FD with the events that should be monitored for and pass on to [`epoll_ctl()`](https://man7.org/linux/man-pages/man2/epoll_ctl.2.html) function to register it with `epoll_fd`.
-2. `events[MAX_EPOLL_EVENTS]` - to store the events that occur
+#define PORT 8080
+#define BUFF_SIZE 10000
 
-```c
-struct epoll_event event, events[MAX_EPOLL_EVENTS];
-```
+typedef struct {
+    char message[BUFF_SIZE];
+    struct sockaddr_in client_addr;
+    int sockfd;
+    socklen_t addr_len;
+} client_data_t;
 
-::: tip NOTE
-Add this to global definitions:
-
-```c
-#define MAX_EPOLL_EVENTS 10
-```
-
-`MAX_EPOLL_EVENTS` - maximum number of events that can be notified by the epoll at a time
-
-:::
-
-The structure definition of `epoll_event` is given below for our understanding. The fields that are relevent to the project will be explained when required.
-
-::: info
-In the current stage, we will look into how to get epoll working. An in depth look at epoll will be done at a later stage.
-:::
-
-```c
-struct epoll_event {
-  uint32_t      events;  /* Epoll events */
-  epoll_data_t  data;    /* User data variable */
-};
-
-union epoll_data {
-  void     *ptr;
-  int       fd;
-  uint32_t  u32;
-  uint64_t  u64;
-};
-
-typedef union epoll_data epoll_data_t;
-```
-
-We are now ready to utilize our epoll instance. The first FD we would like to monitor is the listening socket. So let us add that to the epoll. This will allow us to get notified of incoming connection requests.
-
-```c
-event.events = EPOLLIN;
-event.data.fd = /* listen socket FD */
-epoll_ctl(epoll_fd, EPOLL_CTL_ADD, /* listen socket FD */, &event);
-```
-
-- `EPOLLIN` - specifies that we are interested in read events on the socket
-- `epoll_ctl` - used to add, modify, or remove entries in the interest list of epoll; in this case we are adding the listening socket FD to our epoll instance `epoll_fd`. The `EPOLL_CTL_ADD` flag tells the epoll system call to add this socket to its monitoring list, using the event configuration specified in `event`.
-
----
-
-### Milestone #1
-
-Let us recap and look at what we have done so far
-
-- We created an epoll instance
-- We added the listening socket FD to epoll to monitor read events
-
----
-
-Next step is to wait for any events to happen. For this we use the [`epoll_wait()`](https://man7.org/linux/man-pages/man2/epoll_wait.2.html) blocking system call provided by the `<sys/epoll.h>` header.
-
-```c
-while(1) {
-  int n_ready_fds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, -1);
-  ...
+void strrev(char *str){
+for(int start=0, end=strlen(str) - 2; start<end ; start++, end--){
+char temp = str[start];
+str[start] = str[end];
+str[end]=temp;
 }
-```
 
-When some event has ouccured on the FDs that we added to the epoll, `epoll_wait()` returns the number of FD’s for which events have occurred. The events themselves will be stored in the `events[]`. We wraped this in an infinite loop to keep the server running indefinitely.
+}
 
-Now that we got the number of events, we have to iterate through the `events[]` array and proccess them. Since the epoll is only monitoring the listening socket right now the events will be from that only.
+void* handle_client(void* arg) {
+    client_data_t* data = (client_data_t*)arg;
+    printf("[CLIENT MESSAGE] %s",data->message);
 
-```c
-  for(/* interate from 0 to n_ready_fds */) {
-    int curr_fd = events[i].data.fd;
+    // Reverse the string
+    strrev(data->message);
 
-    /* accept client connection and add to epoll */
+    // Send back the reversed string
+    sendto(data->sockfd, data->message, strlen(data->message), 0,(struct sockaddr*)&(data->client_addr), data->addr_len);
 
-  }
-```
+    free(data); // Free the allocated memory
+    pthread_exit(NULL);
+}
 
-When we get a read event on the listen socket, we accept the connection and create a connection socket like we did in the previous stages. The only crucial difference here is to add the connection socket FD to the epoll. This will allow us to be notified of events that occur on the connection socket.
+int main() {
+    int sockfd;
+    char buffer[BUFF_SIZE];
+    struct sockaddr_in server_addr, client_addr;
+    pthread_t thread_id;
 
-This means that, from the next iteration, we could get two types of events:
+    // Create socket
+    sockfd = /* TODO */
+    
 
-- event on listen socket
-- event on connection socket
+    // Set server address parameters
+    server_addr.sin_family = /* TODO */       // IPv4
+    server_addr.sin_addr.s_addr = /* TODO */ // Any incoming interface
+    server_addr.sin_port = /* TODO */     // Server port
 
-The for loop should address both the cases and a simple if-else would be sufficient to differentiate between them:
+    // Bind the socket to the server address
+    bind(/* TODO */);
 
-```c
-  for(/* interate from 0 to n_ready_fds */) {
-    int curr_fd = events[i].data.fd;
+    printf("[INFO] server listening on port %d\n",PORT);
 
-    if (/* event is on listen socket */) {
-    	...
+    while (1) {
+        socklen_t len = sizeof(client_addr);
+        int n = recvfrom(/* TODO */);
+        buffer[n] = '\0';
+
+        // Allocate memory for client data to pass to the thread
+        client_data_t* data = (client_data_t*)malloc(sizeof(client_data_t));
+        strcpy(data->message, buffer);
+        data->client_addr = /* TODO */
+        data->sockfd = /* TODO */
+        data->addr_len = /* TODO */
+
+        // Create a new thread to handle the client
+        if (pthread_create(&thread_id, NULL, handle_client, (void*)data) != 0) {
+            perror("Failed to create thread");
+            free(data);
+        }
+
+        // Detach the thread to allow independent execution
+        pthread_detach(thread_id);
     }
-    else { // event on connection sockect
-    	...
-    }
-  }
-```
 
-If the event is on the connection socket, read message from client, print it on the terminal, reverse the message and send it to the client.
-
-The code within the `if` and `else` should be straight forward as we have implemented it previously in Stage 1.
-
----
-
-At the end, our code should look like this.
-
-```c
-/* previous code till listen() */
-
-/* epoll setup */
-
-/* adding listening socket to epoll */
-
-while(1) {
-  printf("[DEBUG] Epoll wait\n");
-  int n_ready_fds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, -1);
-
-  for (/* iterate from 0 to n_ready_fds */) {
-
-	if (/* event is on listen socket */) {
-
-      /* accept connection */
-
-	  /* add client socket to epoll */
-
-	}
-	else { // It is a connection socket
-
-	  /* read message from client */
-
-	  /* reverse message */
-
-	  /* send reversed message to client */
-
-	}
+    // Close the socket (unreachable in this infinite loop)
+    /* TODO */
+    return 0;
 }
 ```
 
----
+## Milestone 1
 
-### Milestone #2
+We have successfully created a udp server. Now lets do a small test and check how our code performs.
 
-Time to test our server! Compile and start `tcp_server.c` in a terminal. We should get the following message:
-
-```bash
-[INFO] Server listening on port 8080
-[DEBUG] Epoll wait
-```
-
-The `[DEBUG]` statement confirms that the epoll instance is created and has entered the while loop and the program is blocked till any events occur on FDs registered with the epoll.
-
-On another terminal, run `tcp_client.c`. Lets call this _client#1_. _client#1_ terminal will print this:
+Compile the code with the following command:
 
 ```bash
-[INFO] Connected to server
+gcc udp_server.c -o udp_server -pthread
 ```
 
-Upon client connection to server, the server terminal will enter the `epoll_wait` state again.
+start the server:
 
 ```bash
-[INFO] Client connected to server
-[DEBUG] Epoll wait
+./udp_server
 ```
 
-Open another client instance, say _client#2_ and connect to the server. We will get the same client message as the previous one. But the server terminal will notify that another client has connected to the server:
+Now you can test the server using a netcat client.Open another terminal in parallel and type the following command to start a netcat UDP client:
 
 ```bash
-[INFO] Client connected to server
-[DEBUG] Epoll wait
-[INFO] Client connected to server
-[DEBUG] Epoll wait
+nc -u localhost 8080
 ```
 
-Both the clients are connected to server at the same time! Try sending messages from both client terminals and see the output in _client#1_, _client#2_ and the server terminal.
+Try sending messages from the client.Check whether you are getting the reversed strings.
 
-Here is the expected output:
+Your UDP server is ready now.
 
-![milestone-2.png](/assets/stage-3/milestone-2.png)
+ Next lets see our UDP client code.
 
+### UDP Client
+
+Now lets implement the UDP client code.
+Create a file `udp_client.c` and place it inside `expserver/phase_0`. We would be implementing our client code here. The header files and global variables required are same as that in the TCP client code.
+
+Create a socket of type SOCK_DGRAM. As mentioned earlier here we wont be using connect() system call due to the connectionless property of UDP.
+
+Here we are sending the message to server using sendto() and the reversed string is received using recvfrom().
+
+Our final code looks like this.
+```C
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#define SERVER_PORT 8080
+#define BUFF_SIZE 10000
+
+int main() {
+    char buffer[BUFF_SIZE];
+    char message[BUFF_SIZE];
+
+    // Create socket
+    int sockfd = socket(/* TODO */);
+    
+    struct sockaddr_in server_addr;
+
+    // Set server address parameters
+    server_addr.sin_family = /* TODO */
+    server_addr.sin_addr.s_addr = /* TODO */
+    server_addr.sin_port = /* TODO */
+    
+    while (1) {
+        printf("Enter a string : ");
+        fgets(message, BUFF_SIZE, stdin);
+        
+
+        // Send the message to the server
+        sendto(sockfd, message, strlen(message), 0,(struct sockaddr*)&server_addr, sizeof(server_addr));
+
+        // Receive the reversed string from the server
+        int n = recvfrom(sockfd, buffer, BUFF_SIZE, 0, NULL, NULL);
+        buffer[n] = '\0';
+
+        printf("[SERVER MESSAGE] %s",buffer);
+    }
+
+    // Close the socket
+    close(sockfd);
+    return 0;
+}
+```
 ## Conclusion
 
-The server is now capable of handling multiple clients simultaneously using the _epoll_ I/O event notification mechanism in Linux. Recall that this is one of the methods that can be done to provide concurrency.
-
-In the next stage, we will explore the other method - [multi-threading](<https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>). The server will be using UDP sockets for connection. Both multi-threading and [UDP protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) will not be used in the subsequent stages of the roadmap to build eXpServer. Thus skipping this stage will not affect the continuity of the subsequent stages of the project. However, these are important concepts in networking. Hence these ideas are explored.
+Now our UDP server is capable of handling multiple client requests simultaneously. Here we have achieved concurrency using multithreading. We are creating a new thread for each of the incoming client requests.In the next stage we will see how to make a server concurrent using epoll mechanism which is used by most of modern web servers for obtaining concurrency.

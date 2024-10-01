@@ -237,4 +237,4 @@ In web severs like [Apache](https://en.wikipedia.org/wiki/Apache_HTTP_Server), m
 
 Whereas [Nginx](https://en.wikipedia.org/wiki/Nginx), a more recent web server compared to Apache, uses an event-driven architecture, which relies on epoll. Instead of creating a new thread for every new connection, a single thread is sufficient to handle multiple clients simultaneously.
 
-eXpServer uses the latter method to achieve concurrency. In the next stage we will modify our TCP server to handle multiple clients using epoll.
+eXpServer uses the latter method to achieve concurrency. In the next stage, we will explore the other method - [multi-threading](<https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>). The server will be using UDP sockets for connection. Both multi-threading and [UDP protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol) will not be used in the subsequent stages of the roadmap to build eXpServer. Thus skipping this stage will not affect the continuity of the subsequent stages of the project. However, these are important concepts in networking. Hence these ideas are explored.

@@ -13,8 +13,8 @@
 ::: tip PRE-REQUISITE READING
 
 - Read about the [TCP/IP Model](/guides/resources/tcp-ip-model)
-- Read about [TCP](/guides/resources/tcp)
-- Read about [Sockets](/guides/resources/sockets)
+- Read about [TCP Socket Programming](/guides/resources/tcp-socket-programming)
+<!-- - Read about [Sockets](/guides/resources/sockets) -->
 
 :::
 
@@ -53,9 +53,6 @@ Let us start by adding all the header includes and defines. The use of each head
 #define MAX_ACCEPT_BACKLOG 5
 ```
 
-
-> [!IMPORTANT] IMPORTANT
-> - Read about [Sockets](/guides/resources/sockets) before proceeding further.
 
 **Setting up the server:**
 
@@ -148,7 +145,7 @@ To handle an incoming client connection and gather details about the client's ad
 ```c
   // Creating an object of struct socketaddr_in
   struct sockaddr_in client_addr;
-  int client_addr_len;
+  socklen_t client_addr_len;
 
   // Accept client connection
   int conn_sock_fd = accept(listen_sock_fd, (struct sockaddr *)&client_addr, &client_addr_len);
@@ -348,7 +345,7 @@ int main() {
 
   // Creating an object of struct socketaddr_in
   struct sockaddr_in client_addr;
-  int client_addr_len;
+  socklen_t client_addr_len;
 
   // Accept client connection
   int conn_sock_fd = accept(listen_sock_fd, (struct sockaddr *)&client_addr, &client_addr_len);
