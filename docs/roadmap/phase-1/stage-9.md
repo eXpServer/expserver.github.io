@@ -25,7 +25,7 @@ This behavior would solve the problem of repeated notifications. In level trigge
 
 ## Design
 
-In this stage we will implement edge-triggered epoll. In edge triggered epoll, epoll_wait() will block until there are no I/O events since the previous call to epoll_wait(). So we have to keep track of any read or write events that are ready on the socket. To keep track of the read or write events, we will be using two flags named `read_ready` and `write_ready` respectively. These two flags are added to the `xps_conection_s` structure. We will be also adding two handlers `send_handler` and `recv_handler` to the `xps_connection_s` structure which will manage the sending and receiving of data in a connection. 
+In this stage we will implement edge-triggered epoll. In edge triggered epoll, epoll_wait() will block until there are no I/O events since the previous call to epoll_wait(). So we have to keep track of any read or write events that are ready on the socket. To keep track of the readiness of a connection socket to read or write, we will be using two flags named `read_ready` and `write_ready` respectively. These two flags are added to the `xps_conection_s` structure. We will be also adding two handlers `send_handler` and `recv_handler` to the `xps_connection_s` structure which will manage the sending and receiving of data in a connection. 
 
 We will also add a new function called `handle_connections()` in `xps_loop` module. This will check if any connections are ready for some read or write events currently. If no ready connections are available, then the timeout is set to -1 in epoll_wait(). Otherwise timeout is set to 0. If the timeout argument in epoll_wait() is set to 0, epoll_wait() does not block. It returns after checking the ready FD’s in the interest list of epoll. If timeout is set to -1, epoll_wait() will block until some events occur or until some exceptions happen on the FD’s in the interest list of epoll. 
 
@@ -71,7 +71,7 @@ void connection_loop_write_handler(void* ptr) {
 }
 ```
 
-In the `connection_read_handler` and `connection_write_handler` after sending or receiving is done we will have to set the corresponding flag to false. 
+In the `connection_read_handler` and `connection_write_handler` if recv() or send() is returning an error (EAGAIN or EWOULDBLOCK), then we will have to set the corresponding flag to false. EAGAIN and EWOULDBLOCK means that a non-blocking operation cannot be completed immediately. This essentially implies that no data is available for reading or the buffer is full so that no writting can take place.
 
 ```c
 void connection_read_handler(void* ptr) {
@@ -118,7 +118,7 @@ void connection_write_handler(void* ptr) {
 
 Initialize `send_handler` and `recv_handler` fields of the `xps_connection_s`  structure in the `xps_connection_create` function using `connection_read_handler` and `connection_write_handler` callbacks .
 
-To enable epoll edge triggering mode we have to set the EPOLLET flag.  EPOLLET flag is used to explicitly request the epoll to notify only when an FD changes its state. We have to pass EPOLLET along with EPOLLIN and EPOLLOUT as arguments in `xps_loop_attach` .
+To enable epoll edge triggering mode we have to set the EPOLLET flag.  EPOLLET flag is used to explicitly request the epoll to notify only when an FD changes its state. We have to pass EPOLLET along with EPOLLIN and EPOLLOUT flags in `xps_loop_attach` .
 
 ```c
 xps_connection_t* xps_connection_create(xps_core_t* core, int sock_fd) {
