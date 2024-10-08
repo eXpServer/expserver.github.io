@@ -432,7 +432,7 @@ int xps_pipe_sink_clear(xps_pipe_sink_t *sink, size_t len) {
 
 `xps_connection.h`
 
-As we are not invoking the callback functions depending on the ready state of connection but based on the pipe availability and source/sink status , the flags `read_ready` and `write_ready` are removed. The existing callback functions are also changed.  Add `source` and `sink` to `xps_connection_s` struct.
+As we are not invoking the callback functions depending on the ready state of connection but based on the pipe availability and source/sink status , the flags `read_ready` and `write_ready` are removed. The existing callback functions are also changed.  Add `source` and `sink` to `xps_connection_s` struct. `write_buff_list` removed as we would be using pipe’s buffer for data transfer.
 
 ::: details **expserver/src/network/xps_connection.h**
     
@@ -442,15 +442,15 @@ struct xps_connection_s {
     u_int sock_fd;
     xps_listener_t *listener;
     char *remote_ip;
-    xps_buffer_list_t *write_buff_list;//--
+    xps_buffer_list_t *write_buff_list;// [!code --]
     
-    xps_pipe_source_t *source;//++
-    xps_pipe_sink_t *sink;//++
+    xps_pipe_source_t *source;// [!code ++]
+    xps_pipe_sink_t *sink;// [!code ++]
 
-    bool read_ready;//--
-    bool write_ready;//--
-    xps_handler_t send_handler;//--
-    xps_handler_t receive_handler;//--
+    bool read_ready;// [!code --]
+    bool write_ready;// [!code --]
+    xps_handler_t send_handler;// [!code --]
+    xps_handler_t receive_handler;// [!code --]
 };
 ```
 ::: 
