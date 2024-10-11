@@ -45,11 +45,11 @@ At the bottom of the TCP/IP model is the Data Link layer. This layer deals with 
 
 Just as in the case of Interent layer, there is no direct interaction with the Data Link layer.
 
-### Data Flow over TCP/IP model
+## Data Flow over TCP/IP model
 
 Now let us look into how the data flow occurs from the source to destination through different layers of the TCP/IP model.
 
-Let’s take an example of a client(browser) requesting for a web page from the server. Here the client interacts with the application layer (user interface), i.e requesting the webpage by entering a URL. The data from the application layer now moves to the transport layer through the **socket**(to do-add link) created.Here, the data is fragmented into TCP segments and header is added to each of the segments,this header contains sending and receiving port numbers along with other fields, we will soon explain why this port number is included.These segments are further passed down to the Network layer where one more header is added to form the IP datagrams, this IP header contains source and destination IP address along with certain other fields(will explore the fields later). Then, IP datagrams are passed on to the lower layer i.e Data Link layer, here another header is added to form a link layer frame, this header includes the source and destination MAC address. This is how data encapsulation occurs in different layers of TCP/IP Protocol suite. Later, the physical layer sends the frame out over the network media. Inbetween the source and destination, the packets are passed through switches and routers. On reaching the final destination, the headers are removed sequentially at each layer(decapsulation), and finally data reaches the application layer of the destination.
+Let’s take an example of a client(browser) requesting for a web page from the server. Here the client interacts with the application layer (user interface), i.e requesting the webpage by entering a URL. The data from the application layer now moves to the transport layer through the [socket](https://en.wikipedia.org/wiki/Network_socket) created. Here, the data is fragmented into TCP segments and header is added to each of the segments, this header contains sending and receiving port numbers along with other fields, we will soon explain why this port number is included. These segments are further passed down to the Network layer where one more header is added to form the IP datagrams, this IP header contains source and destination IP address along with certain other fields(will explore the fields later). Then, IP datagrams are passed on to the lower layer i.e Data Link layer, here another header is added to form a link layer frame, this header includes the source and destination MAC address. This is how data encapsulation occurs in different layers of TCP/IP Protocol suite. Later, the physical layer sends the frame out over the network media. In between the source and destination, the packets are passed through switches and routers. On reaching the final destination, the headers are removed sequentially at each layer(decapsulation), and finally data reaches the application layer of the destination.
 
 ![tcp-ip-header.png](/assets/resources/tcp-ip-header.png)
 
@@ -59,9 +59,11 @@ Lets look into the structure of both TCP segment and IP datagram :
 
 ### Port Number
 
-The **source port** helps the receiver know which application on the sender's side sent the data. It also helps in mapping return traffic to the correct application or service. The **destination port** is the port number on the receiving device that indicates which specific service or application the data is intended for. Thus, the port number ensures application to application communication.
+The **source port** helps the receiver to know which application on the sender's side sent the data. It also helps in mapping return traffic to the correct application or service. The **destination port** is the port number on the receiving device that indicates which specific service or application the data is intended for. Thus, the port number ensures application to application communication.
 
+::: info
 Ports 0-1023 are reserved for well-known services (like HTTP, DNS) to ensure consistent network communication and prevent conflicts. Their use is restricted to privileged processes for security reasons. So the temporary port numbers are chosen from the range of dynamic ports (typically 1024–65535).
+:::
 
 ### IP Address
 

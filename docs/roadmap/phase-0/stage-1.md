@@ -14,7 +14,6 @@
 
 - Read about the [TCP/IP Model](/guides/resources/tcp-ip-model)
 - Read about [TCP Socket Programming](/guides/resources/tcp-socket-programming)
-<!-- - Read about [Sockets](/guides/resources/sockets) -->
 
 :::
 
@@ -241,7 +240,7 @@ The `memset` function is initialize the value of `buff` to 0.
 
 ```c
     // Read message from client to buffer
-    int read_n = recv(conn_sock_fd, buff, sizeof(buff), 0);
+    ssize_t read_n = recv(conn_sock_fd, buff, sizeof(buff), 0);
 ```
 
 The [`recv()`](https://man7.org/linux/man-pages/man2/recv.2.html) function is used to receive data from the connected socket. This function reads incoming data from the client and stores it in the character buffer `buff`. Upon successful reception, `recv()` returns the number of bytes received, which is stored in the variable `read_n`.
@@ -357,7 +356,7 @@ int main() {
     memset(buff, 0, BUFF_SIZE);
 
     // Read message from client to buffer
-    int read_n = recv(conn_sock_fd, buff, sizeof(buff), 0);
+    ssize_t read_n = recv(conn_sock_fd, buff, sizeof(buff), 0);
 
     // Client closed connection or error occurred
     if (read_n <= 0) {
