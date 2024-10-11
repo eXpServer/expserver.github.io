@@ -102,14 +102,11 @@ export default defineConfig({
 								{
 									text: 'Stage 3: UDP Multi-threading',
 									link: '/roadmap/phase-0/stage-3',
-									// text: 'Stage 3: Linux epoll',
-									// link: '/roadmap/phase-0/stage-3',
 								},
 								{
 									text: 'Stage 4: Linux epoll',
 									link: '/roadmap/phase-0/stage-4',
-									// text: 'Stage 4: UDP Multi-threading',
-									// link: '/roadmap/phase-0/stage-4',
+									
 								},
 								{
 									text: 'Stage 5: TCP Proxy',
