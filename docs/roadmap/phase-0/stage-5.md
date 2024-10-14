@@ -6,7 +6,7 @@
 
 ## Learning Objectives
 
-- We will combine the functionalities of a TCP server from [Stage 1](/roadmap/phase-0/stage-1) and client from [Stage 3](/roadmap/phase-0/stage-3) to make a TCP [proxy](https://en.wikipedia.org/wiki/Proxy_server) which will relay communication between a web browser and a python file server.
+- We will combine the functionalities of a TCP server from [Stage 1](/roadmap/phase-0/stage-1) and client from [Stage 4](/roadmap/phase-0/stage-4) to make a TCP [proxy](https://en.wikipedia.org/wiki/Proxy_server) which will relay communication between a web browser and a python file server.
 
 ## Introduction
 
@@ -30,7 +30,7 @@ Now that the local file server is running on port 3000, we can connect to it usi
 
 ![python-server.png](/assets/stage-4/python-server.png)
 
-Right now, the client (web browser), is directly accessing the file server. Our goal is to modify the TCP server code from Stage 3 to turn it into a TCP proxy server, so that all the communication between the client and upstream server goes though the proxy.
+Right now, the client (web browser), is directly accessing the file server. Our goal is to modify the TCP server code from Stage 4 to turn it into a TCP proxy server, so that all the communication between the client and upstream server goes though the proxy.
 
 ## Implementation
 

@@ -2,13 +2,13 @@
 
 ## epoll 
 
-*epoll* is an I/O event notification mechanism widely being used in modern web servers like Nginx. *epoll* stands for event poll and it is a Linux specific construct. 
+*epoll* is an I/O event notification mechanism widely being used in modern web servers like [Nginx](https://en.wikipedia.org/wiki/Nginx). *epoll* stands for event poll and it is a Linux specific construct. 
 
-Epoll refers to a kernel data structure. It maintains a list of file descriptors, which allows a process to get notifications whenever an I/O event is possible on any of these file descriptors. epoll_create(), epoll_ctl() and epoll_wait() are the three main system calls that deal with the implementation of epoll.  All these system calls are included in the sys/epoll.h header file.
+Epoll refers to a kernel data structure. It maintains a list of file descriptors, which allows a process to get notifications whenever an I/O event is possible on any of these file descriptors. `epoll_create()`, `epoll_ctl()` and `epoll_wait()` are the three main system calls that deal with the implementation of epoll.  All these system calls are included in the `<sys/epoll.h>` header file.
 
-## epoll_create()
+## `epoll_create()`
 
-epoll_create() is the system call used to create an epoll instance.  An epoll instance is identified by a file descriptor in linux. The epoll_create() returns a file descriptor that identify the newly created kernel data structure.
+`epoll_create()` is the system call used to create an epoll instance. An epoll instance is identified by a file descriptor in linux. The `epoll_create()` returns a file descriptor that identify the newly created kernel data structure.
 
 ```c
 #include <sys/epoll.h>
@@ -17,31 +17,31 @@ int epoll_create(int size);
 
 **Arguments**
 
-**size** - This is the only argument for epoll_create(). It is of integer type. It refers to the number of file descriptors that the process wants to monitor. The kernel decides the size required for the epoll instance(data structure) according to the value in size.
+**size** - This is the only argument for `epoll_create(`). It is of integer type. It refers to the number of file descriptors that the process wants to monitor. The kernel decides the size required for the epoll instance(data structure) according to the value in size.
 
 **Return value**
 
-epoll_create() returns an integer which refers to the file descriptor of the created epoll instance.
+`epoll_create()` returns an integer which refers to the file descriptor of the created epoll instance.
 
-### epoll_create1()
+### `epoll_create1()`
 
-This system call is also used to create an epoll instance similar to epoll_create(), but the arguments differ.
+This system call is also used to create an epoll instance similar to `epoll_create()`, but the arguments differ.
 
 ```c
 int epoll_create1(int flags)
 ```
 
-Here the flags can be either 0 or EPOLL_CLOEXEC
+Here the flags can be either `0` or `EPOLL_CLOEXEC`
 
-if the flag is set to zero, this function behaves same as epoll_create()
+if the flag is set to zero, this function behaves same as `epoll_create()`
 
-when the flag is set to EPOLL_CLOEXEC, whenever a child process is forked from the current process it closes the epoll file descriptor in the child before starting its execution. So only the current process will have access to the epoll instance.
+when the flag is set to `EPOLL_CLOEXEC`, whenever a child process is forked from the current process it closes the epoll file descriptor in the child before starting its execution. So only the current process will have access to the epoll instance.
 
-Since epoll instance is treated as a file descriptor, we use the close() system call in unistd.h header file to close an epoll instance.
+Since epoll instance is treated as a file descriptor, we use the `close()` system call in `<unistd.h>` header file to close an epoll instance.
 
-## epoll_ctl()
+## `epoll_ctl()`
 
-An epoll instance can maintain a list of file descriptors that has to be monitored. All file descriptors registered with an epoll instance is collectively referred to as epoll list or interest list. Whenever any of the file descriptors become ready for I/O operations, they are added to the ready list. Ready list is a subset of interest list. epoll_ctl() system call is used to add, modify or delete file descriptors to be monitored in the interest list of epoll.
+An epoll instance can maintain a list of file descriptors that has to be monitored. All file descriptors registered with an epoll instance is collectively referred to as epoll list or **interest list**. Whenever any of the file descriptors become ready for I/O operations, they are added to the **ready list**. Ready list is a subset of interest list. `epoll_ctl()` system call is used to add, modify or delete file descriptors to be monitored in the interest list of epoll.
 
 ```c
 #include<sys/epoll.h>
@@ -62,7 +62,7 @@ int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
     
 4. **event** - It is of epoll_event type. 
     
-    `epoll_event` structure is included in the `sys/epoll.h` header. The structure of epoll_event is shown below.
+    `epoll_event` structure is included in the `<sys/epoll.h>` header. The structure of `epoll_event` is shown below.
     
     ```c
     struct epoll_event 
@@ -94,7 +94,7 @@ int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
 
  **Return Value -** when successful, epol_ctl returns zero. When an error occurs, it returns -1 and errno is set to indicate the error.
 
-## epoll_wait()
+## `epoll_wait()`
 
 This system call is used to notify the process, when some event has occurred on the interest list of the epoll instance. It blocks the process until any of the descriptors being monitored becomes ready for I/O events.
 
@@ -106,9 +106,9 @@ int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout)
 **Arguments**
 
 1. **epfd** - It is of type integer. It is the file descriptor that refers to the epoll instance.
-2. **events** - It is an array of `epoll_event` structures. It is allocated by the calling process. The values in this array is filled when epoll_wait returns. It will have the list of file descriptors that are in ready state.  
-3. **maxevents** - ****It is of integer type. It refers to the length of events array.
-4. **timeout** - It is of integer type. It refers to the time in milliseconds for which epoll_wait() will block. If it is set to 0, epoll_wait() will not block and if it is set to -1, it will block forever.
+2. **events** - It is an array of `epoll_event` structures. It is allocated by the calling process. The values in this array is filled when `epoll_wait` returns. It will have the list of file descriptors that are in ready state.  
+3. **maxevents** - It is of integer type. It refers to the length of events array.
+4. **timeout** - It is of integer type. It refers to the time in milliseconds for which `epoll_wait()` will block. If it is set to 0, `epoll_wait()` will not block and if it is set to -1, it will block forever.
 
  
 

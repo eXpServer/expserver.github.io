@@ -41,19 +41,22 @@ export default defineConfig({
 							link: '/guides/resources/tcp-ip-model',
 						},
 						{ text: 'TCP Socket Programming', link: '/guides/resources/tcp-socket-programming' },
-						{ text: 'Sockets', link: '/guides/resources/sockets' },
+						{ text: 'UDP Socket Programming', link: '/guides/resources/udp-socket-programming' },
+						{ text: 'Process and Threads', link: '/guides/resources/process-and-threads' },
+						{ text: 'System Calls', link: '/guides/resources/system-calls' },
 						{
 							text: 'Introduction to Linux epoll',
 							link: '/guides/resources/introduction-to-linux-epoll',
+						},
+						{
+							text: 'Linux epoll tutorial',
+							link: '/guides/resources/linux-epoll-tutorial',
 						},
 						{
 							text: 'Blocking & Non-Blocking Sockets',
 							link: '/guides/resources/blocking-and-non-blocking-sockets',
 						},
 						{ text: 'HTTP', link: '/guides/resources/http' },
-						{ text: 'UDP', link: '/guides/resources/udp' },
-						{ text: 'Multi-threading', link: '/guides/resources/multi-threading' },
-						{ text: 'Fork', link: '/guides/resources/fork' },
 						
 						// { text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },
 						// { text: 'File descriptors', link: '/guides/resources/file-descriptors' },
@@ -99,14 +102,11 @@ export default defineConfig({
 								{
 									text: 'Stage 3: UDP Multi-threading',
 									link: '/roadmap/phase-0/stage-3',
-									// text: 'Stage 3: Linux epoll',
-									// link: '/roadmap/phase-0/stage-3',
 								},
 								{
 									text: 'Stage 4: Linux epoll',
 									link: '/roadmap/phase-0/stage-4',
-									// text: 'Stage 4: UDP Multi-threading',
-									// link: '/roadmap/phase-0/stage-4',
+									
 								},
 								{
 									text: 'Stage 5: TCP Proxy',

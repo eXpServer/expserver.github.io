@@ -9,20 +9,20 @@ The guides feature supplementary documentation intended for your reference as yo
 
 ✅ Reviewed
 🟡 To be reviewed
+⚪ Partially reviewed
 
 - ✅ [Architecture](/guides/resources/architecture)
 - ✅ [Coding Conventions](/guides/resources/coding-conventions)
 - ✅ [TCP/IP Model](/guides/resources/tcp-ip-model)
-  <!-- - ✅ [TCP](/guides/resources/tcp) -->
-  <!-- - ✅ [Sockets](/guides/resources/sockets) -->
+- ✅ [TCP Socket Programming](/guides/resources/tcp-socket-programming)
+- 🟡 [UDP Socket Programming](/guides/resources/udp-socket-programming)
+- ⚪ [Process and Threads](/guides/resources/process-and-threads)
+- ⚪ [System Calls](/guides/resources/system-calls)
 - ✅ [Linux epoll](/guides/resources/introduction-to-linux-epoll)
 - 🟡 [Linux epoll tutorial](/guides/resources/linux-epoll-tutorial)
 - 🟡 [Blocking & Non-Blocking Sockets](/guides/resources/blocking-and-non-blocking-sockets)
-- 🟡 [TCP Socket Programming](/guides/resources/tcp-socket-programming)
 - 🟡 [HTTP](/guides/resources/http)
-- 🟡 [UDP](/guides/resources/udp)
-- 🟡 [Multi-threading](/guides/resources/multi-threading)
-- 🟡 [Fork()](/guides/resources/fork)
+
 
 ## References
 
