@@ -183,6 +183,7 @@ xps_pipe_t *xps_pipe_create(xps_core_t *core, size_t buff_thresh, xps_pipe_sourc
     /* Add pipe to 'pipes' list of core*/
     
     /*Attach source and sink to pipe*/
+    /*Make both source and sink of pipe active*/
     
     logger(LOG_DEBUG, "xps_pipe_create()", "created pipe");
 
@@ -304,7 +305,7 @@ xps_pipe_source_t *xps_pipe_source_create(void *ptr, xps_handler_t handler_cb,
     // Init values
     source->pipe = NULL;
     source->ready = false;
-    source->active = true;
+    source->active = false;
     /*similarly initialise the remaining fields of source instance*/
 
     logger(LOG_DEBUG, "xps_pipe_source_create()", "create pipe_source");
