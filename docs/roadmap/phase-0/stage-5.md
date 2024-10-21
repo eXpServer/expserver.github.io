@@ -376,13 +376,17 @@ The proxy should go back to the `epoll_wait` state and wait for more events.
 [DEBUG] Epoll wait
 ```
 
-Keep testing the code by navigating across the file sever, and opening files. Make sure the proxy does not exit out of the program.
+Keep testing the code by navigating across the file server, and opening files. Make sure the proxy does not exit out of the program.
 
 ## Experiments
 
 ### Experiments #1
 
-🟡 Screenshots with sample files and python server. Open the files and take more ss (three windows)
+Screenshots of opening files using proxy server. Try to open the files from the directory and observe the changes displaying tn the proxy server.
+
+![proxy_server1.png](/assets/resources/proxy_server1.png)
+![proxy_server2.png](/assets/resources/proxy_server2.png)
+![proxy_server3.png](/assets/resources/proxy_server3.png)
 
 ## Conclusion
 

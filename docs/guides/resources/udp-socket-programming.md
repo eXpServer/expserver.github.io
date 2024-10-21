@@ -18,7 +18,7 @@ UDP handles data by dividing it into small, independent packets called “[datag
 
 UDP does not provide mechanisms for dividing data into segments or handling large data sizes like TCP does. If datagrams exceed the [maximum transmission unit](https://en.wikipedia.org/wiki/Maximum_transmission_unit) (MTU) of the network, they may be fragmented at the IP layer, but UDP itself does not handle reassembly. The minimum datagram size is 8 bytes for the header, and the maximum is typically determined by the network’s MTU.
 
-![tcp-ip-packet.png](/assets/resources/tcp-ip-packet.png)
+![tcp-ip-packet.png](/assets/resources/udp-ip-packet.png)
 
 ## UDP Socket Programming
 

@@ -223,9 +223,9 @@ Now,we can modify the client code for creating multiple clients in a single exec
 
 :::
 
-Create a file `udp_multi_client.c` and place it inside `expserver/phase_0`. We would be implementing our client code here. 
+Create a file `tcp_multi_client.c` and place it inside `expserver/phase_0`. We would be implementing our client code here. 
 
-Try to run the the modified server code from the experiment 2 and below client code written in the `udp_multi_client.c` file. Observe how multiple clients are created concurrently in a single client code using `fork()` system call and their corresponding output. Try to run it again by updating the number of clients created in the client code and observe how the server deals with it iteratively. 
+Try to run the the modified server code from the experiment 2 and below client code written in the `udp_multi_clients.c` file. Observe how multiple clients are created concurrently in a single client code using `fork()` system call and their corresponding output. Try to run it again by updating the number of clients created in the client code and observe how the server deals with it iteratively. 
 
 ```c
 #include <arpa/inet.h>
@@ -332,7 +332,7 @@ Recall the problem from [Experiment #1](/roadmap/phase-0/stage-2#experiment-1). 
 1. With [multi-threading](<https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>)
 2. With [epoll](https://en.wikipedia.org/wiki/Epoll)
 
-In web severs like [Apache](https://en.wikipedia.org/wiki/Apache_HTTP_Server), multi-threading was used for serving multiple clients simultaneously. Each incoming client request is typically assigned to a separate thread, allowing the server to serve multiple clients concurrently without blocking or slowing down other requests.
+In web servers like [Apache](https://en.wikipedia.org/wiki/Apache_HTTP_Server), multi-threading was used for serving multiple clients simultaneously. Each incoming client request is typically assigned to a separate thread, allowing the server to serve multiple clients concurrently without blocking or slowing down other requests.
 
 Whereas [Nginx](https://en.wikipedia.org/wiki/Nginx), a more recent web server compared to Apache, uses an event-driven architecture, which relies on epoll. Instead of creating a new thread for every new connection, a single thread is sufficient to handle multiple clients simultaneously.
 
