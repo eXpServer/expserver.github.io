@@ -23,9 +23,9 @@ In this stage we are creating a new module named `xps_upstream`. An upstream mod
 
 ![implementation.png](/assets/stage-11/implementation.png)
 
-In this stage a new module named upstream module is added. The following existing modules are also modified.
+In this stage a new module named `xps_upstream` is added. The following existing modules are also modified.
 
-- xps_listener
+- `xps_listener`
 
 ### `xps_upstream` Module
 
