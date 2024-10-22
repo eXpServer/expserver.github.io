@@ -29,11 +29,11 @@ Content-Length: 123
 
 The first line contains the HTTP request line. On parsing the following information is retrieved
 
-Method: GET
+Method: `GET`
 
-URI/Path: /index.html
+URI/Path: `/index.html`
 
-HTTP Version: HTTP/1.1
+HTTP Version: `HTTP/1.1`
 
 2. **Header Parsing**
 
@@ -146,14 +146,14 @@ A struct `xps_http_req_s` is introduced, which stores the information retrieved 
 
 - `parser_state`: Holds the current state of the HTTP request parsing process.
 - `method_n`: Stores the parsed HTTP method (HTTP_POST, etc.).
-- `request_line`: Holds the full request line, such as POST https://www.devdiary.live:3000/api/problems HTTP/1.1.
+- `request_line`: Holds the full request line, such as `POST https://www.devdiary.live:3000/api/problems HTTP/1.1`.
 - `method`: Stores the HTTP method (e.g., POST).
-- `uri`: Holds the full URI (e.g., https://www.devdiary.live:3000/api/problems?key=val).
+- `uri`: Holds the full URI (e.g., `https://www.devdiary.live:3000/api/problems?key=val`).
 - `schema`: Stores the URI schema (e.g., https).
-- `host`: Stores the host part of the URI (e.g., www.devdiary.live).
+- `host`: Stores the host part of the URI (e.g., `www.devdiary.live`).
 - `port`: Stores the port number extracted from the URI (e.g., 3000).
-- `path`: Contains the full path (e.g., /api/problems?key=val).
-- `pathname`:  Contains just the path without any query parameters (e.g., /api/problems).
+- `path`: Contains the full path (e.g., `/api/problems?key=val`).
+- `pathname`:  Contains just the path without any query parameters (e.g., `/api/problems`).
 - `http_version`: Stores the HTTP version (e.g., 1.1). `http_major` and `http_minor` point to the start of the major and minor version numbers in the buffer.
 - `headers`: Holds the parsed headers. Each header will be stored as a key-value pair in this vector.
 - `header_key_start`, `header_key_end`, `header_val_start`, `header_val_end`: These pointers are used during header parsing to mark the start and end of the key and value of each header.
@@ -960,7 +960,7 @@ printf("REQUEST LINE: %s\n", http_req->request_line);
 /*similarly print method,uri,...etc*/
 ```
 
-Start the server. Open a browser tab and enter a HTTP request for eg: http://localhost:8001/example.com
+Start the server. Open a browser tab and enter a HTTP request for eg: `http://localhost:8001/example.com`
 
 Verify the following output is printed in terminal thus ensuring the parsing of request line
 
@@ -1001,7 +1001,7 @@ strcat(file_path, session->http_req->path);
 
 As in the previous file server implementation, the file to be opened should be present in the public folder.
 
-We can verify the modification by requesting the file through browser. Start the server and in browser, enter http request message for getting the file. For eg: http://localhost:8001/sample.txt . Here, sample.txt is the file to be opened and it is present in the public folder. Verify that the contents of file are displayed in browser.
+We can verify the modification by requesting the file through browser. Start the server and in browser, enter http request message for getting the file. For eg: `http://localhost:8001/sample.txt` . Here, sample.txt is the file to be opened and it is present in the public folder. Verify that the contents of file are displayed in browser.
 
 Now try how the browser responds if the file is not present in public folder.
 
