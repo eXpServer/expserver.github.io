@@ -166,7 +166,7 @@ export default defineConfig({
 								},
 								{
 									text: 'Stage 14: HTTP Request Module',
-									link: '/roadmap/phase-2/stage-15',
+									link: '/roadmap/phase-2/stage-14',
 								},
 								{
 									text: 'Stage 15: HTTP Response Module',
