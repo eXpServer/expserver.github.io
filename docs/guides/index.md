@@ -16,7 +16,7 @@ The guides feature supplementary documentation intended for your reference as yo
 - ✅ [TCP/IP Model](/guides/resources/tcp-ip-model)
 - ✅ [TCP Socket Programming](/guides/resources/tcp-socket-programming)
 - 🟡 [UDP Socket Programming](/guides/resources/udp-socket-programming)
-- ⚪ [Process and Threads](/guides/resources/process-and-threads)
+- ✅ [Process and Threads](/guides/resources/process-and-threads)
 - ⚪ [System Calls](/guides/resources/system-calls)
 - ✅ [Linux epoll](/guides/resources/introduction-to-linux-epoll)
 - 🟡 [Linux epoll tutorial](/guides/resources/linux-epoll-tutorial)
