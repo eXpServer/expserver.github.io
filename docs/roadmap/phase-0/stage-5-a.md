@@ -1,4 +1,4 @@
-# Stage 5: TCP Proxy
+# Stage 5 a): TCP Proxy
 
 ## Recap
 
@@ -390,6 +390,4 @@ Screenshots of opening files using proxy server. Try to open the files from the 
 
 ## Conclusion
 
-This marks the end of Phase 0.
-
-Phase 0 laid the foundation as to what is about to come next. Starting from the next phase, we start building eXpServer. Read more about Phase 1 [here](/roadmap/phase-1/).
+In this stage we succesfully implemented the TCP proxy. In the next stage which act as a supplimenatary stage to this, we will implement a simple File Transfer System for transferring the the contents of a file to another file using TCP. 
