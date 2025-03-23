@@ -249,8 +249,13 @@ Let's ensure we handle any unexpected failures by implementing error handling.
 
 ```c
     // Client closed connection or error occurred
-    if (read_n <= 0) {
-      printf("[INFO] Client disconnected. Closing server\n");
+    if (read_n < 0) {
+      printf("[INFO] Error occured. Closing server\n");
+      close(conn_sock_fd);
+      exit(1);
+    }
+    else if (read_n == 0) {
+      printf("[INFO] Client Disconnected. Closing server\n");
       close(conn_sock_fd);
       exit(1);
     }
