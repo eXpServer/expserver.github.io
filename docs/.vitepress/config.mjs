@@ -243,7 +243,7 @@ export default defineConfig({
 			],
 		},
 
-		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer' }],
+		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer'  }],
 	},
 	sitemap: {
 		hostname: 'https://expserver.github.io',
