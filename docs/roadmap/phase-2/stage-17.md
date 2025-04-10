@@ -1,1 +1,1 @@
-# Stage 17: Direcotry Browsing
+# Stage 17: Directory Browsing
