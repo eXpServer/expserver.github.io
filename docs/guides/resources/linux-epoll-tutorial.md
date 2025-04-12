@@ -95,7 +95,7 @@ int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
     
     The fields of the `epoll_event` structure are as follows:
 
-- **events** - It is of type `uint32_t`, which refers to an unsigned 32 bit integer. This field is used to specify which events the file descriptor (FD) should be monitored for in the epoll instance. The major available events include,
+- `events` - It is of type `uint32_t`, which refers to an unsigned 32 bit integer. This field is used to specify which events the file descriptor (FD) should be monitored for in the epoll instance. The major available events include,
     
     `EPOLLIN` - used for read operations
     
@@ -103,14 +103,14 @@ int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
     
     `EPOLLLET` - requests edge triggered notifications for the FD
     
-- **data** - This field is a union that specifies the data that kernel should save and return when the file descriptor becomes ready.
+- `data` - This field is a union that specifies the data that kernel should save and return when the file descriptor becomes ready.
 
-      The fields of the union `epoll_data` are as follows: 
+    The fields of the union `epoll_data` are as follows: 
 
-- **void *ptr** - A pointer to some user-defined object or data. This is useful when we need to store a reference to a custom object (such as a structure) that is associated with the event.
-- **int fd** - The file descriptor we are interested in and on which events are being monitored.
-- **uint32_t u32** - A 32 bit unsigned integer which is used to store flags or timeout values.
-- **uint64_t u64** - A 64 bit unsigned integer that can store large values required for specific event processing flags or timeout values.
+- `void *ptr` - A pointer to some user-defined object or data. This is useful when we need to store a reference to a custom object (such as a structure) that is associated with the event.
+- `int fd` - The file descriptor we are interested in and on which events are being monitored.
+- `uint32_t u32` - A 32 bit unsigned integer which is used to store flags or timeout values.
+- `uint64_t u64` - A 64 bit unsigned integer that can store large values required for specific event processing flags or timeout values.
 
 When the `epoll_ctl()` function call is successful, it returns `0`. If an error occurs, it returns `-1`, and the global variable `errno` is set to indicate the specific error that occurred. Some common errors include
 

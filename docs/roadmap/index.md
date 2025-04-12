@@ -46,9 +46,9 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 
 ### Phase 2: Implementing HTTP support
 
-- [Overview](phase-2/)
+- 🟡 [Overview](phase-2/)
 - 🟡 [Stage 14: HTTP Request Module](phase-2/stage-14)
-- [Stage 15: HTTP Response Module](phase-2/stage-15)
+- 🟡 [Stage 15: HTTP Response Module](phase-2/stage-15)
 - [Stage 16: Config Module](phase-2/stage-16)
 - [Stage 17: Directory Browsing](phase-2/stage-17)
 
