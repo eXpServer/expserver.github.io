@@ -3141,7 +3141,7 @@ xps_config.c
 
 The functions implemented are briefly explained below(do all the error checks for NULL as and when required) :
 
-- xps_config_create : Creates and initializes a configuration structure (`xps_config_t`) by parsing a JSON file at the specified `config_path`.
+- `xps_config_create` : Creates and initializes a configuration structure (`xps_config_t`) by parsing a JSON file at the specified `config_path`.
 
 ```c
 xps_config_t *xps_config_create(const char *config_path) {
@@ -3164,8 +3164,8 @@ xps_config_t *xps_config_create(const char *config_path) {
 }
 ```
 
-- xps_config_destroy : Cleans up and frees the memory allocated for the configuration object. Implement it by deallocating the servers and the corresponding listeners and routes. Also de-initialize the vectors.
-- xps_config_lookup : Performs a lookup to find the correct configuration based on an HTTP request (xps_http_req_t) and client details (xps_connection_t).
+- `xps_config_destroy` : Cleans up and frees the memory allocated for the configuration object. Implement it by deallocating the servers and the corresponding listeners and routes. Also de-initialize the vectors.
+- `xps_config_lookup` : Performs a lookup to find the correct configuration based on an HTTP request (`xps_http_req_t`) and client details (`xps_connection_t`).
 
 ```c
 xps_config_lookup_t *xps_config_lookup(xps_config_t *config, xps_http_req_t *http_req,
@@ -3214,11 +3214,11 @@ xps_config_lookup_t *xps_config_lookup(xps_config_t *config, xps_http_req_t *htt
 }
 ```
 
-- xps_config_lookup_destroy : Implement yourself
-- parse_server : Parses the server_object from the JSON configuration and populates the xps_config_server_t structure.  Extracts and initializes server listeners, hostnames, and routes. For each listener, it calls parse_listener, and for each route, it calls parse_route. It then stores the parsed information into the server structure. Implement it.
-- parse_route : Parses the route configuration from the route_object in the JSON and fills the xps_config_route_t structure. Extracts the req_path and type of the route (the route type could be file_serve, reverse_proxy, or redirect). Based on the route type, it extracts additional information such as dir_path (for file serving), upstreams (for reverse proxy), and redirect_url (for redirects). It also manages the index files for file serving routes. Implement it.
-- parse_listener : Purpose: Parses listener configuration from the listener_object in the JSON and populates the xps_config_listener_t structure. Extracts the host and port values for the listener and validates them. Populates the listener structure with this data. Implement it.
-- parse_all_listener : The function iterates through all the servers and their listeners in the configuration. It checks whether each listener (identified by its host and port) already exists in the _all_listeners array. If the listener doesn't exist, it adds it to the _all_listeners array. This ensures that all listeners are collected in _all_listeners, but duplicates (based on the same host and port) are avoided. Implement it.
+- `xps_config_lookup_destroy` : Implement yourself
+- `parse_server` : Parses the server_object from the JSON configuration and populates the `xps_config_server_t` structure.  Extracts and initializes server listeners, hostnames, and routes. For each listener, it calls `parse_listener`, and for each route, it calls `parse_route`. It then stores the parsed information into the server structure. Implement it.
+- `parse_route` : Parses the route configuration from the route_object in the JSON and fills the `xps_config_route_t` structure. Extracts the `req_path` and type of the route (the route type could be file_serve, reverse_proxy, or redirect). Based on the route type, it extracts additional information such as `dir_path` (for file serving), upstreams (for reverse proxy), and `redirect_url` (for redirects). It also manages the index files for file serving routes. Implement it.
+- `parse_listener` : Purpose: Parses listener configuration from the listener_object in the JSON and populates the `xps_config_listener_t` structure. Extracts the host and port values for the listener and validates them. Populates the listener structure with this data. Implement it.
+- `parse_all_listener` : The function iterates through all the servers and their listeners in the configuration. It checks whether each listener (identified by its host and port) already exists in the  `_all_listeners` array. If the listener doesn't exist, it adds it to the _all_listeners array. This ensures that all listeners are collected in `_all_listeners`, but duplicates (based on the same host and port) are avoided. Implement it.
 
 ### Core Module - Modifications
 
