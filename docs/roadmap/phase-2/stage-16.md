@@ -3412,7 +3412,7 @@ Try by replacing files of different format. You have to update JSON configuratio
     This will create the upstream server mentioned in xps_config.json.
     
 
- The files in the directory in which the python server is running can be viewed from the urls [`localhost:8001/hello`](http://localhost:8001/hello) and [`localhost:8002`](http://localhost:8002) . In this case, the url is redirected to the second one.
+ The files in the directory in which the python server is running can be viewed from the urls [`localhost:8001/hello`] and [`localhost:8002`] . In this case, the url is redirected to the second one.
 
 - `localhost:8003`  would be redirecting to the `redirect_url` mentioned in the JSON configuration file.
 
