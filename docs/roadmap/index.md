@@ -55,7 +55,7 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 ### Phase 3: Adding features to eXpServer
 
 - [Overview](phase-3/)
-- [Stage 18: IP Whitelist/Blacklist](phase-3/stage-1)
+- [Stage 18: IP Whitelist/Blacklist](phase-3/stage-18)
 - [Stage 19: Gzip Compression](phase-3/stage-19)
 - [Stage 20: Load Balancing](phase-3/stage-20)
 - [Stage 21: Request timeouts](phase-3/stage-21)
