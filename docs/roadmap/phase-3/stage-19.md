@@ -1,1 +1,1 @@
-# Stage 19: IP Whitelist/Blacklist
+# Stage 19: Gzip Compression

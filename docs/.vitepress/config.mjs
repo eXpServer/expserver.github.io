@@ -109,8 +109,12 @@ export default defineConfig({
 									
 								},
 								{
-									text: 'Stage 5: TCP Proxy',
-									link: '/roadmap/phase-0/stage-5',
+									text: 'Stage 5 a): TCP Proxy',
+									link: '/roadmap/phase-0/stage-5-a',
+								},
+								{
+									text: 'Stage 5 b): File Transfer using TCP',
+									link: '/roadmap/phase-0/stage-5-b',
 								},
 							],
 						},
@@ -177,9 +181,10 @@ export default defineConfig({
 									link: '/roadmap/phase-2/stage-16',
 								},
 								{
-									text: 'Stage 17: HTTP Specification',
-									link: '/roadmap/phase-2/stage-17',
+									text: 'Stage 17: Directory Browsing',
+									link: '/roadmap/phase-3/stage-17',
 								},
+				
 							],
 						},
 						{
@@ -191,24 +196,20 @@ export default defineConfig({
 									link: '/roadmap/phase-3/',
 								},
 								{
-									text: 'Stage 18: Directory Browsing',
+									text: 'Stage 18: IP Whitelist/Blacklist',
 									link: '/roadmap/phase-3/stage-18',
 								},
 								{
-									text: 'Stage 19: IP Whitelist/Blacklist',
+									text: 'Stage 19: Gzip Compression',
 									link: '/roadmap/phase-3/stage-19',
 								},
 								{
-									text: 'Stage 20: Gzip Compression',
+									text: 'Stage 20: Load Balancing',
 									link: '/roadmap/phase-3/stage-20',
 								},
 								{
-									text: 'Stage 21: Load Balancing',
+									text: 'Stage 21: Request timeouts',
 									link: '/roadmap/phase-3/stage-21',
-								},
-								{
-									text: 'Stage 22: Request timeouts',
-									link: '/roadmap/phase-3/stage-22',
 								},
 							],
 						},
@@ -221,16 +222,12 @@ export default defineConfig({
 									link: '/roadmap/phase-4/',
 								},
 								{
-									text: 'Stage 23: Metrics',
+									text: 'Stage 22: Metrics',
+									link: '/roadmap/phase-4/stage-22',
+								},
+								{
+									text: 'Stage 23: Multiprocess',
 									link: '/roadmap/phase-4/stage-23',
-								},
-								{
-									text: 'Stage 24: Multiprocess',
-									link: '/roadmap/phase-4/stage-24',
-								},
-								{
-									text: 'Stage 25: Transport Layer Security (TLS)',
-									link: '/roadmap/phase-4/stage-25',
 								},
 							],
 						},
@@ -239,7 +236,7 @@ export default defineConfig({
 			],
 		},
 
-		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer' }],
+		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer'  }],
 	},
 	sitemap: {
 		hostname: 'https://expserver.github.io',

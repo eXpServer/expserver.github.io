@@ -6,7 +6,7 @@
 		"preview": "vitepress preview docs"
 	},
 	"devDependencies": {
-		"vitepress": "^1.0.0"
+		"vitepress": "^1.6.3"
 	},
 	"dependencies": {
 		"medium-zoom": "^1.1.0"

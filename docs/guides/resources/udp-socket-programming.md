@@ -2,141 +2,121 @@
 
 ## User Datagram Protocol (UDP)
 
-The **User Datagram Protocol (UDP)** is a key protocol in the [**Transport Layer**](https://en.wikipedia.org/wiki/Transport_layer) of the [**TCP/IP suite**](https://en.wikipedia.org/wiki/Internet_protocol_suite).  UDP provides a connection-less communication method for transferring data between devices. Unlike TCP, UDP does not guarantee data delivery, ordering, or re-transmission of lost packets. Instead, it offers a simpler, faster way to transmit data with minimal overhead.
+The **User Datagram Protocol (UDP)** is a [**Transport Layer**](https://en.wikipedia.org/wiki/Transport_layer) protocol in the [**TCP/IP suite**](https://en.wikipedia.org/wiki/Internet_protocol_suite).  UDP provides a connection-less communication method for transferring data between devices. Unlike TCP, UDP does not guarantee reliable data delivery, ordering of packets, or re-transmission of lost packets. Instead, it operates on a simple “send each packet once and forget”  model with minimal overhead. UDP is commonly used in real time applications where speed is prioritized over reliability, such as video streaming, online gaming etc.
 
 ### **The Phases of UDP Operations**
 
-UDP operations are much simpler than TCP due to the lack of connection setup, error correction, or acknowledgment. Here are the main stages:
+The working of UDP is much simpler than TCP due to the lack of connection setup, error correction, or acknowledgment.  In **UDP**, the server does not listen for client connections in the way that **TCP** does. Instead, it simply processes requests as they arrive. Unlike **TCP**, which establishes a dedicated, reliable connection before data transfer begins, UDP is a connectionless protocol. There is no three way handshake or a persistent communication channel between the client and server. Since there is no guarantee on reliability, ordering, or error correction to be ensured,  each data packet is sent independently.  Each transmit / receive operation using the UDP protocol involves a single transport layer data packet (**called UDP datagram**).  As UDP packets may arrive out of order or get lost entirely during transmission,  there is no guarantee that the receiving sequence and transmitting sequence coincide.   Hence, it is up to the application process to handle these issues.  In the following,  will look at  the main system calls related to UDP socket programming.
 
-1. **No Connection Establishment:** UDP does not require a connection to be established before data is sent. The client can start sending packets (called datagrams) to the server immediately without a handshake.
-2. **Data Transmission:** In UDP ,the client and server send data as datagrams without checking if the data has been received or delivered in order. Each datagram is independent and can be delivered out of order, duplicated, or lost without any notification to the sender. There is no mechanism for re-transmission or error checking at the protocol level. UDP is best used in scenarios where speed is more critical than reliability, such as video streaming or online gaming.
-3. **No Connection Termination:** Since there is no formal connection in UDP, there is no need for a termination process like in TCP. The communication ends when no more data is sent.
+In TCP we have seen that the server first creates a socket using `socket()`, binds the socket to an IP address and port using  `bind()`, and places it in listening state using `listen()` to wait for incoming connection requests. When a client attempts to connect, TCP performs a **three-way handshake** to establish a connection. Subsequently,  when the server calls the `accept()` system call, a dedicated connection socket is created on the server side for the client  that requested connection using the  `connect()` system call and a dedicated communication channel gets created,  which is used exclusively for communication with that particular client. TCP uniquely identifies each connection using the **four-tuple** (**source IP, source port, destination IP, destination port**). 
+
+In contrast, UDP requires a socket to be created using the `socket()` system call but does not involve the use of `listen()`, `connect()` and `accept()` system calls. There are no listening sockets or separate dedicated connection sockets (on server side) for each clients. Instead, the UDP application binds the socket to a particular IP address and port, and this socket is responsible for handling all incoming packets from multiple clients.
+
+In TCP, data is transmitted as a continuous stream of bytes. Since there is a dedicated connection between the server and the client, any data sent is queued in buffers that are specifically allocated for that connection. In contrast, UDP is a connectionless protocol, where there is no persistent connection between sender and receiver. As a result, UDP transmits data in discrete, fixed-size units called datagrams rather than a continuous stream. Therefore each send/receive operation using UDP involves communication of one UDP datagram. An application must use the `sendto()` system call in Linux/Unix systems to send a UDP packet to a remote application.  To receive a UDP packet from a remote destination, the `recvfrom()` system call is used. 
+
+Since there is no dedicated connection being setup, an application that uses `sendto()` must explicitly specify the target IP address and target Port number along with the packet data to the `sendto()` call.  Note that a single  UDP socket can be used by a server program to communicate with multiple remote clients. All outgoing packets generated by the server using the `sendto()` call are placed in the same **send queue** of the socket before transmission.  Since data is sent as datagrams, there is a maximum limit on the size of data that can be sent in a single `sendto()` operation. (The maximum possible size of a UDP datagram, including the header and data, is 65,535 bytes). If the user attempts to send a UDP datagram larger than the allowed size, it may return an `EMSGSIZE` error indicating data can’t be send as a single datagram. During `sendto()` operation, first the data present in the user buffer gets copied to the kernel send buffer. If the message to be sent exceeds the available space in the kernel send buffer, `sendto()` will typically block until space becomes available, unless the socket is set to non-blocking mode. Similarly, all incoming packets from different clients addressed to a server application using a certain (port number, IP address) combination are queued by the server side kernel in the same **receive queue** of the corresponding UDP socket.   Upon execution of the `recvfrom()` call, the kernel returns the first packet from the receive queue to the calling application.  If the receive queue is empty, `recvfrom()` will generally block until some packet arrives, unless non-blocking options are used. Once a received packet is removed from the kernel receive buffer, there is no more information about the sender of the packet. Consequently, there are no acknowledgments in UDP. Thus the sender has no way of knowing whether the datagram successfully reached the other side or not. If the packet is lost while transmitting there in no option to re transmit. Also the packets may arrive out of order at the receiver. UDP does not perform segmentation like TCP. Thus due to the absence of  re transmissions, and guaranteed delivery, UDP is considered **unreliable**. However, UDP is still widely used in various applications due to its low latency and minimal overhead. As there is no connection establishment and connection termination phases involved, there is no delay for setting up and closing connections. Thus the server can respond immediately as packets arrive, which significantly reduces the latency. As a result, UDP is the preferred choice for applications where speed is prioritized over reliability, and occasional data loss can be tolerated.
+
+**Note:**   In case of TCP, if the data to be sent is larger than the network’s MTU (Maximum Transmission Unit), the transport layer (TCP) itself takes care of dividing the data into appropriately sized segments before handing it off to the IP layer. Each segment is sized to fit within the MTU, ensuring that IP fragmentation is typically avoided. These segments are then queued for transmission. In contrast, UDP transmits data as individual, discrete datagrams. The UDP transport layer does not break the data into smaller units based on the MTU. If a datagram is larger than the MTU, it is handed to the IP layer. The IP layer then handles fragmentation, breaking the datagram into smaller IP packets that fit the MTU limits for transmission across the network. However, the IP layer is connectionless and unreliable, it does not perform retransmissions, acknowledgments, or error correction. Its sole responsibility is to route packets from the source to the destination. Therefore, if any fragment of a UDP datagram is lost or corrupted, the entire datagram cannot be reassembled and will be discarded by the receiving host. On the other hand, TCP provides reliable transmission. Even if some IP packets carrying TCP segments are lost or dropped, the TCP layer detects the loss through missing acknowledgments or sequence gaps and will retransmit the necessary segments. This ensures that all data is eventually delivered completely and in order.
+
+In UDP the key system calls include `socket()`, `bind()`, `sendto()`, `recvfrom()` and `close()`. `sendto()` and `recvfrom()` serve the purpose similar to `send()` and `recv()` which are used for sending and receiving data. But here the target address is also included as an argument as no connection setup is involved. Other system calls `socket()`, `bind()` and `close()` are same as that in TCP.
 
 ### **UDP Datagrams**
 
-UDP handles data by dividing it into small, independent packets called “[datagrams](https://en.wikipedia.org/wiki/Datagram)”. Each datagram contains both the data and header information, including source and destination IP addresses and port numbers, but there is no ordering or acknowledgment like in TCP. If a packet is lost, it is not re-transmitted. The header size of a UDP datagram is a fixed 8 bytes.
+UDP send data as independent units called “[datagrams](https://en.wikipedia.org/wiki/Datagram)”. Each datagram contains both the data (payload) and header information. The minimum datagram size is 8 bytes, which accounts for the header containing essential information like source and destination ports, length, and checksum. The maximum datagram size depends on the network’s **Maximum Transmission Unit (MTU)**, which varies based on the underlying network technology. For instance, on a **standard Ethernet network** with an MTU of 1500 bytes, the maximum UDP payload size would typically be 1472 bytes (1500 bytes - 20-byte IP header - 8-byte UDP header). 
 
-UDP does not provide mechanisms for dividing data into segments or handling large data sizes like TCP does. If datagrams exceed the [maximum transmission unit](https://en.wikipedia.org/wiki/Maximum_transmission_unit) (MTU) of the network, they may be fragmented at the IP layer, but UDP itself does not handle reassembly. The minimum datagram size is 8 bytes for the header, and the maximum is typically determined by the network’s MTU.
+If a UDP datagram is larger than the network’s MTU, the **IP layer** breaks it into smaller fragments before transmission. However, UDP itself does not manage or track these fragments. Instead, the **receiving device’s IP layer** is responsible for collecting and reassembling them based on the **fragment offset** and **identification number** in the IP headers. If any fragment is lost or corrupted, the entire datagram is discarded, as UDP does not provide error recovery or retransmission.
 
-![tcp-ip-packet.png](/assets/resources/udp-ip-packet.png)
+
+![udp_ip-packet.png](/assets/resources/udp-ip-packet.png)
 
 ## UDP Socket Programming
 
-When sending data over the network from the Application layer, we create a UDP socket. To send and receive data using this socket, we use the socket programming APIs provided by the operating system. These APIs include system calls like `sendto()` and `recvfrom()`, which facilitate the transmission of data between the Application layer and the Transport layer.
+When sending data over a network using UDP, the process begins with creating a **UDP socket** at the server. This socket serves as an endpoint for communication, allowing the server to send and receive data without establishing a persistent connection with the client. To facilitate data transmission using a UDP socket, the operating system provides specialized **system calls** such as **sendto()** and **recvfrom()**. The **sendto()** function allows the sender to transmit a message to a specific destination IP address and port without requiring a prior connection. Similarly, the **recvfrom()** function enables the receiver to listen for incoming datagrams from any source and retrieve both the data and sender's address.
 
-The flow of events in UDP is given below:
+The typical flow of events in UDP is given below:
 
 ![udp_flow.png](/assets/resources/udp_flow.png)
 
-1. **Socket creation:**   An application process that uses sockets for communication  begins with the creation of a socket using the `socket()` system call. This call returns a file descriptor. Here we create a UDP socket using the `socket()` system call.
-    ::: details `socket()`
+1. **Socket creation:** The application process that wants to communicate over a network has to create a socket first using the `socket()` system call. This is similar to the socket creation we have seen in TCP. The only difference with TCP is that while the type argument of socket in TCP was `SOCK_STREAM` , in UDP it is `SOCK_DGRAM`.
+    - `socket()`
         
-    **Header** : `#include <sys/socket.h>`
+        **Header** : `#include <sys/socket.h>`
         
-    `int socket ( int domain, int type, int protocol );`
+        `int socket ( int domain, int type, int protocol );` 
         
-     **Description** : creates a transport layer communication endpoint and returns a file descriptor that refers to that endpoint.    
+        The arguments of `socket()` system call include:
         
-    **Return Value :** On success, a file descriptor for the new socket is returned.  On error, -1 is returned, and [**errno**](https://man7.org/linux/man-pages/man3/errno.3.html) is set to indicate the error.
+        - `int domain` - The `domain` argument is an integer value that specifies the communication domain. This selects the protocol family which will be used for communication. (e.g., `AF_INET` for [IPv4,](https://en.wikipedia.org/wiki/IPv4) `AF_INET6` for [IPv6](https://en.wikipedia.org/wiki/IPv6)).
+        - `int type` - The type argument is also an integer value that specifies the socket type, which defines the communication semantics or how the data will flow between the client and server. (e.g., `SOCK_STREAM`  -  Provides sequenced, reliable, two-way, connection-based byte streams, used with TCP.   `SOCK_DGRAM`   -  Supports connection less, unreliable messages of a fixed maximum length, used with UDP.)
+        - `int protocol` - The `protocol` argument is of integer type that specifies the specific protocol to be used with the socket. When `0` is passed as the protocol argument, the system selects the default protocol for the given domain and type combination. For `AF_INET` and `SOCK_DGRAM`, this typically results in UDP being chosen as the protocol, as it is the default protocol for datagram sockets in the IPv4 domain. To specify UDP explicitly, `IPPROTO_UDP` can be used.
         
-    | Argument Name | Argument Type | Description |
-    | --- | --- | --- |
-    | domain | `int` | Specifies the communication domain.This selects the protocol family which will be used for communication. (e.g., `AF_INET` for [IPv4,](https://en.wikipedia.org/wiki/IPv4) `AF_INET6` for [IPv6](https://en.wikipedia.org/wiki/IPv6)). In this project we will be using IPv4. |
-    | type | `int` | Specifies the communication semantics (e.g., `SOCK_STREAM`  -  Provides sequenced, reliable, two-way, connection-based byte streams, used with TCP.   `SOCK_DGRAM`   -  Supports connection less, unreliable messages of a fixed maximum length, used with UDP. The following options, which are not used in the project, are also supported.                          `SOCK_RAW`       -  Provides raw network protocol access.                                      `SOCK_SEQPACKET`  -  Provides a sequenced, reliable, two-way connection-based data transmission path for datagrams of fixed maximum length). |
-    | protocol | `int` | Specifies the particular protocol to be used with the socket. When `0` is passed as the protocol argument, the system selects the default protocol for the given domain and type combination. For `AF_INET` and `SOCK_DGRAM`, this typically results in UDP being chosen as the protocol, as it is the default protocol for stream sockets in the IPv4 domain. |
-    :::
-
-2. **Binding :** In server applications, the socket may be bound to a specific [IP address](https://www.notion.so/2c33762c6bd047f39055aa2eed772611?pvs=21) and [port number](Port Number) using the `bind()` system call. This step is necessary for servers to listen to incoming connections on a specific IP address and port number.
-    ::: details `bind()`
+        **Return Value :** On success, `socket()` returns a file descriptor for the newly created socket. On failure, it returns `-1`, and the global variable `errno` is set to indicate the specific error. ( eg: If an invalid **domain**, **type**, or **protocol** is specified, `errno` might be set to values like `EINVAL` (invalid argument) or `EPROTONOSUPPORT` (protocol not supported). If the system is out of resources or has reached a limit on the number of open file descriptors, `errno` could be set to `EMFILE` or `ENFILE` )
         
-    **Header** : `#include <sys/socket.h>`
+2. **Binding :** When a socket is created using the `socket()` system call, it does not have an address (IP and port) assigned to it. The `bind()` system call is used to explicitly assign a specific IP address and port number to the socket. For server sockets, binding is mandatory, as the server must be assigned a specific address and port to receive incoming requests from clients. However in case of clients, binding is optional. The OS will automatically assign an ephemeral port and an appropriate IP address when the socket first sends data. By default, the OS allows only **one** socket to bind to a particular IP and port at a time. 
+    - `bind()`
         
-    `int bind ( int sockfd, const struct sockaddr *addr, socklen_t addrlen );`
+        **Header** : `#include <sys/socket.h>`
         
-    **Description :** When a socket is created with `socket()`, it has no socket address assigned to it. The `bind()` assigns the IP address and port number specified by ***addr***  to the socket referred to by the file descriptor ***sockfd***. 
+        `int bind ( int sockfd, const struct sockaddr *addr, socklen_t addrlen );` 
         
-    **Return Value :** On success, zero is returned.  On error, -1 is returned, and
-     [***errno***](https://man7.org/linux/man-pages/man3/errno.3.html) is set to indicate the error.
+        **The arguments of bind() system call are as follows:**
         
-    | Argument Name | Argument Type | Description |
-    | --- | --- | --- |
-    | sockfd | `int` | Specifies the file descriptor of the socket to be bound. |
-    | addr | `const struct sockaddr *` | Points to a **`sockaddr`** structure containing the address to be bound to the socket.  The length and format of the address depend on the address family of the socket. |
-    | addrlen | `socklen_t` | Specifies the length of the **`sockaddr`** structure pointed to by the *addr* argument. |
-    ::: details `struct sockaddr`
-            
-    The **`sockaddr`** structure is used to define a socket address. The `<sys/socket.h>` header shall define the **sockaddr** structure that includes at least the following members:
-            
-    ```c
-    struct sockaddr{
-            
-        sa_family_t    sa_family       //Address family.
-        char           sa_data[]       //Socket address (variable-length data).
-            
-        };
-    ```
-            
-    `sa_family_t` is defined as an *unsigned integer* type in `<sys/socket.h>` header.
-            
-    ::: details `socklen_t`
-            
-     **`socklen_t`** is an *unsigned opaque integer type* of length of at least 32 bits (the exact length depends on the host machine). It is included in `<sys/socket.h>` header. `socklen_t` enables writing code in a platform independent manner. The header may use different definitions according to the target platform.
-            
+        - `int sockfd` - The `sockfd` argument specifies the file descriptor of the socket to be bound. This file descriptor is typically obtained by calling the `socket()` system call earlier.
+        - `const struct sockaddr *addr` - A pointer to a variable of type `struct sockaddr` that contains the address to be bound to the socket. The caller is responsible for declaring and initializing this variable. The `struct sockaddr` is a generic address structure, we don’t declare and initialize `struct sockaddr` directly in the code. Instead a specialized version of `struct sockaddr` named `struct sockaddr_in` is used for IPv4 addresses and `struct sockaddr_in6` is used for IPv6 addresses. These specific address structures are then typecasted into `struct sockaddr`. The detailed explanation of these structures are provided in the [TCP socket programming documentation](/guides/resources/tcp-socket-programming.md).
+        - `socklen_t addrlen` -  an unsigned integer type that specifies the length of the `sockaddr` structure pointed to by the `addr` argument. This length is necessary because the operating system needs to know how much memory to read for the address, as different address families can use structures of different sizes.
+        
+        **Return Value :** On success, `bind()` returns `0`. On failure, it returns `-1`, and the global variable `errno` is set to indicate the specific error. Common errors for `bind()` include **`EADDRINUSE`**, which occurs when the address is already in use by another socket; **`EACCES`**, which indicates the process doesn't have permission to bind to the address; **`EINVAL`**, when the address is invalid; and **`ENOTSOCK`**, which means the provided file descriptor is not a valid socket.    
+        
 3. **Data Exchange**: Data is exchanged between the client and server using `sendto()` and `recvfrom()` system calls. These calls allow sending and receiving datagrams without requiring a connection.
-    ::: details `sendto()`
+    - `sendto()`
         
-    **Header** : `#include <sys/socket.h`
+        **Header** : `#include <sys/socket.h`
         
-    `ssize_t sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);`
+        `ssize_t sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);`
         
-    **Description :**  Sends data to the specified destination address. Since UDP is connectionless, the destination address must be provided with each `sendto()` call.
+        **Description :**  The `sendto()` system call is used to transmit data over a socket, specifically in connectionless communication such as UDP. Unlike `send()`, `sendto()` does not require the socket to be in a connected state, as it allows specifying the destination address with each call. This makes it suitable for sending data to multiple recipients without establishing a persistent connection. If the message to be sent exceeds the available space in the socket's send buffer, `sendto()` will typically block until space becomes available unless the socket is set to non-blocking mode. In non-blocking mode, `sendto()` returns immediately, and if the buffer is full, it will return an error like `EAGAIN` or `EWOULDBLOCK`. By default, sockets operate in blocking mode, therefore  `sendto()` will wait if necessary until the message can be transmitted.
         
-    **Return Value :** On success, these calls return the number of bytes sent.  On error, -1 is returned, and [errno](https://man7.org/linux/man-pages/man3/errno.3.html) is set to indicate the error.
+        The arguments of `sendto()` are system call are:
         
-    When the message does not fit into the send buffer of the socket, `sendto()` normally blocks, unless the socket has been placed in non-blocking I/O mode.
+        - `int sockfd` - This is the socket that will be used to send the data. It is a valid file descriptor returned by the `socket()` call.
+        - `const void *buf` - This is a pointer to the memory buffer containing the data to send. The data to be transmitted is placed in this buffer. It is declared and populated by the caller.
+        - `size_t len` - This specifies the number of bytes to send from the buffer. It tells the `sendto()` function how much data to transmit from the memory pointed to by `buf`.
+        - `int flags` - This argument specifies various options that can modify the behavior of the `sendto()` call. Some common flag values include. `MSG_CONFIRM`: Used in UDP to verify the reachability of the destination before sending the packet. Primarily used in applications like DNS servers for confirming valid routes. `MSG_DONTWAIT`: Performs a non-blocking send operation. If the socket’s send buffer is full, `sendto()` will return immediately instead of blocking.
+        - `const struct sockaddr *dest_addr` - A pointer to a sockaddr structure that contains destination address. For **IPv4**, this is typically a pointer to `struct sockaddr_in`. For **IPv6**, this is typically a pointer to `struct sockaddr_in6`. The caller will have to declare and initialize the fields of the structure. (Detailed explanations on `struct sockaddr` is provided in the [TCP socket programming documentation](/guides/resources/tcp-socket-programming.md).)
+        - `socklen_t addrlen` - This specifies the **size** (in bytes) of the address structure pointed to by `dest_addr`. This length is necessary because the operating system needs to know how much memory to read for the address, as different address families can use structures of different sizes.
         
-    | Argument Name | Argument Type | Description |
-    | --- | --- | --- |
-    | sockfd | `int` | File descriptor of the sending socket  |
-    | buf | `const void *` | Pointer to the buffer containing the data to be sent. |
-    | len | `size_t` | Length of the data to be sent in bytes. |
-    | flags | `int` | This is used to specify various options or behaviors for the `sendto()` operation. Commonly, this argument is set to `0` to indicate no special behavior. Eg:  `MSG_CONFIRM` flag ensures that destination address is confirmed as reachable.                        |
-    | dest_addr | `const struct sockaddr *` | Pointer to a sockaddr structure that contains destination address. |
-    | addrlen | `socklen_t` | The size of the destination address. |
-    ::: 
-
-    ::: details `recvfrom()`
+        **Return Value :** On success, the `sendto()` system call returns the number of bytes actually sent. This value may be smaller than the total number of bytes requested to be sent if the data could not be fully transmitted in a single call due to buffer limitations or network constraints. If an error occurs, `sendto()` returns `-1`, and the global variable `errno` is set to indicate the specific error. Common errors include `EAGAIN` or `EWOULDBLOCK` if the socket is in non-blocking mode and the send buffer is full, `EDESTADDRREQ` if a destination address is required but not provided, and `EMSGSIZE` if the message is too large to be sent in a single datagram.
         
-    **Header** : `#include <sys/socket.h>`
+    - `recvfrom()`
         
-    `ssize_t recvfrom(int sockfd,const void *buf, size_t len, int flags,const struct sockaddr *src_addr, socklen_t *addrlen);`
+        **Header** : `#include <sys/socket.h>`
         
-    **Description:** The `recvfrom()` function is used to receive data in **UDP**. It allows the receiving socket to read data sent by a specific sender and also retrieve the sender's address. Since UDP is connectionless, each call to `recvfrom()` can receive data from a different sender.
+        `ssize_t recvfrom(int sockfd,const void *buf, size_t len, int flags,const struct sockaddr *src_addr, socklen_t *addrlen);`
         
-    **Return Value :** It return the number of bytes received, or -1 if an error occurred.  In the event of an error, [errno](https://man7.org/linux/man-pages/man3/errno.3.html) is set to indicate the error. If a message is too long to fit in the supplied buffer, excess bytes may be discarded depending on the type of socket the message is received from.
+        **Description**: The `recvfrom()` function is used to receive data from a socket, primarily in connectionless communication, such as with UDP sockets. Unlike `recv()`, which is typically used with connected sockets, `recvfrom()` allows receiving data from any sender and retrieves the sender's address along with the received data. Since UDP does not establish connections, each incoming message may originate from a different source, making the retrieval of sender information essential. By default, sockets are in blocking mode, thus `recvfrom()` blocks until data is available unless the socket is set to non-blocking mode. 
         
-    | Argument Name | Argument Type | Description |
-    | --- | --- | --- |
-    | sockfd | `int` | File descriptor of the socket which receive the incoming datagrams. |
-    | buf | `const void *` | A pointer to the buffer where the received data will be stored. |
-    | len | `size_t` | The maximum number of bytes to be received. |
-    | flags | `int` | This is used to specify various options or behaviors for the `recv()` operation. Commonly, this argument is set to `0` to indicate no special behavior. Eg:  `MSG_DONTWAIT` flag makes the `recv()` operation non-blocking, `MSG_WAITALL` flag enables waiting until the full amount of requested data is received. |
-    | src_addr | `const struct sockaddr *` | A pointer to a `sockaddr` structure where the address of the sender will be stored. This is useful for identifying where the data came from. If this parameter is `NULL`, the sender's address is not captured. |
-    | addrlen | `socklen_t *` | A pointer to a variable containing the size of the `sockaddr` structure. When `recvfrom()` returns, this variable will be updated to reflect the actual size of the sender’s address. |
-    ::: 
-
+        The arguments of `recvfrom()` system call are as follows:
+        
+        - `int sockfd` – This is the socket that will be used to receive data. It is a valid file descriptor returned by the `socket()` call. In the case of UDP, this socket does not need to be connected, as `recvfrom()` can receive data from any sender.
+        - `const void *buf` - This is a pointer to a memory buffer where the received data will be stored. The buffer must be allocated by the caller before calling `recvfrom()`. The function places the received data into this buffer.
+        - `size_t len` – This argument specifies the maximum number of bytes that can be received and stored in the buffer. The `recv()` function will attempt to receive this amount of data (or less, depending on what is available).
+        - `int flags` – This argument specifies options that modify the behavior of the `recvfrom()` call. Some common flag values include: **`MSG_DONTWAIT`** – Performs a non-blocking receive operation. If no data is available, `recvfrom()` returns immediately with an error instead of blocking.
+        - `struct sockaddr *src_addr` – A pointer to a `sockaddr` structure where the sender's address information will be stored. The caller is responsible for declaring and allocating space for the variable, but the OS kernel fills in the sender's address details. For **IPv4**, this is typically a pointer to `struct sockaddr_in`, and for **IPv6**, it is a pointer to `struct sockaddr_in6`. If the caller does not need the sender's address, this can be set to `NULL`.
+        - `socklen_t *addrlen` – A pointer to a variable that specifies the size (in bytes) of the address structure pointed to by `src_addr`. When `recvfrom()` returns, this variable is updated with the actual size of the sender's address structure. This is necessary because different address families may use structures of different sizes.
+        
+        **Return Value :** On success, the `recvfrom()` system call returns the number of bytes actually received and stored in the provided buffer. This value may be smaller than the buffer size specified, depending on the amount of data available in the received packet. If an error occurs, `recvfrom()` returns -1, and the global variable `errno` is set to indicate the specific error. Common errors include `EAGAIN` or `EWOULDBLOCK` if the socket is in non-blocking mode and no data is available, `ECONNREFUSED` if a received ICMP error message indicates that the destination is unreachable, `EFAULT` if the provided buffer is outside the accessible address space(an invalid memory region), and `EINVAL` if the socket is not valid or improperly configured. Additionally, if the received message is larger than the buffer, the excess data is discarded, and `errno` may be set to `EMSGSIZE`
+        
 4. **Connection Termination**: When communication is complete, either party can initiate the termination of the connection using the `close()` system call. This releases the allocated resources associated with the socket and terminates the communication channel.
-    ::: details `close()` 
+    - `close()`
         
-    **Header :** `#include <unistd.h>` 
+        **Header :** `#include <unistd.h>` 
         
-    `int close(int fd);`
+        `int close(int fd);`
         
-    **Description :** closes a file descriptor, so that it no longer refers to any file and may be reused.
+        **Description :** closes a file descriptor, so that it no longer refers to any file and may be reused.
         
-    **Return Value :** returns zero on success.  On error, -1 is returned, and [errno](https://man7.org/linux/man-pages/man3/errno.3.html) is set to indicate the error.
+        **Return Value :** returns zero on success.  On error, -1 is returned, and [errno](https://man7.org/linux/man-pages/man3/errno.3.html) is set to indicate the error.
         
-    | Argument Name | Argument Type | Description |
-    | --- | --- | --- |
-    | sockfd | `int` | File descriptor of the socket to close.  |
-    ::: 
+        | Argument Name | Argument Type | Description |
+        | --- | --- | --- |
+        | sockfd | `int` | File descriptor of the socket to close.  |

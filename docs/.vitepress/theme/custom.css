@@ -578,3 +578,12 @@
 	--vp-local-search-highlight-bg: var(--vp-c-brand-1);
 	--vp-local-search-highlight-text: var(--vp-c-neutral-inverse);
 }
+
+ 
+a[href^="http"]:not([href*="expserver.github.io"], [href*="github.com"]) {
+    color: green;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+

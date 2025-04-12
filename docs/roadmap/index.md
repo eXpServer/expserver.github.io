@@ -27,9 +27,10 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 - ✅ [Stage 0: Setup](phase-0/stage-0)
 - ✅ [Stage 1: TCP Server](phase-0/stage-1)
 - ✅ [Stage 2: TCP Client](phase-0/stage-2)
-- ✅ [Stage 3: Linux Epoll](phase-0/stage-3)
-- 🟡 [Stage 4: UDP with Multi-threading](phase-0/stage-4)
-- ✅ [Stage 5: TCP Proxy](phase-0/stage-5)
+- 🟡 [Stage 3: UDP with Multi-threading](phase-0/stage-3)
+- ✅ [Stage 4: Linux Epoll](phase-0/stage-4)
+- ✅ [Stage 5 a): TCP Proxy](phase-0/stage-5-a)
+- 🟡 [Stage 5 b): File Transfer using TCP](phase-0/stage-5-b)
 
 ### Phase 1: Building the core of eXpServer by creating reusable modules
 
@@ -38,31 +39,29 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 - 🟡 [Stage 7: Core & Loop Modules](phase-1/stage-7)
 - 🟡 [Stage 8: Non-Blocking Sockets](phase-1/stage-8)
 - 🟡 [Stage 9: epoll Edge Triggered](phase-1/stage-9)
-- 🟣 [Stage 10: Pipe Module](phase-1/stage-10)
-- [Stage 11: Upstream Module](phase-1/stage-11)
-- [Stage 12: File Module](phase-1/stage-12)
-- [Stage 13: Session Module](phase-1/stage-13)
+- 🟡 [Stage 10: Pipe Module](phase-1/stage-10)
+- 🟡 [Stage 11: Upstream Module](phase-1/stage-11)
+- 🟡 [Stage 12: File Module](phase-1/stage-12)
+- 🟡 [Stage 13: Session Module](phase-1/stage-13)
 
 ### Phase 2: Implementing HTTP support
 
-- [Overview](phase-2/)
-- [Stage 14: HTTP Request Module](phase-2/stage-14)
-- [Stage 15: HTTP Response Module](phase-2/stage-15)
+- 🟡 [Overview](phase-2/)
+- 🟡 [Stage 14: HTTP Request Module](phase-2/stage-14)
+- 🟡 [Stage 15: HTTP Response Module](phase-2/stage-15)
 - [Stage 16: Config Module](phase-2/stage-16)
-- [Stage 17: HTTP Specification](phase-2/stage-17)
+- [Stage 17: Directory Browsing](phase-2/stage-17)
 
 ### Phase 3: Adding features to eXpServer
 
 - [Overview](phase-3/)
-- [Stage 18: Directory Browsing](phase-3/stage-18)
-- [Stage 19: IP Whitelist/Blacklist](phase-3/stage-19)
-- [Stage 20: Gzip Compression](phase-3/stage-20)
-- [Stage 21: Load Balancing](phase-3/stage-21)
-- [Stage 22: Request timeouts](phase-3/stage-22)
+- [Stage 18: IP Whitelist/Blacklist](phase-3/stage-18)
+- [Stage 19: Gzip Compression](phase-3/stage-19)
+- [Stage 20: Load Balancing](phase-3/stage-20)
+- [Stage 21: Request timeouts](phase-3/stage-21)
 
-### Phase 4: Advanced features and multiprocess architecture
+### Phase 4: Advanced features 
 
 - [Overview](phase-4/)
-- [Stage 23: Metrics](phase-4/stage-23)
-- [Stage 24: Multiprocess](phase-4/stage-24)
-- [Stage 25: Transport Layer Security (TLS)](phase-4/stage-25)
+- [Stage 22: Metrics](phase-4/stage-23)
+- [Stage 23: Multithreading](phase-4/stage-23)
