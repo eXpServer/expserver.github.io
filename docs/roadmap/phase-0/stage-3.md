@@ -2,12 +2,13 @@
 
 ## Recap
 
-- In stage 1, we wrote a basic TCP server
-- In stage 2, we wrote a basic TCP client and connected it to the TCP server
+- In stage 1, we wrote a basic TCP server that listens on a specific port and accepts incoming connections.
+- In stage 2, we wrote a basic TCP client that connects to the server and send messages.
+- In stage 2 experiments we made the TCP server iterative, handling the client connections one afer the other.
 
 ## Learning Objectives
 
-- We will implement a UDP server with multi-threading to handle multiple clients
+- We will implement a UDP server with multi-threading to handle multiple clients concurrently.
 
 
 ---
@@ -24,7 +25,7 @@
 
 At the end of [Stage 2](/roadmap/phase-0/stage-2), we noticed how the server is only able to cater to one client at a time. When the client disconnects, the server breaks out of the recv-send while loop and exits the program. Later in the exercises we modified the server to accept clients sequentially, one after the other.
 
-Now we will use multithreading to implement the same. We can use **multithreading** along with either TCP or UDP protocol. In this stage we will use **UDP** (User Dtagram Protocol) which is a connectionless and unreliable protocol.
+Now we will use multithreading to implement the same. We can use **multithreading** along with either TCP or UDP protocol. In this stage we will use **UDP** (User Dtagram Protocol) which is a connectionless and unreliable protocol. 
 
 We will be using the following functions to setup UDP connections:
 
@@ -311,4 +312,4 @@ int main() {
 ```
 ## Conclusion
 
-Now our UDP server is capable of handling multiple client requests simultaneously. Here we have achieved concurrency using multithreading. We are creating a new thread for each of the incoming client requests. In the next stage we will see how to make a server concurrent using epoll mechanism which is used by most of modern web servers for obtaining concurrency.
+Now our UDP server is capable of handling multiple client requests simultaneously. Here we have achieved concurrency using multithreading. We are creating a new thread for each of the incoming client requests. In this stage we worked with UDP protocol. However, starting from the next stage onwards we will continue with the TCP protocol itself. In the next stage we will see how to make a server concurrent using epoll mechanism which is used by most of the modern web servers for obtaining concurrency.

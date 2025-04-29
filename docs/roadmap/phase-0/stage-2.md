@@ -2,7 +2,7 @@
 
 ## Recap
 
-- In stage 1, we built a simple TCP server using linux networking APIs
+- In stage 1, we built a simple TCP server using linux networking APIs. 
 
 ## Learning Objectives
 
@@ -225,7 +225,7 @@ Now,we can modify the client code for creating multiple clients in a single exec
 
 Create a file `tcp_multi_client.c` and place it inside `expserver/phase_0`. We would be implementing our client code here. 
 
-Try to run the the modified server code from the experiment 2 and below client code written in the `udp_multi_clients.c` file. Observe how multiple clients are created concurrently in a single client code using `fork()` system call and their corresponding output. Try to run it again by updating the number of clients created in the client code and observe how the server deals with it iteratively. 
+Try to run the the modified server code from the experiment 2 and below client code written in the `tcp_multi_clients.c` file. Observe how multiple clients are created concurrently in a single client code using `fork()` system call and their corresponding output. Try to run it again by updating the number of clients created in the client code and observe how the server deals with it iteratively. 
 
 ```c
 #include <arpa/inet.h>
