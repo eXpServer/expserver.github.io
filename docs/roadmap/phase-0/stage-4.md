@@ -2,11 +2,12 @@
 
 ## Recap
 
-- In the previous stage, we modified our TCP server code to handle multiple clients simultaneously using multithreading.
+- In stage 2, we made the TCP server iterative and connected multiple clients one after the other.
+- In stage 3, we wrote UDP server code to handle multiple clients simultaneously using multithreading.
 
 ## Learning Objectives
 
-- We will modify our TCP server from [Stage 1](/roadmap/phase-0/stage-1) to serve multiple clients simultaneously.
+- We will modify our TCP server from [Stage 1](/roadmap/phase-0/stage-1) to serve multiple clients simultaneously using epoll.
 
 ## Introduction
 

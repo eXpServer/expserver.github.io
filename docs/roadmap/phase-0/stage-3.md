@@ -227,7 +227,7 @@ int main() {
 
 ## Milestone 1
 
-We have successfully created a udp server. Now lets do a small test and check how our code performs.
+We have successfully created a UDP server. Now lets do a small test and check how our code performs.
 
 Compile the code with the following command:
 
