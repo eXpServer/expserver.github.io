@@ -18,7 +18,87 @@ const members = [
       { icon: 'github', link: 'https://github.com/aadhavanpl' },
       { icon: 'linkedin', link: 'https://aadhii.in/' }
     ]
-  },
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/122230731?v=4',
+    name: 'Mayank Gupta',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/71203mayank' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/mayank-gupta-715210242' }
+    ]
+  }, {
+    avatar: 'assets/about/Anuj_Haval.jpg',
+    name: 'Anuj Haval',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/AnujHaval' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/anuj-haval-106567251/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/97302579?v=4',
+    name: 'Binshadh Basheer',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/binshadhbu' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/binshadh-basheer-369476227/' }
+    ]
+  }, {
+    avatar: 'assets/about/Diljith_PD.jpg',
+    name: 'Diljith P D',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/th3bossc' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/diljith-p-d-815716250/' }
+    ]
+  }, {
+    avatar: 'assets/about/Nandana_S_Nair.jpg',
+    name: 'Nandana S Nair',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/NandanaSNair02' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/nandana-s-nair-949808222/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/134227262?v=4',
+    name: 'Nikhisha T S',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/nikhishats7' },
+      { icon: 'linkedin', link: '' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/169025635?v=4',
+    name: 'Nandana D V',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/NandanaDV' },
+      { icon: 'linkedin', link: '' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/122631489?v=4',
+    name: 'Fayis Rahman',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/FayisRahman' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/fayis-rahman-thadathil-6644b9250/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/15691889?v=4',
+    name: 'Sreehari J',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/Sreeharij' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/sreehari-j-906873308/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/118613998?v=4',
+    name: 'Mohammed Shibin E',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/Shibin-Ez' },
+      { icon: 'linkedin', link: '' }
+    ]
+  }
   // add more here
 ]
 </script>
