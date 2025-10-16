@@ -27,7 +27,7 @@ const members = [
       { icon: 'linkedin', link: 'https://www.linkedin.com/in/mayank-gupta-715210242' }
     ]
   }, {
-    avatar: 'assets/about/Anuj_Haval.jpg',
+    avatar: './assets/about/Anuj_Haval.jpg',
     name: 'Anuj Haval',
     title: 'Developer',
     links: [
@@ -43,7 +43,7 @@ const members = [
       { icon: 'linkedin', link: 'https://www.linkedin.com/in/binshadh-basheer-369476227/' }
     ]
   }, {
-    avatar: 'assets/about/Diljith_PD.jpg',
+    avatar: './assets/about/Diljith_PD.jpg',
     name: 'Diljith P D',
     title: 'Developer',
     links: [
@@ -51,7 +51,7 @@ const members = [
       { icon: 'linkedin', link: 'https://www.linkedin.com/in/diljith-p-d-815716250/' }
     ]
   }, {
-    avatar: 'assets/about/Nandana_S_Nair.jpg',
+    avatar: './assets/about/Nandana_S_Nair.jpg',
     name: 'Nandana S Nair',
     title: 'Developer',
     links: [
