@@ -1,5 +1,5 @@
 {
-	"homepage": "https://shibin-ez.github.io/expserver.github.io/",
+	"homepage": "https://expserver.github.io",
 	"scripts": {
 		"dev": "vitepress dev docs",
 		"build": "vitepress build docs",
