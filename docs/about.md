@@ -1,7 +1,7 @@
 <script setup>
 import { VPTeamMembers } from 'vitepress/theme'
 
-const members = [
+const batch2020 = [
   {
     avatar: 'https://www.github.com/emanuelchristo.png',
     name: 'Emanuel Christo',
@@ -18,7 +18,11 @@ const members = [
       { icon: 'github', link: 'https://github.com/aadhavanpl' },
       { icon: 'linkedin', link: 'https://aadhii.in/' }
     ]
-  }, {
+  }
+]
+
+const batch2021 = [
+  {
     avatar: 'https://avatars.githubusercontent.com/u/122230731?v=4',
     name: 'Mayank Gupta',
     title: 'Developer',
@@ -64,7 +68,7 @@ const members = [
     title: 'Developer',
     links: [
       { icon: 'github', link: 'https://github.com/nikhishats7' },
-      { icon: 'linkedin', link: '' }
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/nikhisha-ts-5676a6247/' }
     ]
   }, {
     avatar: 'https://avatars.githubusercontent.com/u/169025635?v=4',
@@ -74,7 +78,11 @@ const members = [
       { icon: 'github', link: 'https://github.com/NandanaDV' },
       { icon: 'linkedin', link: '' }
     ]
-  }, {
+  }
+]
+
+const batch2022 = [
+    {
     avatar: 'https://avatars.githubusercontent.com/u/122631489?v=4',
     name: 'Fayis Rahman',
     title: 'Developer',
@@ -99,7 +107,6 @@ const members = [
       { icon: 'linkedin', link: '' }
     ]
   }
-  // add more here
 ]
 </script>
 
@@ -147,7 +154,17 @@ This project provides individuals with practical experience in understanding the
 
 The content in the website and the documentation has been authored in the [Department of Computer Science and Engineering](https://minerva.nitc.ac.in/), [National Institute of Technology Calicut](http://nitc.ac.in/) under the guidance of [Dr. Murali Krishnan K](https://nitc.ac.in/department/computer-science-amp-engineering/faculty-and-staff/faculty/bdb94a31-f29a-4fb0-b4d5-7db9be64edef) and [Dr. Vinod Pathari](https://nitc.ac.in/department/computer-science-amp-engineering/faculty-and-staff/faculty/f6ebabe0-ef35-4efd-964a-59325844b7c5).
 
-<VPTeamMembers size="small" :members="members" />
+### 2020 Batch
+
+<VPTeamMembers size="small" :members="batch2020" />
+
+### 2021 Batch
+
+<VPTeamMembers size="small" :members="batch2021" />
+
+### 2022 Batch
+
+<VPTeamMembers size="small" :members="batch2022" />
 
 ## License
 
