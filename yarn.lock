@@ -220,6 +220,11 @@
   resolved "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.39.0.tgz"
   integrity sha512-t9jqYw27R6Lx0XKfEFe5vUeEJ5pF3SGIM6gTfONSMb7DuG6z6wfj2yjcoZxHg129veTqU7+wOhY6GX8wmf90dA==
 
+"@rollup/rollup-linux-x64-musl@4.39.0":
+  version "4.39.0"
+  resolved "https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.39.0.tgz"
+  integrity sha512-ThFdkrFDP55AIsIZDKSBWEt/JcWlCzydbZHinZ0F/r1h83qbGeenCt/G/wG2O0reuENDD2tawfAj2s8VK7Bugg==
+
 "@shikijs/core@^2.1.0", "@shikijs/core@2.5.0":
   version "2.5.0"
   resolved "https://registry.npmjs.org/@shikijs/core/-/core-2.5.0.tgz"
@@ -921,9 +926,9 @@ vfile@^6.0.0:
     vfile-message "^4.0.0"
 
 "vite@^5.0.0 || ^6.0.0", vite@^5.4.14:
-  version "5.4.18"
-  resolved "https://registry.npmjs.org/vite/-/vite-5.4.18.tgz"
-  integrity sha512-1oDcnEp3lVyHCuQ2YFelM4Alm2o91xNoMncRm1U7S+JdYfYOvbiGZ3/CxGttrOu2M/KcGz7cRC2DoNUA6urmMA==
+  version "5.4.21"
+  resolved "https://registry.npmjs.org/vite/-/vite-5.4.21.tgz"
+  integrity sha512-o5a9xKjbtuhY6Bi5S3+HvbRERmouabWbyUcpXXUA1u+GNUKoROi9byOJ8M0nHbHYHkYICiMlqxkg1KkYmm25Sw==
   dependencies:
     esbuild "^0.21.3"
     postcss "^8.4.43"
