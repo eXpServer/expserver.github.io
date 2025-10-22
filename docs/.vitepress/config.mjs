@@ -5,7 +5,7 @@ export default defineConfig({
 	title: 'eXpServer',
 	description: 'Documentation for eXpServer',
 	head: [['link', { rel: 'icon', href: '/images/icon.png' }]],
-	base: '/',
+	base: '/expserver.github.io/',
 	themeConfig: {
 		outline: { level: 'deep' },
 		// https://vitepress.dev/reference/default-theme-config
@@ -40,6 +40,7 @@ export default defineConfig({
 							text: 'TCP/IP Model',
 							link: '/guides/resources/tcp-ip-model',
 						},
+						{ text: 'GDB', link: '/guides/resources/gdb' },
 						{ text: 'TCP Socket Programming', link: '/guides/resources/tcp-socket-programming' },
 						{ text: 'UDP Socket Programming', link: '/guides/resources/udp-socket-programming' },
 						{ text: 'Process and Threads', link: '/guides/resources/process-and-threads' },

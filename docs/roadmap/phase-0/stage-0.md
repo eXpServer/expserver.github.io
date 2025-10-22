@@ -19,7 +19,7 @@ Since we will be building the project primarily in C programming language, we wi
 ### GNU Debugger - GDB
 
 ::: warning TODO
-Read the section on [GDB](https://nitcbase.github.io/docs/Misc/GDB) to learn how to use the GNU debugger.
+Read the section on [GDB](/guides/resources/gdb) to learn how to use the GNU debugger.
 :::
 
 ### Version control - Git
