@@ -43,7 +43,64 @@ Let us demonstrate a common use case: **finding an infinite loop** in a C progra
 
 Let's say we have a program that builds a linked list and then prints it. However, the program has a bug and accidentally creates a **cycle** in the list, causing the `printList` function to loop forever.
 
-This is our C file, let's call it <a href="files/list_demo.c" download>list_demo.c</a>.
+This is our C file:
+
+::: details **expserver/list_demo.c**
+
+```c
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void printList(struct Node* head) {
+    struct Node* current = head;
+    printf("Attempting to print list:\n");
+    
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    
+    printf("NULL\n");
+}
+
+int main() {
+
+    struct Node* head   = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* second = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* third  = (struct Node*)malloc(sizeof(struct Node));
+
+    head->data = 10;
+    head->next = second;
+
+    second->data = 20;
+    second->next = third;
+
+    third->data = 30;
+    
+    third->next = second; 
+    
+
+    printf("Calling printList...\n");
+    printList(head);
+
+    printf("List printing complete.\n");
+
+    free(head);
+    free(second);
+    free(third);
+
+    return 0;
+}
+
+```
+
+:::
 
 It contains:
 
