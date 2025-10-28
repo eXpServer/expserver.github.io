@@ -43,7 +43,7 @@ Let us demonstrate a common use case: **finding an infinite loop** in a C progra
 
 Let's say we have a program that builds a linked list and then prints it. However, the program has a bug and accidentally creates a **cycle** in the list, causing the `printList` function to loop forever.
 
-This is our C file, let's call it <a href="/assets/resources/list_demo.c" download>list_demo.c</a>.
+This is our C file, let's call it <a href="files/list_demo.c" download>list_demo.c</a>.
 
 It contains:
 
