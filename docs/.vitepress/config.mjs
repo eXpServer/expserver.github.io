@@ -5,7 +5,7 @@ export default defineConfig({
 	title: 'eXpServer',
 	description: 'Documentation for eXpServer',
 	head: [['link', { rel: 'icon', href: '/images/icon.png' }]],
-	base: '/',
+	base: '/expserver.github.io/',
 	themeConfig: {
 		outline: { level: 'deep' },
 		// https://vitepress.dev/reference/default-theme-config
