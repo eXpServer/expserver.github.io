@@ -43,7 +43,7 @@ Let us demonstrate a common use case: **finding an infinite loop** in a C progra
 
 Let's say we have a program that builds a linked list and then prints it. However, the program has a bug and accidentally creates a **cycle** in the list, causing the `printList` function to loop forever.
 
-This is our C file, let's call it <a href="/expserver.github.io/assets/resources/list_demo.c" download>list_demo.c</a>.
+This is our C file, let's call it <a href="/assets/resources/list_demo.c" download>list_demo.c</a>.
 
 It contains:
 
@@ -77,6 +77,8 @@ Now our GDB is up.
 
 **`layout src`** - Opens a Graphical user interface, where you can view the part of the code currently executing along with the code line numbers.
 
+![gdb-layoutsrc.png](/assets/resources/gdb-layoutsrc.png)
+
 ```
 (gdb) layout src
 ```
@@ -88,6 +90,27 @@ We know the program hangs, and we suspect the printList function is the problem.
 ```
 (gdb) break printList
 ```
+You can also set a breakpoint on a specific line number. This is useful if you know exactly which line you want to stop at.
+```
+(gdb) break list_demo.c:14
+```
+
+* This sets a breakpoint at **line 14 of `list_demo.c`**, pausing execution whenever that line is about to run.
+
+Alternatively, you can set a breakpoint by line number alone:
+
+```
+(gdb) break 14
+```
+
+* This sets a breakpoint at **line 14 of the “current” source file**.
+* The current file is usually:
+
+  * The file where execution currently is, or
+  * The file you last viewed using `list` or `layout src`.
+
+Using breakpoints lets you pause execution at critical points and inspect variables to debug your program effectively.
+
 
 **`run`** - It runs the program until it encounters one of the break points.
 
@@ -141,17 +164,7 @@ This confirms that the node with data `30` points back to the node with data `20
 
 Since the `printList` function iterates through the list with a `while` loop, we can set a breakpoint on a line _inside_ that loop (e.g., line 14, `printf("%d -> ", current->data);`).
 
-**Note:** You can also set a breakpoint on a specific line number _before_ running the program. This is useful if you know exactly which line you want to stop at.
 
-```
-(gdb) break list_demo.c:14
-```
-
-This command tells GDB to stop at line 14 of `list_demo.c` every time it's about to be executed.
-
-Once we `run` and hit our _first_  breakpoint (at the start of `printList`), we can set this _second_ breakpoint inside the loop. When we type `continue`, GDB executes until it hits this loop breakpoint (on the first node, "10").
-
-Now, when we type `continue` again, GDB will finish the current loop, grab the next node, and stop _again_ at the same breakpoint, but on the _next_ node. This lets us "jump" from node to node.
 
 ```
 (gdb) break 14
