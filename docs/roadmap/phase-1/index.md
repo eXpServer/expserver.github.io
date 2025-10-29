@@ -6,8 +6,8 @@ Congratulations on the completion of Phase 0. Let’s take a look at what we hav
 
 - In stage 1, we built a simple TCP server that served a _netcat_ client
 - In stage 2, we created our own TCP client and made it communicate with the TCP server
-- In stage 3, we made our TCP server support multiple simultaneous clients using _epoll_ (concurrency)
-- In stage 4, We experimented with UDP and multi-threading
+- In stage 3, We experimented with UDP and multi-threading
+- In stage 4, we made our TCP server support multiple simultaneous clients using _epoll_ (concurrency)
 - In stage 5, we combined the functionality of a TCP server and client to create a TCP proxy and made browser requests to the python file server go through it
 
 ## What to expect in Phase 1

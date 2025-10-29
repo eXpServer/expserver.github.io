@@ -70,7 +70,8 @@ int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
     
     `EPOLL_CTL_MOD`  - Change the setting associated with fd which is already in the interest list of epfd to new settings specified in the event argument.
     
-    `EPOLL_CTL_DEL`  - Removes the target file descriptor(fd) from the interest list of epfd. If the fd has been added to multiple epoll instances, then closing it from will remove it from all the epoll interest lists to which it was a part of. 
+    `EPOLL_CTL_DEL`  - Removes the target file descriptor (fd) from the interest list of the specified epoll instance (epfd). 
+	Note that if the underlying file descriptor is closed, the kernel will automatically remove it from all epoll instances that were monitoring that file descriptor.
     
 4. `struct epoll_event *event` - A pointer to an `epoll_event` structure that specifies the events to be monitored on the file descriptor. This argument is used while adding and modifying the FDs. While deleting any FD, this argument is generally ignored and set to NULL. The caller is responsible for initializing and allocating the fields for `epoll_event` structure. 
     
