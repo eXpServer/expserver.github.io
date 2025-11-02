@@ -716,7 +716,7 @@ Functions Added
 bool handle_pipes(xps_loop_t *loop) {
     assert(loop != NULL);
     for (int i = 0; i < loop->core->pipes.length; i++) {
-    xps_connection_t *pipe = loop->core->pipes.data[i];
+    xps_pipe_t *pipe = loop->core->pipes.data[i];
     if (pipe == NULL)
         continue;
         
@@ -743,7 +743,7 @@ bool handle_pipes(xps_loop_t *loop) {
     }
 
     for (int i = 0; i < loop->core->pipes.length; i++) {
-    xps_connection_t *pipe = loop->core->pipes.data[i];
+    xps_pipe_t *pipe = loop->core->pipes.data[i];
     if (pipe == NULL){
         logger(LOG_DEBUG, "handle_pipes", "pipe is null");
         continue;

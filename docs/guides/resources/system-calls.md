@@ -107,7 +107,7 @@ The `pthread_attr_t` is a structure used to define thread attributes. It is decl
 
 So these are some of the major functions that are used to set the thread attributes.
 
-- `void * (*start_routine)(void *)`  - a pointer to a subroutine (function pointer) that is executed by the thread. The return type and parameter type of the subroutine must be of type `void *`. The function accepts a single argument of type `void` . If multiple values need to be passed to the function, the arguments must be placed in a structure and the pointer is passed.
+- `void * (*start_routine)(void *)`  - a pointer to a subroutine (function pointer) that is executed by the thread. The return type and parameter type of the subroutine must be of type `void *`. The function accepts a single argument of type `void *` . If multiple values need to be passed to the function, the arguments must be placed in a structure and the pointer is passed.
 - `void *arg` - A void pointer that contains the arguments to the function defined in the `start_routine`.  Typically a structure pointer with values of arguments to the `start_routine` is passed in practice.
 
 **Return Value**
@@ -190,7 +190,7 @@ while (1) {//for handling multiple connections till the server terminates
 
 ## pthread_join()
 
-`pthread_join()` function allows one thread to wait for the termination of another thread. It enables synchronization of threads and ensures that the resources used by the terminated thread are cleaned up properly. As seen before a detached thread will automatically release its resources after termination. But for joinable threads (by default threads are created in joinable state) `pthread_join` should be called to release its resources, otherwise zombie threads will be created. The calling thread will block until the specified thread terminates. `pthread_join()` also allows to retrieve the exit status of the terminated thread. This function is included in the `pthread.h` header. The function signature is as follows:
+`pthread_join()` function allows one thread to wait for the termination of another thread. It enables synchronization of threads and ensures that the resources used by the terminated thread are cleaned up properly. As seen before, a detached thread will automatically release its resources after termination. But for joinable threads (by default threads are created in joinable state) `pthread_join` should be called to release its resources, otherwise zombie threads will be created. The calling thread will block until the specified thread terminates. `pthread_join()` also allows to retrieve the exit status of the terminated thread. This function is included in the `pthread.h` header. The function signature is as follows:
 
 `int pthread_join(pthread_t thread, void **retval);` 
 
