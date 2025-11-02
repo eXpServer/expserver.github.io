@@ -1,7 +1,7 @@
 <script setup>
 import { VPTeamMembers } from 'vitepress/theme'
 
-const members = [
+const batch2020 = [
   {
     avatar: 'https://www.github.com/emanuelchristo.png',
     name: 'Emanuel Christo',
@@ -18,8 +18,95 @@ const members = [
       { icon: 'github', link: 'https://github.com/aadhavanpl' },
       { icon: 'linkedin', link: 'https://aadhii.in/' }
     ]
-  },
-  // add more here
+  }
+]
+
+const batch2021 = [
+  {
+    avatar: 'https://avatars.githubusercontent.com/u/122230731?v=4',
+    name: 'Mayank Gupta',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/71203mayank' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/mayank-gupta-715210242' }
+    ]
+  }, {
+    avatar: 'images/about/Anuj_Haval.jpg',
+    name: 'Anuj Haval',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/AnujHaval' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/anuj-haval-106567251/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/97302579?v=4',
+    name: 'Binshadh Basheer',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/binshadhbu' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/binshadh-basheer-369476227/' }
+    ]
+  }, {
+    avatar: 'images/about/Diljith_PD.jpg',
+    name: 'Diljith P D',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/th3bossc' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/diljith-p-d-815716250/' }
+    ]
+  }, {
+    avatar: 'images/about/Nandana_S_Nair.jpg',
+    name: 'Nandana S Nair',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/NandanaSNair02' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/nandana-s-nair-949808222/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/134227262?v=4',
+    name: 'Nikhisha T S',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/nikhishats7' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/nikhisha-ts-5676a6247/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/169025635?v=4',
+    name: 'Nandana D V',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/NandanaDV' },
+      { icon: 'linkedin', link: '' }
+    ]
+  }
+]
+
+const batch2022 = [
+    {
+    avatar: 'https://avatars.githubusercontent.com/u/122631489?v=4',
+    name: 'Fayis Rahman',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/FayisRahman' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/fayis-rahman-thadathil-6644b9250/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/15691889?v=4',
+    name: 'Sreehari J',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/Sreeharij' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/sreehari-j-906873308/' }
+    ]
+  }, {
+    avatar: 'https://avatars.githubusercontent.com/u/118613998?v=4',
+    name: 'Mohammed Shibin E',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/Shibin-Ez' },
+      { icon: 'linkedin', link: '' }
+    ]
+  }
 ]
 </script>
 
@@ -67,7 +154,17 @@ This project provides individuals with practical experience in understanding the
 
 The content in the website and the documentation has been authored in the [Department of Computer Science and Engineering](https://minerva.nitc.ac.in/), [National Institute of Technology Calicut](http://nitc.ac.in/) under the guidance of [Dr. Murali Krishnan K](https://nitc.ac.in/department/computer-science-amp-engineering/faculty-and-staff/faculty/bdb94a31-f29a-4fb0-b4d5-7db9be64edef) and [Dr. Vinod Pathari](https://nitc.ac.in/department/computer-science-amp-engineering/faculty-and-staff/faculty/f6ebabe0-ef35-4efd-964a-59325844b7c5).
 
-<VPTeamMembers size="small" :members="members" />
+### 2020 Batch
+
+<VPTeamMembers size="small" :members="batch2020" />
+
+### 2021 Batch
+
+<VPTeamMembers size="small" :members="batch2021" />
+
+### 2022 Batch
+
+<VPTeamMembers size="small" :members="batch2022" />
 
 ## License
 

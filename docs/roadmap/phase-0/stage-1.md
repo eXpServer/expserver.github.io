@@ -243,7 +243,7 @@ The `memset` function is initialize the value of `buff` to 0.
     ssize_t read_n = recv(conn_sock_fd, buff, sizeof(buff), 0);
 ```
 
-The [`recv()`](https://man7.org/linux/man-pages/man2/recv.2.html) function is used to receive data from the connected socket. This function reads incoming data from the client and stores it in the character buffer `buff`. Upon successful reception, `recv()` returns the number of bytes received, which is stored in the variable `read_n`.
+The [`recv()`](https://man7.org/linux/man-pages/man2/recv.2.html) function is used to receive data from the connected socket. This function reads incoming data from the client and stores it in the character buffer `buff`. Upon successful reception, `recv()` returns the number of bytes received, which is stored in the variable `read_n`. The last argument 0 indicates that no special flags are set — the function will block until data is available.
 
 Let's ensure we handle any unexpected failures by implementing error handling.
 

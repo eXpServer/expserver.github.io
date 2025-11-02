@@ -57,6 +57,7 @@ When an `xps_listener` instance gets a client connection, an instance of `xps_co
 #include <netdb.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <unistd.h>

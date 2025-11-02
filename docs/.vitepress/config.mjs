@@ -40,6 +40,7 @@ export default defineConfig({
 							text: 'TCP/IP Model',
 							link: '/guides/resources/tcp-ip-model',
 						},
+						{ text: 'GDB', link: '/guides/resources/gdb' },
 						{ text: 'TCP Socket Programming', link: '/guides/resources/tcp-socket-programming' },
 						{ text: 'UDP Socket Programming', link: '/guides/resources/udp-socket-programming' },
 						{ text: 'Process and Threads', link: '/guides/resources/process-and-threads' },
