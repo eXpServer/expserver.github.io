@@ -54,6 +54,10 @@ export default defineConfig({
 							link: '/guides/resources/linux-epoll-tutorial',
 						},
 						{
+							text: 'Linux epoll',
+							link: '/guides/resources/linux-epoll',
+						},
+						{
 							text: 'Blocking & Non-Blocking Sockets',
 							link: '/guides/resources/blocking-and-non-blocking-sockets',
 						},
