@@ -49,10 +49,10 @@ export default defineConfig({
 							text: 'Introduction to Linux epoll',
 							link: '/guides/resources/introduction-to-linux-epoll',
 						},
-						{
-							text: 'Linux epoll tutorial',
-							link: '/guides/resources/linux-epoll-tutorial',
-						},
+						// {
+						// 	text: 'Linux epoll tutorial',
+						// 	link: '/guides/resources/linux-epoll-tutorial',
+						// },
 						{
 							text: 'Linux epoll',
 							link: '/guides/resources/linux-epoll',
