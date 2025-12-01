@@ -13,7 +13,7 @@ The guides feature supplementary documentation intended for your reference as yo
 
 - ✅ [Architecture](/guides/resources/architecture)
 - ✅ [Coding Conventions](/guides/resources/coding-conventions)
-- 🟡 [GDB](/guides/resources/gdb)
+- ✅ [GDB](/guides/resources/gdb)
 - ✅ [TCP/IP Model](/guides/resources/tcp-ip-model)
 - ✅ [TCP Socket Programming](/guides/resources/tcp-socket-programming)
 - ✅ [UDP Socket Programming](/guides/resources/udp-socket-programming)

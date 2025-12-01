@@ -87,7 +87,7 @@ Line removed // [!code --]
 #define DEFAULT_NULLS_THRESH 32 // [!code ++]
 
 // Error constants
-#define E_SUCCESS 0     // Success  // [!code ++]
+#define OK 0            // Success  // [!code ++]
 #define E_FAIL -1       // Un-recoverable error  // [!code ++]
 #define E_AGAIN -2      // Try again  // [!code ++]
 #define E_NEXT -3       // Do next  // [!code ++]
