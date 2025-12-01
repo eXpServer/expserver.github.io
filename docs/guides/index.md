@@ -19,8 +19,8 @@ The guides feature supplementary documentation intended for your reference as yo
 - ✅ [UDP Socket Programming](/guides/resources/udp-socket-programming)
 - ✅ [Process and Threads](/guides/resources/process-and-threads)
 - ✅ [System Calls](/guides/resources/system-calls)
-- ✅ [Linux epoll](/guides/resources/introduction-to-linux-epoll)
-- 🟡 [Linux epoll tutorial](/guides/resources/linux-epoll-tutorial)
+- 🟡 [Introduction to Linux epoll](/guides/resources/introduction-to-linux-epoll)
+- 🟡 [Linux epoll](/guides/resources/linux-epoll)
 - 🟡 [Blocking & Non-Blocking Sockets](/guides/resources/blocking-and-non-blocking-sockets)
 - 🟡 [HTTP](/guides/resources/http)
 
