@@ -299,7 +299,10 @@ Now that `buff` has the reversed string, it is time to send it to the client. We
 
 The final code should look like this.
 
+<a id="tcp-server-c"></a>
 ::: details expserver/phase_0/tcp_server.c
+
+
 
 ```c
 #include <arpa/inet.h>
