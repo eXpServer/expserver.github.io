@@ -23,9 +23,9 @@ There are various [asynchronous I/O](https://en.wikipedia.org/wiki/Asynchronous_
 
 ![implementation.png](/assets/stage-3/implementation.png)
 
-Let us clearly understand the requirement once again. We have one single port that is listening for incoming client connections. Through this port, we want to be able to accept multiple clients, and cater to all of them simultaneously.
+Let us clearly understand the requirement once again. We have one single port that is listening for incoming client connections. Through this port, we want to be able to accept multiple clients, and cater to all of them simultaneously. We have already achieved this in stage 3 using multithreading. In this stage we are incoorporating the same functionility using a single thread with epoll mechanism. Multithreading involves switiching between threads which is considered less efficient in comparison with epoll.
 
-Think of `tcp_server.c` as two parts:
+Think of [`tcp_server.c`](/roadmap/phase-0/stage-1.md#tcp-server-c) (implemented in stage 1) as two parts:
 
 1. **Setting up the server and waiting for clients**
 
@@ -69,7 +69,7 @@ First we’ll create an epoll instance using [`epoll_create1()`](https://man7.or
 int epoll_fd = epoll_create1(0);
 ```
 
-We need _epoll_ to monitor specific FD’s that we are interested in and notify us if there are any events on it.
+We need _epoll_ to monitor specific FD’s that we are interested in (listening socket and connection sockets) and notify us if there are any events on it.
 `struct epoll_event` is a structure provided by the `<sys/epoll.h>` that specifies event related data that epoll provides. We will be using an `event` variable and an `events` array of `struct epoll_event` type for the following purposes
 
 1. `event` - to setup a FD with the events that should be monitored for and pass on to [`epoll_ctl()`](https://man7.org/linux/man-pages/man2/epoll_ctl.2.html) function to register it with `epoll_fd`.
@@ -93,24 +93,65 @@ Add this to global definitions:
 The structure definition of `epoll_event` is given below for our understanding. The fields that are relevent to the project will be explained when required.
 
 ::: info
-In the current stage, we will look into how to get epoll working. An in depth look at epoll will be done at a later stage.
+In the current stage, we will look into how to get epoll working. A closer look at epoll will be done at a later stage.
 :::
 
 ```c
 struct epoll_event {
-  uint32_t      events;  /* Epoll events */
+  uint32_t      events;  /* Epoll events (eg: EPOLLIN,EPOLLOUT,EPOLLET) */
   epoll_data_t  data;    /* User data variable */
 };
 
 union epoll_data {
-  void     *ptr;
-  int       fd;
-  uint32_t  u32;
-  uint64_t  u64;
+  void     *ptr;  /* Pointer to a user defined data structure */
+  int       fd;   /* File descritor of the socket we are monitoring*/
+  uint32_t  u32;  /* Not used within the scope of this project */
+  uint64_t  u64;  /* Not used within the scope of this project */
 };
 
 typedef union epoll_data epoll_data_t;
 ```
+
+:::info IMPORTANT NOTE
+
+**Fields inside `struct epoll_event`**
+
+**`events`**  
+event flags indicating which I/O conditions to monitor (`EPOLLIN`, `EPOLLOUT`, etc.) and which of them actually occurred.
+
+<!--since nested block is not possible this is a workaround using HTML code-->
+<div class="custom-block danger">
+  <p class="custom-block-title">NOTE</p>
+  <p>
+    In this project, the results of <code>epoll_wait()</code> are kept in an array
+    named <code>events</code>, so the event flags naturally appear in the code as
+    <code>events[i].events</code>.
+  </p>
+</div>
+
+**`data`**  
+User-defined payload returned unchanged by the kernel. Used to associate the file descriptor with application-specific state.
+
+**Fields inside `union epoll_data`**
+
+**`ptr`**  
+Pointer to application-defined context or a custom struct.  
+This is the primary method used in later stages and is what makes `epoll_event` highly useful.
+
+**`fd`**  
+Stores the file descriptor directly. Useful when no additional state or context is required.
+
+**`u32 / u64`**  
+Integer fields for lightweight IDs or metadata.  
+(Not used within the scope of this project.)
+
+:::
+
+
+:::tip Union
+`epoll_data_t` is implemented as a union. Since all members overlap in memory, only one field holds a valid value at a time.
+:::
+
 
 We are now ready to utilize our epoll instance. The first FD we would like to monitor is the listening socket. So let us add that to the epoll. This will allow us to get notified of incoming connection requests.
 

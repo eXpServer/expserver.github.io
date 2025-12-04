@@ -6,9 +6,9 @@ However, a key drawback of this approach is that each time `select()` or `poll()
 
 ## epoll
 
-**_epoll_** stands for _event poll_ and is a Linux-specific construct. It allows a process to monitor multiple file descriptors and receive notifications when an event occurs on them. Essentially, it's a kernel data structure facilitating I/O multiplexing on multiple file descriptors.
+**_epoll_** stands for _event poll_ and is a Linux-specific construct. It allows a process to monitor multiple file descriptors and receive notifications when an event occurs on them. Essentially, it is a kernel data structure facilitating I/O multiplexing on multiple file descriptors.
 
-epoll can be managed through three system calls, facilitating its creation, modification, and deletion. It's notably employed in [Nginx](https://en.wikipedia.org/wiki/Nginx), a popular web server, and it's a fundamental component of our implementation of eXpServer as well.
+epoll can be managed through three system calls, facilitating its creation, modification, and deletion. It is notably employed in [Nginx](https://en.wikipedia.org/wiki/Nginx), a popular web server, and it's a fundamental component of our implementation of eXpServer as well.
 
 ## **The Problem**
 
