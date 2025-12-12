@@ -297,9 +297,9 @@ Now that `buff` has the reversed string, it is time to send it to the client. We
 
 ---
 
-The final code should look like this.
+The final code should look like this. {#tcp-server-c}
 
-<a id="tcp-server-c"></a>
+
 ::: details expserver/phase_0/tcp_server.c
 
 

@@ -38,14 +38,14 @@ The below is the code for the header file `xps_upstream.h`. Have a look at it an
 ::: details **expserver/src/network/xps_upstream.h**
     
 ```c
-    #ifndef XPS_UPSTREAM_H
-    #define XPS_UPSTREAM_H
-    
-    #include "../xps.h"
-    
-    xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int port);
-    
-    #endif
+#ifndef XPS_UPSTREAM_H
+#define XPS_UPSTREAM_H
+
+#include "../xps.h"
+
+xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int port);
+
+#endif
 ```
 :::    
 
@@ -105,7 +105,7 @@ void listener_connection_handler(void *ptr) {
      
       /* create upstream connection */
       /*create pipe connection to  client source and upstream sink for the listener*/
-      /*create pipe a connection to upstream source and client sink for the listener*/
+      /*create pipe connection to upstream source and client sink for the listener*/
     } else {
     /* same as previous stages*/
 

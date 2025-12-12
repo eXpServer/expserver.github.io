@@ -827,7 +827,7 @@ Since we did not modify the functionality of the server, this milestone will is 
   return -1;
   }
 
-  if (connect(sock, (struct sockaddr \*)&serv_addr, sizeof(serv_addr)) < 0) {
+  if (connect(sock, (struct sockaddr* )&serv_addr, sizeof(serv_addr)) < 0) {
   perror("Connection failed");
   return -1;
   }
