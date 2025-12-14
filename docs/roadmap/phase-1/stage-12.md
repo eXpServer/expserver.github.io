@@ -88,7 +88,7 @@ const char *xps_get_mime(const char *file_path) {
 ```
 :::   
 
-As we are mapping the MIME type based on the file extension, a function for finding the file extension is added in `xps_utils.h`. Add the below given function in xps_utils.c
+As we are mapping the MIME type based on the file extension, a function for finding the file extension is added in `xps_utils.h`. Add the below given function in `xps_utils.c`
 
 ```c
 const char *get_file_ext(const char *file_path) {
@@ -241,7 +241,7 @@ The functions in xps_file.c are given below:
       FILE *file_struct = fopen(file_path, "rb");
       /*handle EACCES,ENOENT or any other error*/
       if (file_struct == NULL) {
-        /*logs EACCES,ENOENT or any other error*/
+        /*logs EACCES,ENOENT or any other error*/ 
         return NULL;
       }
     

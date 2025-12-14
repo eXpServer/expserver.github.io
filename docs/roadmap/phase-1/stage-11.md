@@ -57,9 +57,7 @@ xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int 
 xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int port) {
   /* validate parameter */
 
- /* create a socket and connect to host and port to upstream using xps_getaddrinfo and connect function */
-
-  
+  /* create a socket and connect to host and port to upstream using xps_getaddrinfo and connect function */
 
   if (!(connect_error == 0 || errno == EINPROGRESS)) {
     logger(LOG_ERROR, "xps_upstream_create()", "connect() failed");
@@ -74,6 +72,9 @@ xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int 
   return connection;
 }
 ```
+:::warning  
+ Dont forget to free allocated struct addrinfo
+:::
 
 ## Modifications to listener module
 

@@ -117,7 +117,7 @@ xps_session_t *xps_session_create(xps_core_t *core, xps_connection_t *client) {
   // Alloc memory for session instance
   xps_session_t *session = /* fill this */
   if (session == NULL) {
-    logger(LOG_ERROR, "xps_session_create()", "malloc() failed fro 'session'");
+    logger(LOG_ERROR, "xps_session_create()", "malloc() failed for 'session'");
     return NULL;
   }
 
@@ -190,14 +190,28 @@ xps_session_t *xps_session_create(xps_core_t *core, xps_connection_t *client) {
 
   if (client->listener->port == 8001) {
     xps_connection_t *upstream = /* fill this */
-    xps_pipe_create(/* fill this */)
-    xps_pipe_create(/* fill this */)
+    if (upstream == NULL) {
+      logger(LOG_ERROR, "xps_session_create()", "xps_upstream_create() failed");
+      perror("Error message");
+      /* destroy session */
+      return NULL;
+    }
+    session->upstream = /* fill this */;
+    xps_pipe_create(/* fill this */);
+    xps_pipe_create(/* fill this */);
   }
 
   else if (client->listener->port == 8002) {
     int error;
-    xps_file_t *file = xps_file_create(/* fill this */)
-    xps_pipe_create(/* fill this */)
+    xps_file_t *file = xps_file_create(/* fill this */);
+    if (file == NULL) {
+      logger(LOG_ERROR, "xps_session_create()", "xps_file_create() failed");
+      perror("Error message");
+      /*destory session*/
+      return NULL;
+    }
+    /* assign to the file member */
+    xps_pipe_create(/* fill this */);
   }
 
   return session;
@@ -491,12 +505,12 @@ void listener_connection_handler(void *ptr) {
       continue;
     }
     client->listener = listener;
-
-    // TEMP
+    
     xps_session_t *session = /* fill this */ ;
     if (session == NULL) {
       logger(LOG_ERROR, "listener_connection_handler()", "xps_session_create() failed");
       xps_connection_destroy(client);
+      return;
     }
 
     logger(LOG_INFO, "listener_connection_handler()", "new connection");
