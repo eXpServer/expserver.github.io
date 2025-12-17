@@ -34,7 +34,7 @@ Create a new folder disk in src, this would be used for adding necessary modules
 
 The code below has the contents of the header file for `xps_mime`. Have a look at it and make a copy of it in your codebase.
 
-:::details **expserver/src/disc/xps_mime.h**
+:::details **expserver/src/disk/xps_mime.h**
     
 ```c
 #ifndef XPS_MIME_H
@@ -52,7 +52,7 @@ const char *xps_get_mime(const char *file_path);
 
 The function `xps_get_mime()` returns the MIME type of a file based on its extension. A MIME type lookup table (`mime_types`) maps file extensions (e.g., ".html", ".jpg") to their corresponding MIME types (e.g., "text/html", "image/jpeg"). This tells the browser how to display or interact with the file. For example, an HTML file is rendered as a web page, while an image is displayed as a picture. We won’t be using this functionality in the present stage but would be looking into in later stages.
 
-:::details **expserver/src/disc/xps_mime.c**
+:::details **expserver/src/disk/xps_mime.c**
     
 ```c
 #include "../xps.h"
@@ -88,7 +88,7 @@ const char *xps_get_mime(const char *file_path) {
 ```
 :::   
 
-As we are mapping the MIME type based on the file extension, a function for finding the file extension is added in `xps_utility`. Add the below given function in utility.c
+As we are mapping the MIME type based on the file extension, a function for finding the file extension is added in `xps_utils.h`. Add the below given function in `xps_utils.c`
 
 ```c
 const char *get_file_ext(const char *file_path) {
@@ -108,7 +108,7 @@ Also declare the newly created function in utility.h
 
 The code below has the contents of the header file for `xps_file`. Have a look at it and make a copy of it in your codebase.
 
-:::details **expserver/src/disc/xps_file.h**
+:::details **expserver/src/disk/xps_file.h**
     
 ```c
 #ifndef XPS_FILE_H
@@ -157,7 +157,7 @@ Several file system-related C standard library functions are used to handle file
     FILE *fopen(const char *filename, const char *mode);
     ```
     
-    Opens a file specified by filename and returns a pointer to a FILE structure that represents the file stream. If mode given as “rb”, it opens the file in binary read mode. **Returns**: A pointer to a FILE structure if successful, or NULL if the file cannot be opened .
+    Opens a file specified by filename and returns a pointer to a FILE structure that represents the file stream. If mode given as “rb”, it opens the file in binary read mode. **Returns**: A pointer to a FILE structure if successful, or NULL if the file cannot be opened. 
     
 - `fclose()`
     
@@ -241,7 +241,7 @@ The functions in xps_file.c are given below:
       FILE *file_struct = fopen(file_path, "rb");
       /*handle EACCES,ENOENT or any other error*/
       if (file_struct == NULL) {
-        /*logs EACCES,ENOENT or any other error*/
+        /*logs EACCES,ENOENT or any other error*/ 
         return NULL;
       }
     

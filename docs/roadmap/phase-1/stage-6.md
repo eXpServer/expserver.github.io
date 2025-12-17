@@ -638,7 +638,7 @@ In Stage 5, we had three types of events that could occur in epoll:
 Since this stage involves receiving a message from the client, reversing it and sending it back, we won’t not be needing upstream. We will work on the first two types of events:
 
 ::: tip NOTE
-Upstream will have its own module (`xps_upstream`) and will be implemented in Stage 9.
+Upstream will have its own module (`xps_upstream`) and will be implemented in Stage 11.
 :::
 
 - **Read event on listening socket:**

@@ -121,7 +121,6 @@ event flags indicating which I/O conditions to monitor (`EPOLLIN`, `EPOLLOUT`, e
 
 <!--since nested block is not possible this is a workaround using HTML code-->
 <div class="custom-block danger">
-  <p class="custom-block-title">NOTE</p>
   <p>
     In this project, the results of <code>epoll_wait()</code> are kept in an array
     named <code>events</code>, so the event flags naturally appear in the code as

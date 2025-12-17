@@ -38,14 +38,14 @@ The below is the code for the header file `xps_upstream.h`. Have a look at it an
 ::: details **expserver/src/network/xps_upstream.h**
     
 ```c
-    #ifndef XPS_UPSTREAM_H
-    #define XPS_UPSTREAM_H
-    
-    #include "../xps.h"
-    
-    xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int port);
-    
-    #endif
+#ifndef XPS_UPSTREAM_H
+#define XPS_UPSTREAM_H
+
+#include "../xps.h"
+
+xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int port);
+
+#endif
 ```
 :::    
 
@@ -57,9 +57,7 @@ The below is the code for the header file `xps_upstream.h`. Have a look at it an
 xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int port) {
   /* validate parameter */
 
- /* create a socket and connect to host and port to upstream using xps_getaddrinfo and connect function */
-
-  
+  /* create a socket and connect to host and port to upstream using xps_getaddrinfo and connect function */
 
   if (!(connect_error == 0 || errno == EINPROGRESS)) {
     logger(LOG_ERROR, "xps_upstream_create()", "connect() failed");
@@ -74,6 +72,9 @@ xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int 
   return connection;
 }
 ```
+:::warning  
+ Dont forget to free allocated struct addrinfo
+:::
 
 ## Modifications to listener module
 
@@ -105,7 +106,7 @@ void listener_connection_handler(void *ptr) {
      
       /* create upstream connection */
       /*create pipe connection to  client source and upstream sink for the listener*/
-      /*create pipe a connection to upstream source and client sink for the listener*/
+      /*create pipe connection to upstream source and client sink for the listener*/
     } else {
     /* same as previous stages*/
 
