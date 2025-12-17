@@ -91,7 +91,7 @@ client_data_t* data = (client_data_t*)malloc(sizeof(client_data_t));
 ```
 
 In the next step we will be creating a thread for handling the received request. We can use `pthread_create()` function for creating a new thread.
-READMEDEV-give a disclaimer asking to read more about pthread create in threads and systems calls before proceeding.
+
 ```C
 pthread_create(&thread_id, NULL, handle_client, (void*)data)
 ```
