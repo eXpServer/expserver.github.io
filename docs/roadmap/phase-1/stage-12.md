@@ -106,7 +106,7 @@ Also declare the newly created function in utility.h
 
 ### `xps_file.h`
 
-The code below has the contents of the header file for `xps_file`. Have a look at it and make a copy of it in your codebase.
+The code below has the contents of the header file for `xps_file.c`. Have a look at it and make a copy of it in your codebase.
 
 :::details **expserver/src/disk/xps_file.h**
     

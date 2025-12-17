@@ -101,14 +101,14 @@ void listener_connection_handler(void *ptr) {
     // Creating connection instance
     ...
 
-    // TEMP
+    // Handle connection based on listener port (upstream or direct)
     if (listener->port == 8001) {
      
       /* create upstream connection */
       /*create pipe connection to  client source and upstream sink for the listener*/
       /*create pipe connection to upstream source and client sink for the listener*/
     } else {
-    /* same as previous stages*/
+      /* same as previous stages*/
 
     }
     
