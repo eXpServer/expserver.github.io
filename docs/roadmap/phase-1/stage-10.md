@@ -34,9 +34,9 @@ Along with modifying the existing modules to enable data transfer through pipes,
 
 Three new structs are introduced here. The `xps_pipe_s`  struct includes the buffer and the maximum threshold. The `xps_pipe_source_s` and `xps_pipe_sink_s` structs includes the `ready`/`active` flags and callback functions. Earlier the callback functions were called based on the `read_ready` / `write_ready` flags of connection , here it would be based on the status of source/sink and whether the pipe is readable/writable. A pipe is readable if the length of `buff_list` greater than `0` and writable if its length less than the maximum threshold.
 
-The callback functions in `connection.c` are modified to ensure the working of source-sink system. The `connection_source_handler()` reads the data using `recv()` and writes it to pipe, whereas the `connection_sink_handler()` reads the data from pipe and `send()`.
+The callback functions in `xps_connection.c` are modified to ensure the working of source-sink system. The `connection_source_handler()` reads the data using `recv()` and writes it to pipe, whereas the `connection_sink_handler()` reads the data from pipe and `send()`.
 
-Here, the timeout in the `epollwait()` is set according to the existence of ready pipes. A ready pipe indicates that some operation has to be done on that - write into, read from , destroy. The availability of ready pipe leads to the timeout being set to 0, which results in a non-blocking call as discussed earlier.
+Here, the timeout in the `epoll_wait()` is set according to the existence of ready pipes. A ready pipe indicates that some operation has to be done on that - write into, read from , destroy. The availability of ready pipe leads to the timeout being set to 0, which results in a non-blocking call as discussed earlier.
 
 In Stage 6, we have discussed the issue of accumulating nulls in the events,connections and listeners list, here we would be filtering those.
 
@@ -782,7 +782,7 @@ void filter_nulls(xps_core_t *core) {
 ```
 :::    
 
-- `handle_epoll_events()`  -  Replaces the existing `xps_loop_run()`,  this function would be invoked from the new `xps_loop_run()`. It iterates thorough the events and corresponding call back functions are called based on epoll notification. This is added to simplify the new `xps_loop_run()`.
+- `handle_epoll_events()`  -  Replaces the epoll events iteration logic from `xps_loop_run()`,  this function would be invoked from the new `xps_loop_run()`. It iterates through the events and corresponding call back functions are called based on epoll notification. This is added to simplify the new `xps_loop_run()`.
 ::: details **expserver/src/core/xps_loop.c -** `handle_epoll_events()`
     
 ```c
