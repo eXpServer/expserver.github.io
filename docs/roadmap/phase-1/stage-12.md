@@ -225,7 +225,7 @@ Several file system-related C standard library functions are used to handle file
 
 `errno` determines the specific error when an operation fails. In case of `fopen()`, `EACCES` indicates a permission denied error and `ENOENT` indicates the specified file or directory doesn't exist.
 
-The functions in xps_file.c are given below:
+The functions in `xps_file.c` are given below:
 
 1. **`xps_file_create()`**
     
@@ -362,16 +362,16 @@ The second struct is for storing the key-value pairs of mime extensions and mime
 
 ## `xps_listener` Module - Modifications
 
-### `listener.c`
+### `xps_listener.c`
 
 As we have to serve file for the incoming connections on port 8002, the `listener_connection_handler` function has to be modified. The `xps_file_create` function is invoked for opening the file and creating a `xps_file_s` instance for it. The path of file to be opened is specified in the argument. Then pipe is created with the source that is attached to the file instead of that attached to connection.
 
 ```c
-if (listener->port == 8001) {
+    if (listener->port == 8001) {
       ....
     } else if (listener->port == 8002) {// [!code ++]
       int error;// [!code ++]
-      xps_file_t *file = xps_file_create(listener->core, "../public/sample.txt", &error);// [!code ++]
+      xps_file_t *file = xps_file_create(listener->core, "public/sample.txt", &error);// [!code ++]
       xps_pipe_create(listener->core, DEFAULT_PIPE_BUFF_THRESH, file->source, client->sink);// [!code ++]
     } else {
       ...
