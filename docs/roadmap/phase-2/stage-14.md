@@ -349,6 +349,11 @@ For each component the start pointer is assigned on beginning and and end pointe
 :::details **expserver/src/http/xps_http.c -** `xps_http_parse_request_line()`
     
   ```c
+
+  bool http_strcmp(u_char *str, const char *method, size_t length){
+    /* complete this */
+  }
+
   int xps_http_parse_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
     /*get current parser state*/
     u_char *p_ch = buff->pos;//current buffer postion
@@ -569,7 +574,7 @@ Let us look into the states in header parsing:
     assert(http_req != NULL);
     assert(buff != NULL);
   
-    char *p_ch = buff->pos;
+    u_char *p_ch = buff->pos;
     xps_http_parser_state_t parser_state = http_req->parser_state;
   
     for (/*iterarte though buffer, also increments the buffer position*/) {
@@ -717,7 +722,8 @@ xps_buffer_t *xps_http_serialize_headers(vec_void_t *headers) {
     sprintf(header_str, "%s: %s\n", header->key, header->val);
     if ((buff->size - buff->len) < header_str_len) { //buffer is small
       u_char *new_data = /*realloc() buffer to twice size*/
-      /*updata buff->data and buff->size*/
+      /*handle error*/
+      /*update buff->data and buff->size*/
     }
     strcat(buff->data, header_str);
     buff->len = strlen(buff->data);
@@ -752,13 +758,14 @@ int http_process_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
   /*find port_str from port start and end pointers*/
   /*if port_str is null assign default port number 80 for http and 443 for https
   if not null assign atoi(port_str)*/
+  /*free port_str*/
   return OK;
 }
 ```
 
-Add the str_from_ptrs() utility function. Update utils.h accordingly.
+Add the `str_from_ptrs()` utility function. Update `xps_utils.h` accordingly.
 
-- expserver/src/utils/utils.c
+- `expserver/src/utils/xps_utils.c`
     
     ```c
     char *str_from_ptrs(const char *start, const char *end) {

@@ -60,7 +60,8 @@ The above code allowed us to connect to one client at a time and keep serving th
 Now let us modify this section and use epoll to achieve our goal of concurrency.
 
 ::: tip PRE-REQUISITE READING
-Read the following [introduction to epoll](/guides/resources/introduction-to-linux-epoll) before proceeding further.
+- Read about [Introduction to epoll](/guides/resources/introduction-to-linux-epoll).
+- Read about [Linux epoll](/guides/resources/linux-epoll)
 :::
 
 First we’ll create an epoll instance using [`epoll_create1()`](https://man7.org/linux/man-pages/man2/epoll_create.2.html) given by the `<sys/epoll.h>` header. This returns a file descriptor (FD), and lets call it `epoll_fd`. Remember FD’s are just integers (unsigned integers, to be specific).

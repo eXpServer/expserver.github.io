@@ -73,7 +73,7 @@ xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int 
 }
 ```
 :::warning  
- Dont forget to free allocated struct addrinfo
+ Dont forget to free the addrinfo object after use
 :::
 
 ## Modifications to listener module
@@ -136,10 +136,10 @@ If file server is successfully operational it will display a message like the on
 In another terminal compile and run the eXpServer code. It will start like this,
 
 ```bash
-[INFO] xps_start() : Server listening on [http://0.0.0.0:8001](http://0.0.0.0:8001/)
-[INFO] xps_start() : Server listening on [http://0.0.0.0:8002](http://0.0.0.0:8002/)
-[INFO] xps_start() : Server listening on [http://0.0.0.0:8003](http://0.0.0.0:8003/)
-[INFO] xps_start() : Server listening on [http://0.0.0.0:8004](http://0.0.0.0:8004/)
+[INFO] xps_core_start() : Server listening on [http://0.0.0.0:8001](http://0.0.0.0:8001/)
+[INFO] xps_core_start() : Server listening on [http://0.0.0.0:8002](http://0.0.0.0:8002/)
+[INFO] xps_core_start() : Server listening on [http://0.0.0.0:8003](http://0.0.0.0:8003/)
+[INFO] xps_core_start() : Server listening on [http://0.0.0.0:8004](http://0.0.0.0:8004/)
 ```
 
 Now the python file server and our eXpServer are both running. If the implementation was correct then accessing `localhost:8001`  will now show the files present in the current working directory. Whenever any files are selected on `localhost:8001` the corresponding request details can be seen as log in the terminal running the python server.
