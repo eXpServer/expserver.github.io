@@ -204,7 +204,7 @@ Make necessary changes in `xps_loop.c`. Here are a few hints:
 ### Modifications to `xps_connection` Module
 
 - Similar to `connection_loop_read_handler()`, add `connection_loop_write_handler()` and `connection_loop_close_handler()` in `xps_connection.c` .
-- In `connection_close_handler()` destroy the connection instance.
+- In `connection_loop_close_handler()` destroy the connection instance.
 - Currently in `connection_loop_read_handler()` we `recv()` from the connection socket, reverse the string and `send()` it back. However, from now on `connection_loop_write_handler()` will be invoked when the socket is available to be written to. Hence, `send()` should be invoked within `connection_loop_write_handler()` .
 - Therefore, we need to buffer the reversed strings somewhere till it is ready to be sent. For that we will use an `xps_buffer_list` .
 

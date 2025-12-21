@@ -83,9 +83,6 @@ struct xps_connection_s;
 typedef struct xps_listener_s xps_listener_t;
 typedef struct xps_connection_s xps_connection_t;
 
-// Function typedefs
-typedef void (*xps_handler_t)(void *ptr);
-
 // Temporary declarations
 extern vec_void_t listeners;
 extern vec_void_t connections;
@@ -718,7 +715,6 @@ After compiling, it should give an output file named `xps`. Start eXpServer usin
 [INFO] main() : Server listening on port 8001
 [INFO] main() : Server listening on port 8002
 [INFO] main() : Server listening on port 8003
-[INFO] main() : Server listening on port 8004
 ```
 
 ::: tip NOTE

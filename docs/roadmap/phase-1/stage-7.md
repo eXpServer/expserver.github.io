@@ -421,7 +421,7 @@ void xps_loop_run(xps_loop_t *loop) {
       if (curr_epoll_event.events & EPOLLIN) {
         logger(LOG_DEBUG, "handle_epoll_events()", "EVENT / read");
         if (curr_event->read_cb != NULL)
-          // Pass the ptr from loop_event_t to the callback
+          // Pass the ptr from loop_event_t as a parameter to the callback
           curr_event->read_cb(/* fill this */);
       }
     }
@@ -644,8 +644,8 @@ struct xps_connection_s {
   char *remote_ip;
 };
 
-xps_connection_t *xps_connection_create(int epoll_fd, int sock_fd, xps_listener_t *listener); // [!code --]
-xps_connection_t *xps_connection_create(xps_core_t *core, u_int sock_fd, xps_listener_t *listener);// [!code ++]
+xps_connection_t *xps_connection_create(int epoll_fd, int sock_fd); // [!code --]
+xps_connection_t *xps_connection_create(xps_core_t *core, u_int sock_fd);// [!code ++]
 void xps_connection_destroy(xps_connection_t *connection);
 void xps_connection_read_handler(xps_connection_t *connection); // [!code --]
 
@@ -668,6 +668,10 @@ When we create a listener and a connection, we have to do two things now:
 Another major change is seen in how/who calls the [callback functions](<https://en.wikipedia.org/wiki/Callback_(computer_programming)>) when an event occurs on either the listener or the connection sockets. Previously, the `xps_loop_run()` calls the appropriate functions depending on whether `sock_fd` belongs to a listener or a connection.
 
 Now we pass the callback functions and pointer to the instance when calling `xps_loop_attach()`.
+
+:::tip NOTE
+We have renamed `xps_listener_connection_handler` to `listener_connection_handler` and `xps_connection_read_handler` to `connection_read_handler` as these two functions are no longer global.
+:::
 
 In the case of `xps_listener`:
 
@@ -697,7 +701,7 @@ void listener_connection_handler(void *ptr) { // [!code ++]
   assert(ptr != NULL); // [!code ++]
   xps_listener_t *listener = ptr; // [!code ++]
 
-  /* same code from xps_listener_connection_handler() */
+  /* same code logic from xps_listener_connection_handler() */
 
 }
 ```
@@ -799,7 +803,6 @@ Since we did not modify the functionality of the server, this milestone will is 
   #include <netdb.h>
   #include <netinet/in.h>
   #include <stdio.h>
-  #include <stdlib.h>
   #include <string.h>
   #include <sys/socket.h>
   #include <sys/types.h>
@@ -827,7 +830,7 @@ Since we did not modify the functionality of the server, this milestone will is 
   return -1;
   }
 
-  if (connect(sock, (struct sockaddr* )&serv_addr, sizeof(serv_addr)) < 0) {
+  if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
   perror("Connection failed");
   return -1;
   }
@@ -875,7 +878,7 @@ Since we did not modify the functionality of the server, this milestone will is 
 
 **What is going on here?**
 
-The `sender` only sends data to eXpServer. It does not `recv()` data. Thus, when eXpServer is trying to send the reversed string back, it is not getting received. This will cause the kernel buffer to fill up. When the kernel buffer is full the call to `send()` will block the process as we are dealing with blocking network sockets. The process is blocked till the data in the kernel buffer is cleared. However this will not happen as `sender` does not receive any data. Thus the eXpServer process will block leading to no more connections being served.
+The `sender` only sends data to eXpServer. It does not `recv()` data. Thus, when eXpServer is trying to send the reversed string back, it is not getting received. This will cause the kernel buffer to fill up. When the kernel buffer is full, the call to `send()` will block the process as we are dealing with blocking network sockets. The process is blocked till the data in the kernel buffer is cleared. However this will not happen as `sender` does not receive any data. Thus the eXpServer process will block leading to no more connections being served.
 
 In a real life situation where the rate at which eXpServer is writing to a TCP socket is more than the rate at which data is received by the TCP client, the kernel buffer can fill up resulting in the server process being blocked intermittently. This leads to inefficient serving of connections.
 
