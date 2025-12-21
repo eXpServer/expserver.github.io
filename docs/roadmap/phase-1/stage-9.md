@@ -117,7 +117,7 @@ void connection_write_handler(void* ptr) {
 }
 ```
 
-Initialize `send_handler` and `recv_handler` fields of the `xps_connection_s`  structure in the `xps_connection_create` function using `connection_read_handler` and `connection_write_handler` callbacks .
+Initialize `send_handler` and `recv_handler` fields of the `xps_connection_s`  structure in the `xps_connection_create` function using `connection_write_handler` and `connection_read_handler` callbacks respectively.
 
 To enable epoll edge triggering mode we have to set the EPOLLET flag.  EPOLLET flag is used to explicitly request the epoll to notify only when an FD changes its state. We have to pass EPOLLET along with EPOLLIN and EPOLLOUT flags in `xps_loop_attach` .
 
