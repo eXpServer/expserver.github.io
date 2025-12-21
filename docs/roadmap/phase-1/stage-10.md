@@ -34,7 +34,7 @@ Along with modifying the existing modules to enable data transfer through pipes,
 
 Three new structs are introduced here. The `xps_pipe_s`  struct includes the buffer and the maximum threshold. The `xps_pipe_source_s` and `xps_pipe_sink_s` structs includes the `ready`/`active` flags and callback functions. Earlier the callback functions were called based on the `read_ready` / `write_ready` flags of connection , here it would be based on the status of source/sink and whether the pipe is readable/writable. A pipe is readable if the length of `buff_list` greater than `0` and writable if its length less than the maximum threshold.
 
-The callback functions in `connection.c` are modified to ensure the working of source-sink system. The `connection_source_handler()` reads the data using `recv()` and writes it to pipe, whereas the `connection_sink_handler()` reads the data from pipe and `send()`.
+The callback functions in `xps_connection.c` are modified to ensure the working of source-sink system. The `connection_source_handler()` reads the data using `recv()` and writes it to pipe, whereas the `connection_sink_handler()` reads the data from pipe and `send()`.
 
 Here, the timeout in the `epollwait()` is set according to the existence of ready pipes. A ready pipe indicates that some operation has to be done on that - write into, read from , destroy. The availability of ready pipe leads to the timeout being set to 0, which results in a non-blocking call as discussed earlier.
 
@@ -852,7 +852,13 @@ bool handle_pipes(xps_loop_t *loop) {
     return false;
 }
 ```
-::: 
+:::
+
+:::tip NOTE
+The logic for handling cases where **only** a source or **only** a sink exists might seem unnecessary right now, since we currently connect the source and sink of the same pipe to the same client connection. However, this design is crucial for future extensibility.
+
+In later stages (like Stage 11), when we introduce `upstream servers` or `file servers`, the **source** and **sink** of a pipe will often belong to *different* connections (e.g., reading from a client and writing to an upstream server). This independent checking ensures our pipe system can gracefully handle scenarios where one end of the data flow (like the upstream server) closes or disconnects while the other end (the client) is still active, or vice versa.
+:::
     
         
     
