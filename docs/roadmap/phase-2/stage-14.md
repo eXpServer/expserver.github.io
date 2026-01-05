@@ -418,7 +418,7 @@ For each component the start pointer is assigned on beginning and and end pointe
           break;
   
         case RL_PATH:
-          /*on ' ' - path ends, assign end of path,pathname, next state is RL_VERSION_START*/
+          /*on ' ' - path ends, assign end of path,pathname,uri next state is RL_VERSION_START*/
           /*on '?'or'&'or'='or'#' - assign end of pathname, next state is RL_PATHNAME*/
           /*on CR or LF, fails*/ 
           break;
@@ -805,6 +805,7 @@ int http_process_headers(xps_http_req_t *http_req, xps_buffer_t *buff) {
       /* Alloc memory for new header*/
       /*assign key,val from their corresponding start and end pointers*/
       /*push this header into headers list of http_req*/
+      /*if error is E_NEXT continue*/
     }
 		return OK;
     }
@@ -822,9 +823,9 @@ Serializes the parsed HTTP request (request line and headers) into a buffer. The
 xps_buffer_t *xps_http_req_serialize(xps_http_req_t *http_req) {
   assert(http_req != NULL);
   /* Serialize headers into a buffer headers_str*/
-  size_t final_len = strlen(http_req->request_line) + 1 + headers_str->len + 1;// Calculate length for final buffer
+  size_t final_len = strlen(http_req->request_line) + 1 + headers_str->len + 1;   /*Calculate length for final buffer*/
   /*Create instance for final buffer*/
-  // Copy everything to final buffer
+  /*Copy everything to final buffer*/
   memcpy(buff->pos, http_req->request_line, strlen(http_req->request_line));
   buff->pos += strlen(http_req->request_line);
   /*similarly copy "\n", headers_str, "\n"*/
@@ -865,7 +866,7 @@ Frees the memory and resources allocated for the HTTP request object.
 void xps_http_req_destroy(xps_core_t *core, xps_http_req_t *http_req) {
   assert(http_req != NULL);
   /*Frees memory allocated for various components of the HTTP request line(request line, method,etc)*/
-  /* iterate through the headers list of http_req and free the memory*/
+  /*iterate through the headers list of http_req and free the memory*/
   /*de-intialize the headers list*/
   /*free http_req*/
 }
@@ -938,15 +939,15 @@ void client_sink_handler(void *ptr) {
   ...
   if (session->http_req == NULL) { //http requset is not recieved till now// [!code ++]
     int error;// [!code ++]
-    /*create http_req for the buff read from pipe and destroy the buff*/// [!code ++]
+    // create http_req for the buff read from pipe and destroy the buff // [!code ++]
     if (error == E_FAIL) {// [!code ++]
-	    /*process the session and return*/// [!code ++]
+	    // process the session and return //[!code ++]
     }// [!code ++]
-		/*handle E_AGAIN*/// [!code ++]
+	// handle E_AGAIN // [!code ++]
     session->http_req = http_req;// [!code ++]
-    /*serialize http_req into buffer http_req_buff*/// [!code ++]
-    /*set http_req_buff to from_client_buff and clear the pipe*/// [!code ++]
-    /*process the session*/ // [!code ++]
+    // serialize http_req into buffer http_req_buff // [!code ++]
+    // set http_req_buff to from_client_buff and clear the pipe // [!code ++]
+    // process the session  // [!code ++]
   } else {// [!code ++]
   set_from_client_buff(session, buff); 
   xps_pipe_sink_clear(sink, buff->len);
