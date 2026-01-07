@@ -3856,7 +3856,7 @@ function emptyPlaceholder(vnode) {
 function getKeepAliveChild(vnode) {
   return isKeepAlive(vnode) ? (
     // #7121 ensure get the child component subtree in case
-    // it's been replaced during HMR
+    // it is been replaced during HMR
     vnode.component ? vnode.component.subTree : vnode.children ? vnode.children[0] : void 0
   ) : vnode;
 }
@@ -7275,9 +7275,9 @@ function baseCreateRenderer(options, createHydrationFns) {
         if (true) {
           traverseStaticChildren(n1, n2);
         } else if (
-          // #2080 if the stable fragment has a key, it's a <template v-for> that may
+          // #2080 if the stable fragment has a key, it is a <template v-for> that may
           //  get moved around. Make sure all root level vnodes inherit el.
-          // #2134 or if it's a component root, it may also get moved around
+          // #2134 or if it is a component root, it may also get moved around
           // as the component is being moved.
           n2.key != null || parentComponent && n2 === parentComponent.subTree
         ) {
@@ -7440,7 +7440,7 @@ function baseCreateRenderer(options, createHydrationFns) {
           if (isAsyncWrapperVNode) {
             initialVNode.type.__asyncLoader().then(
               // note: we are moving the render call into an async callback,
-              // which means it won't track dependencies - but it's ok because
+              // which means it won't track dependencies - but it is ok because
               // a server-rendered async wrapper is already in resolved state
               // and it will never need to change.
               () => !instance.isUnmounted && hydrateSubTree()
@@ -7542,9 +7542,9 @@ function baseCreateRenderer(options, createHydrationFns) {
         patch(
           prevTree,
           nextTree,
-          // parent may have changed if it's in a teleport
+          // parent may have changed if it is in a teleport
           hostParentNode(prevTree.el),
-          // anchor may have changed if it's in a fragment
+          // anchor may have changed if it is in a fragment
           getNextHostNode(prevTree),
           instance,
           parentSuspense,
@@ -10771,7 +10771,7 @@ var vModelText = {
       addEventListener(el, "change", onCompositionEnd);
     }
   },
-  // set value on mounted so it's after min/max for type="range"
+  // set value on mounted so it is after min/max for type="range"
   mounted(el, { value }) {
     el.value = value == null ? "" : value;
   },

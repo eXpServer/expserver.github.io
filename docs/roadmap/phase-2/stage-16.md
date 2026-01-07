@@ -1462,7 +1462,7 @@ As the server configuration is present in the form of JSON data, a parser is req
         /* Serialization */
         
         /*  APPEND_STRING() is only called on string literals.
-            It's a bit hacky because it makes plenty of assumptions about the external state
+            It is a bit hacky because it makes plenty of assumptions about the external state
             and should eventually be tidied up into a function (same goes for APPEND_INDENT)
          */
         #define APPEND_STRING(str) do {\
@@ -2863,7 +2863,7 @@ As the server configuration is present in the form of JSON data, a parser is req
             char cleanup_command[256];
             char output_filename[] = "commits.json";
             
-            /* it ain't pretty, but it's not a libcurl tutorial */
+            /* it ain't pretty, but it is not a libcurl tutorial */
             sprintf(curl_command, 
                 "curl -s \"https://api.github.com/repos/%s/%s/commits\" > %s",
                 username, repo, output_filename);

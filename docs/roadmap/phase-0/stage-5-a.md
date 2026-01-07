@@ -129,7 +129,7 @@ Now that we have that, we are ready to start accepting connection; so lets write
 - Accept the client connection and create the connection socket FD `conn_sock_fd`
 - Add the connection socket to epoll to monitor for events using `epoll_ctl()`
 - Open up a connection to the upstream server using `connect_upstream()`, and add it to the epoll
-- An entry will be added to the route table with the `conn_sock_fd` and it's corresponding `upstream_sock_fd`
+- An entry will be added to the route table with the `conn_sock_fd` and it is corresponding `upstream_sock_fd`
 
 ```c
 void accept_connection(int listen_sock_fd) {

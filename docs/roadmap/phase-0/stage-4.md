@@ -17,7 +17,7 @@ In the previous stage we have created a concurrent server using multithreading m
 
 [epoll](https://en.wikipedia.org/wiki/Epoll) is an I/O event notification mechanism provided by the Linux kernel. It allows applications to efficiently monitor multiple file descriptors for various I/O events.
 
-There are various [asynchronous I/O](https://en.wikipedia.org/wiki/Asynchronous_I/O) mechanisms available in operating systems. We have chosen epoll as it is widely used in modern servers such as nginx.
+There are various [I/O multiplexing](https://nima101.github.io/io_multiplexing) mechanisms available in operating systems. We have chosen epoll as it is widely used in modern servers such as nginx.
 
 ## Implementation
 
