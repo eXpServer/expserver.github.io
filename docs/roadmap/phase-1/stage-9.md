@@ -34,6 +34,7 @@ We will also add a new function called `handle_connections()` in `xps_loop` modu
 In this stage we will be modifying the following modules in the given order: 
 
 - `xps_connection`
+- `xps_listener`
 - `xps_loop`
 
 ### Modifications to `xps_connection` module:
@@ -139,7 +140,43 @@ Modify the `xps_loop_attach` in `xps_listener_create` function similarly
 
 :::
 
-## Modifying `xps_loop` module
+### Modifications to `xps_listener` module
+
+In `xps_listener` module we will be modifying the `listener_connection_handler()`
+
+
+```c
+
+void listener_connection_handler(void *ptr) {
+	/*check parameter validity*/
+
+  while (1) {  // [!code ++]
+
+    /*Accepting connection*/
+
+    if (conn_sock_fd < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) //[!code ++]
+      break; //[!code ++]
+
+    /*Making socket non blocking*/
+
+    /*Creating connection instance*/
+
+  } // [!code ++]
+}
+
+```
+:::tip  NOTE
+Here, the connection handling logic is enclosed inside a `while (true)` loop because the listener socket is registered using **edge-triggered epoll**. In **edge-triggered mode**, epoll generates an event only when there is a change in the state of the kernel buffer. As a result, if multiple connection requests arrive at the same time and we do not drain the accept queue completely, the remaining connections will not trigger another epoll event.
+
+By repeatedly calling `accept()` inside the loop, we ensure that all pending connections in the kernel buffer are processed in a single epoll notification. The loop exits when `accept()` returns `-1` with `errno` set to `EAGAIN` or `EWOULDBLOCK`, indicating that the kernel accept queue has been exhausted.
+
+:::
+
+:::danger IMPORTANT
+This behavior is not evident during testing with a single client, since the correctness of this logic can only be verified when multiple clients establish connections simultaneously.
+:::
+
+### Modifications to `xps_loop` module
 
  
 
@@ -200,6 +237,7 @@ void xps_loop_run(xps_loop_t* loop) {
 	}  
 }
 ```
+
 
 So now we have successfully made the required changes to enable epoll edge triggering.  
 

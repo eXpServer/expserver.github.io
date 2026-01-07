@@ -197,7 +197,6 @@ A new function named `xps_http_set_header()` is added in this stage. This functi
 
 ```c
 int xps_http_set_header(vec_void_t *headers, const char *key, const char *val) {
-  // Validate params
   /* Validate params */
 
   xps_keyval_t *header = /* fill this */;
@@ -242,6 +241,7 @@ The `xps_http_res_create()` function is getting called from this function. Based
 - If the path for the requested file is not found, then HTTP response is created with status code set to `HTTP_NOT_FOUND`.
 - After creating the http response, headers for content length and type are added using `xps_http_set_header()`.
 - Further the response is serialized using `xps_http_res_serialize()` and it is then stored into the `to_client_buff` .
+- Don't forget to destroy the response object after its use(after serialization).
 
 ## Milestone #1
 

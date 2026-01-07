@@ -73,14 +73,14 @@ xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int 
 }
 ```
 :::warning  
- Dont forget to free allocated struct addrinfo
+ Dont forget to free the addrinfo object after use
 :::
 
 ## Modifications to listener module
 
 In `xps_listener` the `listener_connection_handler()` function is having modifications. If the client requests are on port number 8001, an upstream connection instance is created using `xps_upstream_create()`  function. Further using `xps_pipe_create()` pipes are created between client source and upstream sink as well as between upstream source and client sink. So the changes are as follows,
 
-- An upstream connection instance is created if `listener→port` is 8001.
+- An upstream connection instance is created if `listener->port` is 8001. The connection should be made to **127.0.0.1** on port **3000**.
 - A pipe is created between client source and upstream sink.
 - A pipe is created between upstream source and client sink.
 
@@ -104,7 +104,7 @@ void listener_connection_handler(void *ptr) {
     // Handle connection based on listener port (upstream or direct)
     if (listener->port == 8001) {
      
-      /* create upstream connection */
+      /* create upstream connection to 127.0.0.1:3000 */
       /*create pipe connection to  client source and upstream sink for the listener*/
       /*create pipe connection to upstream source and client sink for the listener*/
     } else {
@@ -133,13 +133,15 @@ Now start the python file server to serve the current working directory as shown
 If file server is successfully operational it will display a message like the one below
 `Serving HTTP on 0.0.0.0 port 3000 (http://0.0.0.0:3000/) ...`
 
+Ensure that the port used when creating the upstream connection matches the port on which the Python file server is running (which is **3000** in this case).
+
 In another terminal compile and run the eXpServer code. It will start like this,
 
 ```bash
-[INFO] xps_start() : Server listening on [http://0.0.0.0:8001](http://0.0.0.0:8001/)
-[INFO] xps_start() : Server listening on [http://0.0.0.0:8002](http://0.0.0.0:8002/)
-[INFO] xps_start() : Server listening on [http://0.0.0.0:8003](http://0.0.0.0:8003/)
-[INFO] xps_start() : Server listening on [http://0.0.0.0:8004](http://0.0.0.0:8004/)
+[INFO] xps_core_start() : Server listening on   http://0.0.0.0:8001/
+[INFO] xps_core_start() : Server listening on   http://0.0.0.0:8002/
+[INFO] xps_core_start() : Server listening on   http://0.0.0.0:8003/
+[INFO] xps_core_start() : Server listening on   http://0.0.0.0:8004/
 ```
 
 Now the python file server and our eXpServer are both running. If the implementation was correct then accessing `localhost:8001`  will now show the files present in the current working directory. Whenever any files are selected on `localhost:8001` the corresponding request details can be seen as log in the terminal running the python server.

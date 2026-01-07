@@ -1,5 +1,9 @@
 # Roadmap
 
+<script setup>
+const isProd = import.meta.env.PROD
+</script>
+
 The roadmap provides a structured guide for participants to build eXpServer gradually. It outlines the progression of learning objectives, starting from introductory concepts and building up to advanced features and architecture.
 
 Each stage builds upon the previous one, ensuring a systematic approach to the project. Links are provided within the stage documents for additional reference of concepts as and when necessary. There will be two types of links present throughout the documentation:
@@ -16,39 +20,39 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 
 ## Stages
 
-✅ Reviewed
-🟡 To be reviewed
-🟣 Working on it
-🔴 Corrections
+<span v-if="!isProd">✅ Reviewed </span>
+<span v-if="!isProd">🟡 To be reviewed </span>
+<span v-if="!isProd">🟣 Working on it </span>
+<span v-if="!isProd">🔴 Corrections </span>
 
 ### Phase 0: Introduction to Linux socket programming
 
-- ✅ [Overview](phase-0/)
-- ✅ [Stage 0: Setup](phase-0/stage-0)
-- ✅ [Stage 1: TCP Server](phase-0/stage-1)
-- ✅ [Stage 2: TCP Client](phase-0/stage-2)
-- 🟡 [Stage 3: UDP with Multi-threading](phase-0/stage-3)
-- ✅ [Stage 4: Linux Epoll](phase-0/stage-4)
-- ✅ [Stage 5 a): TCP Proxy](phase-0/stage-5-a)
-- 🟡 [Stage 5 b): File Transfer using TCP](phase-0/stage-5-b)
+- <span v-if="!isProd">✅</span> [Overview](phase-0/)
+- <span v-if="!isProd">✅</span> [Stage 0: Setup](phase-0/stage-0)
+- <span v-if="!isProd">✅</span> [Stage 1: TCP Server](phase-0/stage-1)
+- <span v-if="!isProd">✅</span> [Stage 2: TCP Client](phase-0/stage-2)
+- <span v-if="!isProd">🟡</span> [Stage 3: UDP with Multi-threading](phase-0/stage-3)
+- <span v-if="!isProd">✅</span> [Stage 4: Linux Epoll](phase-0/stage-4)
+- <span v-if="!isProd">✅</span> [Stage 5 a): TCP Proxy](phase-0/stage-5-a)
+- <span v-if="!isProd">🟡</span> [Stage 5 b): File Transfer using TCP](phase-0/stage-5-b)
 
 ### Phase 1: Building the core of eXpServer by creating reusable modules
 
-- ✅ [Overview](phase-1/)
-- ✅ [Stage 6: Listener & Connection Modules](phase-1/stage-6)
-- 🟡 [Stage 7: Core & Loop Modules](phase-1/stage-7)
-- 🟡 [Stage 8: Non-Blocking Sockets](phase-1/stage-8)
-- 🟡 [Stage 9: epoll Edge Triggered](phase-1/stage-9)
-- 🟡 [Stage 10: Pipe Module](phase-1/stage-10)
-- 🟡 [Stage 11: Upstream Module](phase-1/stage-11)
-- 🟡 [Stage 12: File Module](phase-1/stage-12)
-- 🟡 [Stage 13: Session Module](phase-1/stage-13)
+- <span v-if="!isProd">✅</span> [Overview](phase-1/)
+- <span v-if="!isProd">✅</span> [Stage 6: Listener & Connection Modules](phase-1/stage-6)
+- <span v-if="!isProd">🟡</span> [Stage 7: Core & Loop Modules](phase-1/stage-7)
+- <span v-if="!isProd">🟡</span> [Stage 8: Non-Blocking Sockets](phase-1/stage-8)
+- <span v-if="!isProd">🟡</span> [Stage 9: epoll Edge Triggered](phase-1/stage-9)
+- <span v-if="!isProd">🟡</span> [Stage 10: Pipe Module](phase-1/stage-10)
+- <span v-if="!isProd">🟡</span> [Stage 11: Upstream Module](phase-1/stage-11)
+- <span v-if="!isProd">🟡</span> [Stage 12: File Module](phase-1/stage-12)
+- <span v-if="!isProd">🟡</span> [Stage 13: Session Module](phase-1/stage-13)
 
 ### Phase 2: Implementing HTTP support
 
-- 🟡 [Overview](phase-2/)
-- 🟡 [Stage 14: HTTP Request Module](phase-2/stage-14)
-- 🟡 [Stage 15: HTTP Response Module](phase-2/stage-15)
+- <span v-if="!isProd">🟡</span> [Overview](phase-2/)
+- <span v-if="!isProd">🟡</span> [Stage 14: HTTP Request Module](phase-2/stage-14)
+- <span v-if="!isProd">🟡</span> [Stage 15: HTTP Response Module](phase-2/stage-15)
 - [Stage 16: Config Module](phase-2/stage-16)
 - [Stage 17: Directory Browsing](phase-2/stage-17)
 

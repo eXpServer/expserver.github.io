@@ -40,6 +40,7 @@ Here, the timeout in the `epoll_wait()` is set according to the existence of rea
 
 In Stage 6, we have discussed the issue of accumulating nulls in the events,connections and listeners list, here we would be filtering those.
 
+
 ## Implementation
 
 A new module `xps_pipe` is added and the existing modules are modified.
@@ -50,6 +51,93 @@ Modifications are carried out in the following order :
 - `xps_listener`
 - `xps_loop`
 - `xps_core`
+
+Find below the updated `xps.h` file.
+
+::: details **expserver/src/xps.h**
+
+```c 
+#ifndef XPS_H
+#define XPS_H
+
+// Header files
+#include <arpa/inet.h>
+#include <assert.h>
+#include <netdb.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <sys/epoll.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <errno.h>
+
+// 3rd party libraries
+#include "lib/vec/vec.h" // https://github.com/rxi/vec
+
+// Constants
+#define DEFAULT_BACKLOG 64
+#define MAX_EPOLL_EVENTS 32
+#define DEFAULT_BUFFER_SIZE 100000 // 100 KB
+#define DEFAULT_PIPE_BUFF_THRESH 1000000 // 1 MB // [!code ++]
+#define DEFAULT_NULLS_THRESH 32
+
+// Error constants
+#define OK 0            // Success
+#define E_FAIL -1       // Un-recoverable error
+#define E_AGAIN -2      // Try again
+#define E_NEXT -3       // Do next
+#define E_NOTFOUND -4   // File not found
+#define E_PERMISSION -5 // File permission denied
+#define E_EOF -6        // End of file reached
+
+// Data types
+typedef unsigned char u_char;
+typedef unsigned int u_int;
+typedef unsigned long u_long;
+
+// Structs
+struct xps_core_s;
+struct xps_loop_s;
+struct xps_listener_s;
+struct xps_connection_s;
+struct xps_buffer_s;
+struct xps_buffer_list_s;
+struct xps_pipe_s; // [!code ++]
+struct xps_pipe_source_s; // [!code ++]
+struct xps_pipe_sink_s; // [!code ++]
+
+// Struct typedefs
+typedef struct xps_core_s xps_core_t;
+typedef struct xps_loop_s xps_loop_t;
+typedef struct xps_listener_s xps_listener_t;
+typedef struct xps_connection_s xps_connection_t;
+typedef struct xps_buffer_s xps_buffer_t;
+typedef struct xps_buffer_list_s xps_buffer_list_t;
+typedef struct xps_pipe_s xps_pipe_t; // [!code ++]
+typedef struct xps_pipe_source_s xps_pipe_source_t; // [!code ++]
+typedef struct xps_pipe_sink_s xps_pipe_sink_t; // [!code ++]
+
+// Function typedefs
+typedef void (*xps_handler_t)(void *ptr);
+
+
+ // xps headers
+#include "core/xps_core.h"
+#include "core/xps_loop.h"
+#include "core/xps_pipe.h" // [!code ++]    
+#include "network/xps_connection.h"
+#include "network/xps_listener.h"
+#include "utils/xps_logger.h"
+#include "utils/xps_utils.h"
+#include "utils/xps_buffer.h"
+
+#endif
+
+```
+:::
 
 ## `xps_pipe` Module
 
@@ -764,7 +852,13 @@ bool handle_pipes(xps_loop_t *loop) {
     return false;
 }
 ```
-::: 
+:::
+
+:::tip NOTE
+The logic for handling cases where **only** a source or **only** a sink exists might seem unnecessary right now, since we currently connect the source and sink of the same pipe to the same client connection. However, this design is crucial for future extensibility.
+
+In later stages (like Stage 11), when we introduce `upstream servers` or `file servers`, the **source** and **sink** of a pipe will often belong to *different* connections (e.g., reading from a client and writing to an upstream server). This independent checking ensures our pipe system can gracefully handle scenarios where one end of the data flow (like the upstream server) closes or disconnects while the other end (the client) is still active, or vice versa.
+:::
     
         
     
