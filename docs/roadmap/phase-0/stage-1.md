@@ -72,7 +72,7 @@ The function takes three arguments:
 - **type:** This argument determines the communication semantics and the characteristics of the data transmission over the socket. `SOCK_STREAM` indicates a socket of type stream. Stream sockets provide a reliable, connection-oriented, and sequenced flow of data. They are typically used with the [Transmission Control Protocol (TCP)](https://en.wikipedia.org/wiki/Transmission_Control_Protocol), which ensures that data sent from one end of the connection is received correctly at the other end, with no loss, duplication, or corruption.
 - **protocol:** This specifies the specific protocol to be used with the socket. When `0` is passed as the protocol, the system selects the default protocol for the given domain and type combination. For `AF_INET` and `SOCK_STREAM`, this typically results in TCP being chosen as the protocol, as it is the default protocol for stream sockets in the IPv4 domain.
 
-Now that we've initialized our listening socket, it's crucial to ensure its proper functioning, especially in scenarios where the server is stopped and restarted frequently.
+Now that we've initialized our listening socket, it is crucial to ensure its proper functioning, especially in scenarios where the server is stopped and restarted frequently.
 
 Assume that our server is up and running, listening on a particular `IP:port` combination. When we terminate the server program, the socket goes into a `TIME_WAIT` state. In the `TIME_WAIT` state, the socket remains open for a predetermined period to ensure that any lingering packets associated with the previous connection are properly handled.
 
@@ -155,7 +155,7 @@ The [`accept()`](https://en.wikipedia.org/wiki/Berkeley_sockets#:~:text=1%20is%2
 
 - `listen_sock_fd`: The file descriptor of the listening socket.
 - `(struct sockaddr *)&client_addr`: A pointer to the `client_addr` structure where information about the client's address will be stored.
-- `&client_addr_len`: A pointer to the variable storing the size of the client address structure. Upon successful execution, `accept()` updates this variable with the actual size of the client address structure. This is required because the size of the sockaddr structure may vary depending on whether it's an IPv4 or [IPv6](https://en.wikipedia.org/wiki/IPv6) address.
+- `&client_addr_len`: A pointer to the variable storing the size of the client address structure. Upon successful execution, `accept()` updates this variable with the actual size of the client address structure. This is required because the size of the sockaddr structure may vary depending on whether it is an IPv4 or [IPv6](https://en.wikipedia.org/wiki/IPv6) address.
 
 After `accept()` completes successfully, the server can use the `conn_sock_fd` file descriptor to communicate with the client over the newly established connection.
 

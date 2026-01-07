@@ -105,7 +105,7 @@ void xps_loop_run(int epoll_fd);
 Let us have a brief look at what are included in the file:
 
 - `#ifndef XPS_H` & `#define XPS_H`:
-  This is called an [include guard](https://en.wikipedia.org/wiki/Include_guard) in C programming. It's a common technique used to prevent multiple inclusions of the same header file while compiling.
+  This is called an [include guard](https://en.wikipedia.org/wiki/Include_guard) in C programming. It is a common technique used to prevent multiple inclusions of the same header file while compiling.
 - **Standard header files:**
   Headers files from [C standard library](https://en.wikipedia.org/wiki/C_standard_library). The use of each header will be explained at appropriate parts of the stage.
 - **3rd party libraries:**

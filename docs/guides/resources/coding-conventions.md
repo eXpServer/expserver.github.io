@@ -73,7 +73,7 @@ If a function is intended to perform a task that could fail, it should return an
 
 ### Pointer Return with Error Code
 
-When a function needs to return a pointer to an instance and report an error code, it's not possible in C to return more than one value directly. In such cases, the return type of the function will be a pointer, and a reference to an integer, `int *error`, is passed to the function by the calling function. On error, `NULL` is returned, and the error integer is set to a valid error code.
+When a function needs to return a pointer to an instance and report an error code, it is not possible in C to return more than one value directly. In such cases, the return type of the function will be a pointer, and a reference to an integer, `int *error`, is passed to the function by the calling function. On error, `NULL` is returned, and the error integer is set to a valid error code.
 
 For example: `xps_file_t xps_file_create(..., int *error)`. On successful creation of the file instance, a valid pointer will be returned, and `*error` will be set to `E_SUCCESS`. In case of an error, `NULL` is returned, and `*error` is set to a valid error code such as `E_NOTFOUND`.
 

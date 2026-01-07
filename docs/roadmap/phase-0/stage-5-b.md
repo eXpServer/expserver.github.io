@@ -77,7 +77,7 @@ we opened the file **t2.txt** for writing the contents from the client. Recieve 
     }
 ```
 
-The `fprintf()` function in C writes formatted output to a specified file stream. It's defined in the `<stdio.h>` library and works similarly to `printf()`, but instead of writing to the console, it writes to a file. After writing the data into the text file we can close the file using the `fclose()` function.
+The `fprintf()` function in C writes formatted output to a specified file stream. It is defined in the `<stdio.h>` library and works similarly to `printf()`, but instead of writing to the console, it writes to a file. After writing the data into the text file we can close the file using the `fclose()` function.
 
 ```c
     fclose(fp);

@@ -14,7 +14,7 @@ This queue holds the list of processes (threads) that are currently blocked in `
 #### 2. The Ready List (`rdlist`)
 This is a **doubly linked list** that stores the file descriptors (FDs) that are currently "ready" (i.e., have data to read or space to write).
 - When an event occurs on a monitored FD, it is added to this list.
-- `epoll_wait()` simply checks this list. If it's not empty, it returns the events to the user.
+- `epoll_wait()` simply checks this list. If it is not empty, it returns the events to the user.
 
 #### 3. The Red-Black Tree (`rbr`)
 This is a **Red-Black Tree** that stores all the file descriptors currently being monitored by this epoll instance.
