@@ -23,39 +23,62 @@ This is a **Red-Black Tree** that stores all the file descriptors currently bein
 
 ## How it works: The Lifecycle
 
-### **Creating an Epoll instance**: `epoll_create()`
+### **Creating an Epoll instance**: `epoll_create1()`
 
 ```c
-int epoll_create1(int flags)
+int  epoll_create1(int  flags)
 ```
 
-Here the flags can be either `0` or `EPOLL_CLOEXEC`
+This call returns a file descriptor representing the epoll instance. The descriptor is later used with epoll_ctl() to register file descriptors and with epoll_wait() to receive readiness events.
 
-If the flag is set to zero, this function behaves like the older `epoll_create()` API, but without its obsolete size argument (as size is now dynamically managed by kernel).
+**flags** : The flags argument controls properties of the epoll file descriptor itself.
 
-If the flag is set to `EPOLL_CLOEXEC`, it will inform the kernel to set the close-on-exec (`FD_CLOEXEC`) flag on this epoll file descriptor. So if your process later calls `exec()` (e.g., `execvp()` after a `fork()`), the epoll FD will automatically be closed in the child process. This prevents leaking file descriptors into executed programs.
+ - **EPOLL_CLOEXEC**:    Sets the close-on-exec (FD_CLOEXEC) flag on the epoll file
+   descriptor. When the process calls exec(), the kernel automatically
+   closes the epoll descriptor, preventing it from being inherited by
+   the new program image.  
 
-When you call `epoll_create1(0)`, the kernel allocates a new `eventpoll` object in kernel memory. This object is the heart of the epoll instance and contains the following key members:
+ - **0**:  Creates the epoll instance without setting FD_CLOEXEC. In this case,
+   the epoll file descriptor is inherited across fork() + exec(), which
+   can unintentionally leak the epoll instance into child processes.
+
+**In almost all applications—especially servers and multi-process programs—EPOLL_CLOEXEC should be used to avoid file descriptor leaks.**
 
 ```c
+
 struct eventpoll {
-    /* Wait queue for sys_epoll_wait() */
-    wait_queue_head_t wq;
 
-    /* List of ready file descriptors */
-    struct list_head rdlist;
+/* Wait queue for sys_epoll_wait() */
+wait_queue_head_t wq;
 
-    /* Red-black tree root used to store monitored file descriptors */
-    struct rb_root_cached rbr;
+/* List of ready file descriptors */
+struct list_head rdlist;
 
-    /* Lock for protecting the structure */
-    spinlock_t lock;
-    
-    /* ... other fields ... */
+/* Red-black tree root used to store monitored file descriptors */
+struct rb_root_cached rbr; 
+
+/* Lock for protecting the structure */
+spinlock_t lock;
+
+/* ... other fields ... */
+
 };
+
 ```
 
-Finally, a file descriptor is returned to the user-space referencing this `eventpoll` object. Applications can use this descriptor with `epoll_ctl()` and `epoll_wait()` to manage monitored file descriptors and retrieve events. 
+**Why epoll_create1() Replaces epoll_create()** 
+
+**The older API:**
+
+    int epoll_create(int size);
+ 
+
+The older API required a positive size argument that was originally intended as a hint for how many file descriptors the epoll instance would monitor. Modern Linux kernels ignore this parameter entirely, as the kernel dynamically manages epoll’s internal data structures and does not require an upfront size specification.
+
+In addition, epoll_create() cannot set the close-on-exec (FD_CLOEXEC) flag atomically, which can lead to file descriptor leaks in multi-threaded or fork() + exec()-based programs.
+
+epoll_create1() removes the obsolete size parameter, and allows FD_CLOEXEC to be applied atomically. As a result, epoll_create() is obsolete and should not be used in new code.
+
 
 ### **Registering a File Descriptor with Epoll**: `epoll_ctl()`
 
