@@ -505,7 +505,7 @@ GET http://example.com/index.html HTTP/1.1
 1. Initial State: RL_START
 
 - The parser starts in the `RL_START` state.
-- It reads the first character, which is `'G'`. The method starts at this position. Since it's a valid character for an HTTP method, it moves to the `RL_METHOD` state.
+- It reads the first character, which is `'G'`. The method starts at this position. Since it is a valid character for an HTTP method, it moves to the `RL_METHOD` state.
 
 2. State: RL_METHOD
 

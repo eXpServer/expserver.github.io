@@ -17,7 +17,7 @@ IP addresses have two distinct versions or standards:
 - The Internet Protocol version 4 ([IPv4](https://en.wikipedia.org/wiki/Internet_Protocol_version_4)) address is the older of the two, which has space for up to 4 billion IP addresses and is assigned to all computers.
 - The more recent Internet Protocol version 6 ([IPv6](https://en.wikipedia.org/wiki/IPv6)) has space for trillions of IP addresses
 
-Every device with an internet connection has an IP address, whether it's a computer, laptop, IoT device, or even toys. The IP addresses allow for the efficient transfer of data between two connected devices, allowing machines on different networks to talk to each other.
+Every device with an internet connection has an IP address, whether it is a computer, laptop, IoT device, or even toys. The IP addresses allow for the efficient transfer of data between two connected devices, allowing machines on different networks to talk to each other.
 
 Read more about them [here](https://en.wikipedia.org/wiki/IP_address).
 
