@@ -146,15 +146,14 @@ It is not user-facing, not exposed through any system call or header, and exists
 :::
 
 
-3. Crucially, this `epitem` is registered to the target file's `poll` table via a function `ep_ptable_queue_proc()`.
+5. Crucially, this `epitem` is registered to the target file's [`poll table`](#poll-table).
 
 ::: tip NOTE
 Every file descriptor in Linux (sockets, pipes, character devices, etc.) exposes a `poll` method through its `file_operations` (f_op->poll).
 :::
 
-4. On successful completion, `epoll_ctl()` returns `0`.
 
-### **The Kernel Callback**: `ep_poll_callback()`
+### **The Kernel [Callback](#callback)**: `ep_poll_callback()`
 
 - Once a file descriptor is registered with epoll, the kernel associates it with an internal callback. When the state of that file descriptor changes—for example, when new data arrives    (`POLLIN`) or buffer space becomes available (`POLLOUT`)—the kernel invokes its own internal epoll callback function, `ep_poll_callback()`. 
 - This callback:
@@ -174,18 +173,13 @@ int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout)
 
 - `epfd`: The file descriptor of the epoll instance.
 - `events`: A pointer to an array of `epoll_event` structures (this array need to be allocated in the user space). The kernel will store the events that occurred in this array.
-- `maxevents`: The maximum number of events to return. This is the size of the `events` array.
+- `maxevents`: The maximum number of events epoll_wait() may return in a single call. The kernel copies events from the epoll ready list (rdlist) until either the list is exhausted or maxevents entries have been filled. If more file descriptors are ready, they remain in the ready list and are returned by subsequent calls to epoll_wait().
 - `timeout`: The maximum time (in milliseconds) to block. If `timeout` is `0`, the call will return immediately. If `timeout` is `-1`, the call will block indefinitely.
 
-When your process calls `epoll_wait(epfd, events, maxevents, timeout)`, the kernel will execute:
-
-```c
-SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events, int, maxevents, int, timeout)
-```
 
 #### Internally:
 
-1. **Kernel acquires lock and checks ready list**
+1. **Kernel acquires the epoll lock and checks ready list**
    - If the `rdlist` (ready list) is non-empty, events are immediately returned.
    - Otherwise, the process goes to sleep in the `wait queue` (`ep->wq`).
 
@@ -197,10 +191,9 @@ When `epoll_wait()` wakes up, it iterates over the `rdlist`, copies the correspo
 
 ## Level triggered mode
 
-In level-triggered mode, epoll reports an event as long as any of the file descriptors in the `rdl1ist` of epoll is ready. For readable events `(EPOLLIN)`, if a socket has unread data in its receive buffer, every call to `epoll_wait()` will continue to return it until the data is consumed. For writable events `(EPOLLOUT)`, `epoll_wait()` will continue to return the descriptor as long as there is available space in the send buffer.
+In level-triggered mode, epoll reports a file descriptor as ready as long as the readiness condition persists. For EPOLLIN, readiness indicates that unread data is present in the kernel’s receive buffer; for EPOLLOUT, it indicates available space in the kernel’s send buffer. The file descriptor is returned by epoll_wait() on every call while these conditions remain true. Reading from the descriptor removes data from the receive buffer, and the descriptor continues to be reported until the buffer is fully drained. Similarly, writable events continue to be reported until the send buffer becomes full. 
 
-
-This mode is easier to use and ensures events are not missed, but may generate repeated notifications if the application does not fully drain the file descriptor.
+As a result, level-triggered mode reflects the current I/O state of the file descriptor rather than changes in that state, which can lead to repeated notifications if the application does not complete the required I/O operations.
 
 ## Edge triggered mode
 
@@ -249,30 +242,15 @@ wake_up_interruptible(&ep->wq);
 
 This triggers a scheduler wakeup for any sleeping threads, causing them to resume execution and return ready events.
 
-## Recursive Epoll (Nested Instances)
-
-Linux allows **epoll of epoll** (monitoring another epoll FD).
-The kernel prevents deadlocks and loops by marking epoll files with flags (`EPOLLWAKEUP`, `EPOLLEXCLUSIVE`) and limiting recursion depth.
-
-This is handled carefully in `fs/eventpoll.c` using checks like:
-
-```c
-if (is_file_epoll(file))
-    error = -EINVAL;
-```
-
-unless explicit recursion is enabled.
-
 ## Performance and Locking
 
-Epoll uses **fine-grained spinlocks** (`ep->lock`) around its lists and trees.
+Epoll uses **[fine-grained spinlocks](#spin-lock)** (`ep->lock`) around its lists and trees.
 Operations are O(1) per event and O(log n) for FD management.
 
 This design ensures:
 
 - Constant-time event delivery.
 - Scalable to tens of thousands of FDs.
-- Lock contention only on wakeups (not on every syscall).
 
 ## Important Kernel Functions (for reference)
 
@@ -287,7 +265,7 @@ This design ensures:
 
 All defined in `fs/eventpoll.c` (Linux source).
 
-## Understanding Readiness Propagation
+## Lifecycle of an Epoll Readiness Event
 
 When a socket receives new data:
 
@@ -297,16 +275,6 @@ When a socket receives new data:
 4. The corresponding `epitem` moves to `rdlist`.
 5. If a process is sleeping in `epoll_wait()`, it’s woken up.
 6. Events are copied to user space, and control returns to the application.
-
-This cycle is **non-blocking** and **fully asynchronous** — the kernel only wakes up the process when there’s meaningful work to do.
-
-## Closing the Loop
-
-When the application closes a monitored FD:
-
-- The kernel calls `ep_remove()` to unlink its `epitem` from all lists.
-- The callback hooks are detached.
-- Memory is freed safely even if wakeups are pending.
 
 ## Summary Table
 
@@ -320,7 +288,314 @@ When the application closes a monitored FD:
 
 ### Summary of chain of events:
 
-When an application calls `epoll_wait()`, it essentially hands control to the kernel, asking it to monitor all file descriptors that were previously registered through `epoll_ctl()`. Inside the kernel, each epoll instance is represented by an eventpoll object, which contains three key components — a red-black tree (holding all registered file descriptors), a ready list (containing file descriptors that currently have pending I/O events), and a wait queue (where user processes sleep when there are no ready events). When `epoll_wait()` is invoked, if the ready list is empty, the calling process is put to sleep on the wait queue. Meanwhile, every file descriptor (socket, pipe, etc.) in the system maintains its own internal `poll table`, a structure that records which epoll instances are interested in its state changes. When data arrives or an I/O state changes on any of those file descriptors, the kernel triggers the registered callback `ep_poll_callback()`. This callback runs in interrupt or softirq context, adds the corresponding `epitem` (representing that FD) to the eventpoll’s ready list, and then wakes up any processes sleeping on the epoll’s wait queue. Once the sleeping process wakes, `epoll_wait()` copies the list of ready events from the kernel’s ready list into user-space memory and returns control to the application with a list of file descriptors that are ready for I/O. 
+When an application calls `epoll_wait()`, it essentially hands control to the kernel, asking it to monitor all file descriptors that were previously registered through `epoll_ctl()`. Inside the kernel, each epoll instance is represented by an eventpoll object, which contains three key components — a red-black tree (holding all registered file descriptors), a ready list (containing file descriptors that currently have pending I/O events), and a wait queue (where user processes sleep when there are no ready events). When `epoll_wait()` is invoked, if the ready list is empty, the calling process is put to sleep on the wait queue. Meanwhile, every file descriptor (socket, pipe, etc.) in the system maintains its own internal [`poll table`](#poll-table), a structure that records which epoll instances are interested in its state changes. When data arrives or an I/O state changes on any of those file descriptors, the kernel triggers the registered callback `ep_poll_callback()`. This callback runs in interrupt or softirq context, adds the corresponding `epitem` (representing that FD) to the eventpoll’s ready list, and then wakes up any processes sleeping on the epoll’s wait queue. Once the sleeping process wakes, `epoll_wait()` copies the list of ready events from the kernel’s ready list into user-space memory and returns control to the application with a list of file descriptors that are ready for I/O. 
 
 Workflow of `epoll_wait()` :
 ![epoll_wait.png](/assets/resources/linux-epoll-wait.png)
+
+
+
+
+
+
+# Glossary
+## Callback
+
+**Definition**  
+A _callback_ is a kernel-registered function that the kernel invokes automatically when a specific internal event occurs.
+
+**What happens in the Linux kernel**
+
+-   During `epoll_ctl(EPOLL_CTL_ADD)`, epoll registers its internal function (`ep_poll_callback`) with the target file descriptor.
+    
+-   This registration occurs through the file’s poll mechanism.
+    
+-   The function pointer is stored inside kernel data structures associated with that file.
+    
+-   When the file’s readiness state changes (for example, data arrives on a socket), the kernel executes the callback directly.
+    
+-   The callback:
+    
+    1.  Adds the corresponding `epitem` to the epoll ready list.
+        
+    2.  Wakes up any thread sleeping in `epoll_wait()`.
+        
+
+**Important properties**
+
+-   Executed entirely in kernel space.
+    
+-   Not explicitly called by user code.
+    
+-   May run in interrupt or softirq context.
+    
+-   Must not sleep.
+
+## Poll Table
+
+**Definition**  
+A _poll table_ is a kernel data structure used to register interest in future readiness changes of a file descriptor.
+
+**What happens in the Linux kernel**
+
+-   When epoll registers a file descriptor, it calls the file’s `poll()` method.
+    
+-   A poll table object is passed to this method.
+    
+-   The file’s poll implementation:
+    
+    -   Adds epoll’s callback function to its internal wait queues.
+        
+-   These wait queues are monitored by the kernel.
+    
+-   When the file’s state changes, the kernel invokes all callbacks registered in the poll table.
+    
+
+**Why it exists**
+
+-   It connects file state changes to epoll notifications.
+    
+-   It avoids repeated scanning of file descriptors.
+    
+
+----------
+
+## Spin Lock
+
+**Definition**  
+A _spin lock_ is a low-level kernel lock that causes the CPU to repeatedly check a lock variable until it becomes available.
+
+**What happens in the Linux kernel**
+
+-   When a thread attempts to acquire a spin lock:
+    
+    -   If the lock is free, it is acquired immediately.
+        
+    -   If the lock is held, the CPU spins in a tight loop waiting for release.
+        
+-   The thread does not sleep while waiting.
+    
+-   Spin locks are used to protect short critical sections.
+    
+
+**Why epoll uses spin locks**
+
+-   Epoll callbacks may run in interrupt or softirq context.
+    
+-   Sleeping is forbidden in these contexts.
+    
+-   Spin locks provide mutual exclusion without sleeping.
+    
+
+**Key constraints**
+
+-   Must be held for very short durations.
+    
+-   Holding a spin lock for too long wastes CPU time.
+
+
+## Interrupt Context (Hard Interrupt Context)
+
+### Definition
+
+**Interrupt context** is a kernel execution context entered when the CPU receives a hardware interrupt signal. Code running in interrupt context executes immediately, preempting the currently running task, and is subject to strict execution constraints.
+
+----------
+
+### How interrupt context is entered (step by step)
+
+1.  The CPU is executing instructions (either user-space code or kernel code).
+    
+2.  A hardware device (e.g., network card, disk controller, timer) raises an interrupt signal.
+    
+3.  The CPU:
+    
+    -   Saves the current execution state (program counter, registers).
+        
+    -   Switches to kernel mode if not already in it.
+        
+    -   Jumps to a predefined interrupt handler registered by the kernel.
+        
+4.  The interrupt handler begins executing in **interrupt context**.
+    
+    
+    ### What runs in interrupt context
+
+-   Hardware interrupt handlers
+    
+-   Minimal device-handling code
+    
+-   Code that acknowledges the interrupt source
+    
+-   Code that schedules deferred work (such as softirqs)
+    
+
+Interrupt context code executes **without association to any user process or thread**.
+
+### Execution rules in interrupt context
+
+The following rules are **strictly enforced**:
+
+-   ❌ Sleeping is forbidden
+    
+-   ❌ Blocking is forbidden
+    
+-   ❌ Mutexes and other sleep-based locks are forbidden
+    
+-   ❌ Accessing user-space memory is forbidden
+    
+
+Allowed operations include:
+
+-   Acquiring spin locks
+    
+-   Modifying small kernel data structures
+    
+-   Scheduling deferred work
+
+### Why sleeping is forbidden
+
+Sleeping would require the kernel scheduler to:
+
+-   Suspend the current execution
+    
+-   Switch to another runnable task
+    
+
+However, interrupt context:
+
+-   Does not represent a schedulable task
+    
+-   Has no task state to save or resume
+    
+
+Sleeping in interrupt context would lead to kernel corruption or deadlock.
+
+### Relation to epoll
+
+When a device event occurs (e.g., network packet arrival):
+
+-   The interrupt handler detects the event
+    
+-   It does **not** perform full processing
+    
+-   It schedules deferred work (usually a softirq)
+    
+-   Epoll callbacks are never allowed to sleep because they may be triggered from interrupt-related paths
+
+## Softirq Context
+
+### Definition
+
+**Softirq context** is a kernel execution context used to perform deferred work that was triggered by a hardware interrupt but could not be safely or efficiently completed inside the interrupt handler itself.
+
+----------
+
+### Why softirq exists
+
+Hardware interrupt handlers must execute **very quickly**.  
+However, many kernel subsystems (especially networking) require additional processing that:
+
+-   Takes longer than acceptable in interrupt context
+    
+-   Still must run soon
+    
+-   Must not sleep
+    
+
+Softirqs provide a controlled way to defer this work.
+
+### How softirq context is entered 
+1.  A hardware interrupt occurs.
+    
+2.  The interrupt handler:
+    
+    -   Performs minimal required work
+        
+    -   Schedules a softirq
+        
+3.  The interrupt handler returns.
+    
+4.  At a later point (often immediately after):
+    
+    -   The kernel executes the scheduled softirq
+        
+    -   This execution occurs in **softirq context**
+        
+
+Softirqs may execute:
+
+-   On the same CPU
+    
+-   On a different CPU
+    
+-   Immediately after the interrupt
+    
+-   Or slightly later, depending on load
+    
+
+----------
+
+### What runs in softirq context
+
+-   Network packet processing
+    
+-   Block I/O completion handling
+    
+-   Timer expiration handling
+    
+-   Parts of socket readiness processing
+    
+-   Epoll readiness propagation
+    
+
+Like interrupt context, softirq context is **not associated with a user process**.
+
+### Execution rules in softirq context
+
+The rules are similar to interrupt context:
+
+-   ❌ Sleeping is forbidden
+    
+-   ❌ Blocking is forbidden
+    
+-   ❌ Mutexes are forbidden
+    
+
+Allowed operations:
+
+-   Acquiring spin locks
+    
+-   Iterating kernel queues
+    
+-   Updating kernel state
+    
+-   Waking sleeping processes
+### Relation to epoll
+
+In the networking stack:
+
+1.  A packet arrives → hardware interrupt
+    
+2.  Interrupt handler schedules networking softirq
+    
+3.  Softirq processes packet and updates socket state
+    
+4.  Socket becomes readable
+    
+5.  Epoll callback is triggered
+    
+6.  Epoll:
+    
+    -   Adds the corresponding `epitem` to the ready list
+        
+    -   Wakes sleeping processes in `epoll_wait()`
+        
+
+Because this chain runs through softirq context:
+
+-   Epoll uses spin locks
+    
+-   Epoll callbacks never sleep
+    
+-   Epoll only performs minimal state updates
