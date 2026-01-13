@@ -9,15 +9,20 @@ Internally, epoll revolves around a kernel object called `eventpoll`.
 ### Key Components of `eventpoll` Object
 
 #### 1. The Wait Queue (`wq`)
+
 This queue holds the list of processes (threads) that are currently blocked in `epoll_wait()`, waiting for an event to occur. When an event happens, the kernel wakes up the processes in this queue.
 
 #### 2. The Ready List (`rdlist`)
+
 This is a **doubly linked list** that stores the file descriptors (FDs) that are currently "ready" (i.e., have data to read or space to write).
+
 - When an event occurs on a monitored FD, it is added to this list.
 - `epoll_wait()` simply checks this list. If it is not empty, it returns the events to the user.
 
 #### 3. The Red-Black Tree (`rbr`)
+
 This is a **Red-Black Tree** that stores all the file descriptors currently being monitored by this epoll instance.
+
 - It allows for efficient **insertion, deletion, and search** of file descriptors (O(log n)).
 - When you call `epoll_ctl()` to add or remove an FD, the kernel modifies this tree.
 
@@ -87,6 +92,7 @@ epoll_create1() removes the obsolete size parameter, and allows FD_CLOEXEC to be
 #include<sys/epoll.h>
 int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
 ```
+
 **Arguments:**
 
 - `epfd`: The file descriptor of the epoll instance as returned by `epoll_create1()`. 
@@ -158,8 +164,8 @@ Every file descriptor in Linux (sockets, pipes, character devices, etc.) exposes
 
 - Once a file descriptor is registered with epoll, the kernel associates it with an internal callback. When the state of that file descriptor changes—for example, when new data arrives    (`POLLIN`) or buffer space becomes available (`POLLOUT`)—the kernel invokes its own internal epoll callback function, `ep_poll_callback()`. 
 - This callback:
-    1. Enqueues the `epitem` into the **ready list** (`rdlist`) of the `eventpoll`.
-    2. Wakes up any thread currently sleeping in `epoll_wait()` on this epoll instance.
+  1. Enqueues the `epitem` into the **ready list** (`rdlist`) of the `eventpoll`.
+  2. Wakes up any thread currently sleeping in `epoll_wait()` on this epoll instance.
 
 ### Waiting for Events: `epoll_wait()`
 
@@ -186,6 +192,7 @@ SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events, int,
 #### Internally:
 
 1. **Kernel acquires lock and checks ready list**
+
    - If the `rdlist` (ready list) is non-empty, events are immediately returned.
    - Otherwise, the process goes to sleep in the `wait queue` (`ep->wq`).
 
@@ -199,7 +206,6 @@ When `epoll_wait()` wakes up, it iterates over the `rdlist`, copies the correspo
 
 In level-triggered mode, epoll reports an event as long as any of the file descriptors in the `rdl1ist` of epoll is ready. For readable events `(EPOLLIN)`, if a socket has unread data in its receive buffer, every call to `epoll_wait()` will continue to return it until the data is consumed. For writable events `(EPOLLOUT)`, `epoll_wait()` will continue to return the descriptor as long as there is available space in the send buffer.
 
-
 This mode is easier to use and ensures events are not missed, but may generate repeated notifications if the application does not fully drain the file descriptor.
 
 ## Edge triggered mode
@@ -208,7 +214,7 @@ In edge-triggered mode, epoll reports events only when the readiness state chang
 
 Because **ET does not repeat events**, the application must read or write until the operation returns `EAGAIN`; otherwise, data may remain unread with no further notifications.
 
-ET reduces unnecessary wakeups and is useful for high-performance servers, but requires more careful programming. This mode is enabled by passing the `EPOLLET` flag when registering the file descriptor with `epoll_ctl()`. 
+ET reduces unnecessary wakeups and is useful for high-performance servers, but requires more careful programming. This mode is enabled by passing the `EPOLLET` flag when registering the file descriptor with `epoll_ctl()`.
 
 ::: tip NOTE
 `EAGAIN` is a common error code returned by non-blocking I/O operations (e.g., `read`, `write`, `recv`, `send`) when the operation cannot be completed immediately without blocking the calling process. In the context of `epoll` with non-blocking sockets, especially in Edge-Triggered mode, receiving `EAGAIN` indicates that there is no more data to read or the write buffer is full, and you should stop attempting the operation until a new event is reported by `epoll_wait()`.
@@ -218,11 +224,11 @@ ET reduces unnecessary wakeups and is useful for high-performance servers, but r
 
 Each `epitem` (monitored FD) transitions through three stages:
 
-| Stage | Description |
-| :---- | :---- |
-| **Registered** | In red-black tree, not ready yet |
-| **Ready** | Added to ready list after kernel callback |
-| **Delivered** | Returned by `epoll_wait()`, removed or re-queued |
+| Stage          | Description                                      |
+| :------------- | :----------------------------------------------- |
+| **Registered** | In red-black tree, not ready yet                 |
+| **Ready**      | Added to ready list after kernel callback        |
+| **Delivered**  | Returned by `epoll_wait()`, removed or re-queued |
 
 ## Epoll’s Red-Black Tree (Interest List)
 
@@ -249,20 +255,6 @@ wake_up_interruptible(&ep->wq);
 
 This triggers a scheduler wakeup for any sleeping threads, causing them to resume execution and return ready events.
 
-## Recursive Epoll (Nested Instances)
-
-Linux allows **epoll of epoll** (monitoring another epoll FD).
-The kernel prevents deadlocks and loops by marking epoll files with flags (`EPOLLWAKEUP`, `EPOLLEXCLUSIVE`) and limiting recursion depth.
-
-This is handled carefully in `fs/eventpoll.c` using checks like:
-
-```c
-if (is_file_epoll(file))
-    error = -EINVAL;
-```
-
-unless explicit recursion is enabled.
-
 ## Performance and Locking
 
 Epoll uses **fine-grained spinlocks** (`ep->lock`) around its lists and trees.
@@ -276,14 +268,14 @@ This design ensures:
 
 ## Important Kernel Functions (for reference)
 
-| Function | Purpose |
-| :---- | :---- |
-| `do_epoll_create()` | Allocates and initializes `eventpoll`. |
-| `ep_insert()` | Inserts new `epitem` into red-black tree. |
-| `ep_remove()` | Removes an `epitem` on `EPOLL_CTL_DEL`. |
-| `ep_poll_callback()` | Called by kernel when FD becomes ready. |
-| `ep_send_events()` | Copies ready events to user space. |
-| `ep_eventpoll_release()` | Cleans up on `close(epfd)` or `exit()`. |
+| Function                 | Purpose                                   |
+| :----------------------- | :---------------------------------------- |
+| `do_epoll_create()`      | Allocates and initializes `eventpoll`.    |
+| `ep_insert()`            | Inserts new `epitem` into red-black tree. |
+| `ep_remove()`            | Removes an `epitem` on `EPOLL_CTL_DEL`.   |
+| `ep_poll_callback()`     | Called by kernel when FD becomes ready.   |
+| `ep_send_events()`       | Copies ready events to user space.        |
+| `ep_eventpoll_release()` | Cleans up on `close(epfd)` or `exit()`.   |
 
 All defined in `fs/eventpoll.c` (Linux source).
 
@@ -310,17 +302,17 @@ When the application closes a monitored FD:
 
 ## Summary Table
 
-| Component | Data Structure | Purpose |
-| :---- | :---- | :---- |
-| Interest list | Red-black tree (`rbr`) | Store registered FDs |
-| Ready list | Linked list (`rdlist`) | Store active events |
-| Wait queue | `wait_queue_head_t` | Put sleeping processes |
-| FD node | `epitem` | Connects file to eventpoll |
-| Callback | `ep_poll_callback()` | Moves item to ready list + wakeup |
+| Component     | Data Structure         | Purpose                           |
+| :------------ | :--------------------- | :-------------------------------- |
+| Interest list | Red-black tree (`rbr`) | Store registered FDs              |
+| Ready list    | Linked list (`rdlist`) | Store active events               |
+| Wait queue    | `wait_queue_head_t`    | Put sleeping processes            |
+| FD node       | `epitem`               | Connects file to eventpoll        |
+| Callback      | `ep_poll_callback()`   | Moves item to ready list + wakeup |
 
 ### Summary of chain of events:
 
-When an application calls `epoll_wait()`, it essentially hands control to the kernel, asking it to monitor all file descriptors that were previously registered through `epoll_ctl()`. Inside the kernel, each epoll instance is represented by an eventpoll object, which contains three key components — a red-black tree (holding all registered file descriptors), a ready list (containing file descriptors that currently have pending I/O events), and a wait queue (where user processes sleep when there are no ready events). When `epoll_wait()` is invoked, if the ready list is empty, the calling process is put to sleep on the wait queue. Meanwhile, every file descriptor (socket, pipe, etc.) in the system maintains its own internal `poll table`, a structure that records which epoll instances are interested in its state changes. When data arrives or an I/O state changes on any of those file descriptors, the kernel triggers the registered callback `ep_poll_callback()`. This callback runs in interrupt or softirq context, adds the corresponding `epitem` (representing that FD) to the eventpoll’s ready list, and then wakes up any processes sleeping on the epoll’s wait queue. Once the sleeping process wakes, `epoll_wait()` copies the list of ready events from the kernel’s ready list into user-space memory and returns control to the application with a list of file descriptors that are ready for I/O. 
+When an application calls `epoll_wait()`, it essentially hands control to the kernel, asking it to monitor all file descriptors that were previously registered through `epoll_ctl()`. Inside the kernel, each epoll instance is represented by an eventpoll object, which contains three key components — a red-black tree (holding all registered file descriptors), a ready list (containing file descriptors that currently have pending I/O events), and a wait queue (where user processes sleep when there are no ready events). When `epoll_wait()` is invoked, if the ready list is empty, the calling process is put to sleep on the wait queue. Meanwhile, every file descriptor (socket, pipe, etc.) in the system maintains its own internal `poll table`, a structure that records which epoll instances are interested in its state changes. When data arrives or an I/O state changes on any of those file descriptors, the kernel triggers the registered callback `ep_poll_callback()`. This callback runs in interrupt or softirq context, adds the corresponding `epitem` (representing that FD) to the eventpoll’s ready list, and then wakes up any processes sleeping on the epoll’s wait queue. Once the sleeping process wakes, `epoll_wait()` copies the list of ready events from the kernel’s ready list into user-space memory and returns control to the application with a list of file descriptors that are ready for I/O.
 
 Workflow of `epoll_wait()` :
 ![epoll_wait.png](/assets/resources/linux-epoll-wait.png)
