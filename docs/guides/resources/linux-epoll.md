@@ -197,7 +197,7 @@ When `epoll_wait()` wakes up, it iterates over the `rdlist`, copies the correspo
 
 ## Level triggered mode
 
-In level-triggered mode, epoll reports an event as long as any of the file descriptors in the `rdlist` of epoll is ready. For readable events `(EPOLLIN)`, if a socket has unread data in its receive buffer, every call to `epoll_wait()` will continue to return it until the data is consumed. For writable events `(EPOLLOUT)`, `epoll_wait()` will continue to return the descriptor as long as there is available space in the send buffer.
+In level-triggered mode, epoll reports an event as long as any of the file descriptors in the `rdl1ist` of epoll is ready. For readable events `(EPOLLIN)`, if a socket has unread data in its receive buffer, every call to `epoll_wait()` will continue to return it until the data is consumed. For writable events `(EPOLLOUT)`, `epoll_wait()` will continue to return the descriptor as long as there is available space in the send buffer.
 
 
 This mode is easier to use and ensures events are not missed, but may generate repeated notifications if the application does not fully drain the file descriptor.
