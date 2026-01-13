@@ -9,7 +9,7 @@ Internally, epoll revolves around a kernel object called `eventpoll`.
 ### Key Components of `eventpoll` Object
 
 #### 1. The Wait Queue (`wq`)
-This queue holds the list of processes (threads) that are currently blocked in `epoll_wait()`, waiting for an event to occur. When an event happens, the kernel wakes up the processes in this queue.
+This queue holds the list of processes/threads that are currently blocked in `epoll_wait()`, waiting for an event to occur. When an event happens, the kernel wakes up the processes in this queue.
 
 #### 2. The Ready List (`rdlist`)
 This is a **doubly linked list** that stores the file descriptors (FDs) that are currently "ready" (i.e., have data to read or space to write).
@@ -92,7 +92,7 @@ int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
 - `epfd`: The file descriptor of the epoll instance as returned by `epoll_create1()`. 
 - `op`: The operation to be performed (e.g., `EPOLL_CTL_ADD`, `EPOLL_CTL_MOD`, `EPOLL_CTL_DEL`).
 - `fd`: The target file descriptor to monitor.
-- `event`: A pointer to an `epoll_event` structure that specifies the events to monitor (e.g., `EPOLLIN`, `EPOLLOUT`) and any user data associated with the file descriptor.
+- `event`: A pointer to an `epoll_event` structure that specifies the events to monitor (e.g., `EPOLLIN` - representing resource is ready for reading, `EPOLLOUT` - representing resource is ready for writing) and any user data associated with the file descriptor.
 
 ### User-Space Event Specification: `struct epoll_event`
 
@@ -153,7 +153,7 @@ Every file descriptor in Linux (sockets, pipes, character devices, etc.) exposes
 :::
 
 
-### The Kernel [Callback](#callback): `ep_poll_callback()` {#epoll-callback}
+### The Kernel Callback: `ep_poll_callback()` 
 
 - Once a file descriptor is registered with epoll, the kernel associates it with an internal callback. When the state of that file descriptor changes—for example, when new data arrives    (`POLLIN`) or buffer space becomes available (`POLLOUT`)—the kernel invokes its own internal epoll callback function, `ep_poll_callback()`. 
 - This callback:
