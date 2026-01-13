@@ -605,13 +605,13 @@ Try by replacing files of different format. You have to update JSON configuratio
 
 Try adding more ports and redirect to different urls.
 
-## Experiment #1: Understanding Route Priority
+## Experiment #1
 
 eXpServer uses a **Longest Prefix Match** strategy to decide which route to use when multiple routes match a request path. To see this in action, open your `xps_config.json` and add two overlapping routes for the same server: Route A with `req_path: "/"` (Type: `file_serve`) and Route B with `req_path: "/api"` (Type: `redirect` to `http://localhost:8002`). 
 
 Now, try requesting `http://localhost:8001/api/data`. You will notice that Route B is chosen because `/api` is a longer match than `/`. If you request `/ap`, where do you think it will be routed to?
 
-## Experiment #2: Directory Browsing
+## Experiment #2
 
 In this experiment, we will explore how the server behaves when an index file is missing. Open `xps_config.json` and change the `dir_path` for the root route of port `8001` from `../public/` to `../../` (your project root). 
 
