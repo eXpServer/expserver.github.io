@@ -153,7 +153,7 @@ Every file descriptor in Linux (sockets, pipes, character devices, etc.) exposes
 :::
 
 
-### **The Kernel [Callback](#callback)**: `ep_poll_callback()`
+### The Kernel [Callback](#callback): `ep_poll_callback()` {#epoll-callback}
 
 - Once a file descriptor is registered with epoll, the kernel associates it with an internal callback. When the state of that file descriptor changes—for example, when new data arrives    (`POLLIN`) or buffer space becomes available (`POLLOUT`)—the kernel invokes its own internal epoll callback function, `ep_poll_callback()`. 
 - This callback:
