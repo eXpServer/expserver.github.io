@@ -81,7 +81,7 @@ This will create a parson directory inside `expserver/src/lib/` and download all
 				{
 					"req_path": "/",
 					"type": "file_serve",
-					"dir_path": "../../",
+					"dir_path": "../public/",
 					"index": ["index.html"]
 				},
 				{
@@ -588,7 +588,7 @@ Three port would be created as given:
 
 ![exp1-img2.png](/assets/stage-16/exp1-img2.png)
 
-- First, we would be verifying the file server functionality. An `index.html`  file as mentioned in the xps_config.json is created in the src folder. Add some standard html code in this file. The contents can be viewed on `[localhost:8001](http://localhost:8001)` on the browser.
+- First, we would be verifying the file server functionality. An `index.html`  file as mentioned in the xps_config.json is created in the public folder. Add some standard html code in this file. The contents can be viewed on `[localhost:8001](http://localhost:8001)` on the browser.
 
 Try by replacing files of different format. You have to update JSON configuration file accordingly.
 
@@ -605,50 +605,21 @@ Try by replacing files of different format. You have to update JSON configuratio
 
 Try adding more ports and redirect to different urls.
 
-## Experiment #1: File Serving Beyond Source
+## Experiment #1: Understanding Route Priority
 
-In this experiment, we will explore how the file server handles paths and directory configurations.
+eXpServer uses a **Longest Prefix Match** strategy to decide which route to use when multiple routes match a request path. To see this in action, open your `xps_config.json` and add two overlapping routes for the same server: Route A with `req_path: "/"` (Type: `file_serve`) and Route B with `req_path: "/api"` (Type: `redirect` to `http://localhost:8002`). 
 
-1. **Access external files**: Try accessing a file located outside the `src` folder by providing its path relative to the `dir_path` in the URL (e.g., `http://localhost:8001/README.md`).
-2. **Modify the `dir_path`**: Open `xps_config.json` and change the `dir_path` for the root route of port `8001` to point to a different directory.
+Now, try requesting `http://localhost:8001/api/data`. You will notice that Route B is chosen because `/api` is a longer match than `/`. If you request `/ap`, where do you think it will be routed to?
 
+## Experiment #2: Directory Browsing
 
-## Experiment #2: Testing Reverse Proxy
+In this experiment, we will explore how the server behaves when an index file is missing. Open `xps_config.json` and change the `dir_path` for the root route of port `8001` from `../public/` to `../../` (your project root). 
 
-Reverse proxying allows eXpServer to act as a gateway to other services.
+Now, navigate to `http://localhost:8001/` in your browser. You will notice that the server returns a **404 Not Found** error. Take a moment to think about why this happens even though the directory clearly exists on your system.
 
-1. **Set up an upstream server**: Start a simple file server on port `3000`.
-2. **Access through eXpServer**: Open `http://localhost:8002` in your browser. Even though you are connecting to eXpServer, you should see the contents being served by the Python server.
-3. **Change the upstream**: Try modifying the `upstreams` list in `xps_config.json` to point to a different port or service.
-
-## Experiment #3: Exploring URL Redirects
-
-Redirects are used to send clients from one URL to another. We have a redirect configured on port `8003`.
-
-1. **Verify the redirect**: Navigate to `http://localhost:8003`. You should be automatically redirected to `https://expserver.github.io`.
-2. **Test internal redirects**: Add a new route in `xps_config.json` that redirects a specific path like `/hello` to another local port:
-   ```json
-   {
-       "req_path": "/hello",
-       "type": "redirect",
-       "http_status_code": 302,
-       "redirect_url": "http://localhost:8001/"
-   }
-   ```
-3. **Verify**: Visit `http://localhost:8001/hello` and ensure it takes you back to the file server on port `8001`.
-
-## Experiment #4: Understanding Route Priority
-
-eXpServer uses a **Longest Prefix Match** strategy to decide which route to use when multiple routes match a request path.
-
-1. **Add overlapping routes**: In your `xps_config.json`, add these two routes for the same server:
-   - Route A: `req_path: "/"` (Type: `file_serve`)
-   - Route B: `req_path: "/api"` (Type: `redirect` to `http://localhost:8002`)
-2. **Test the match**: If you request `http://localhost:8001/api/data`, Route B will be chosen because `/api` is a longer match than `/`.
-3. **Observe edge cases**: What happens if you request `/ap`?
 
 ## Conclusion
 
-In this stage, we transitioned from a hardcoded server setup to a dynamic, configuration-driven architecture. With the new `config` module, our server now supports multiple worker cores and features like reverse proxying and URL redirects. Currently, attempting to browse a directory without an index file results in an error; in the next stage, we will address this by implementing a directory module to enable seamless navigation of directory contents.
+In this stage, we transitioned from a hardcoded server setup to a dynamic, configuration-driven architecture using JSON. By implementing the `config` module, eXpServer now supports multiple worker cores, reverse proxying, and URL redirects. While the server currently returns a 404 error when an index file is missing from a directory, we will resolve this in the next stage by implementing a dedicated directory module.
 
   
