@@ -381,7 +381,7 @@ if (lookup->type == REQ_FILE_SERVE) {
   xps_http_res_t *http_res =
       xps_http_res_create(session->core, lookup->http_status_code);
   xps_http_set_header(&http_res->headers, "Location", lookup->redirect_url);
-  xps_buffer_t *http_res_buff = xps_http_res_serialize(http_res);
+  /*serialize the reponse*/
   set_to_client_buff(session, http_res_buff);
   /* destroy the response object after use */
   return;
