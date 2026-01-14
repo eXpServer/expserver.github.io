@@ -106,7 +106,7 @@ This call returns a file descriptor representing the epoll instance. The descrip
 
 - **0**: Creates the epoll instance without setting FD_CLOEXEC. In this case, the epoll file descriptor is inherited across fork() + exec(), which can unintentionally leak the instance into child processes.
 
-**In almost all applications—especially servers and multi-process programs—EPOLL_CLOEXEC should be used to avoid file descriptor leaks.**
+**In almost all applications, especially servers and multi-process programs, EPOLL_CLOEXEC should be used to avoid file descriptor leaks.**
 
 ### **Registering a File Descriptor with Epoll**: `epoll_ctl()`
 
