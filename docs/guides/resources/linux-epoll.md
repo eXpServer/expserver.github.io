@@ -407,10 +407,10 @@ Workflow of `epoll_wait()` :
 ![epoll_wait.png](/assets/resources/linux-epoll-wait.png)
 
 
-# Glossary
+## Glossary
 
 
-## Callback
+### Callback
 
 A callback is a function inside the kernel that is registered to be run automatically when a certain kernel condition occurs. In epoll, the callback is used to inform the epoll subsystem that the state of a monitored file descriptor has changed.
 
@@ -418,7 +418,7 @@ When a file descriptor is added to epoll using epoll_ctl(EPOLL_CTL_ADD), epoll r
 
 The callback runs entirely inside the kernel and is not called by user code. Its job is only to record that the file descriptor is ready and to wake up any threads waiting in epoll_wait(). It does not decide which events occurred and does not return data to user space. Because it may run in interrupt or softirq context, the callback is not allowed to sleep.
 
-## Spinlock
+### Spinlock
 
 A spinlock is a low-level kernel synchronization primitive used to protect shared data structures from concurrent access. When a CPU attempts to acquire a spinlock, it repeatedly checks the lock until it becomes available, without putting the current execution context to sleep.
 
@@ -426,7 +426,7 @@ Spinlocks are used in epoll because parts of the epoll subsystem, including call
 
 
 
-### Interrupt Context (Hard Interrupt Context)
+#### Interrupt Context (Hard Interrupt Context)
 
 Interrupt context is a kernel execution context entered when the CPU receives a hardware interrupt from a device such as a network card, disk controller, or timer. When an interrupt occurs, the CPU immediately suspends the currently running code, switches to kernel mode if necessary, and begins executing the registered interrupt handler.
 
@@ -436,7 +436,7 @@ In the context of epoll, interrupt handlers do not directly invoke epoll logic. 
 
 ----------
 
-### Softirq Context
+#### Softirq Context
 
 Softirq context is a kernel execution context used to perform deferred work that was triggered by a hardware interrupt but could not be completed safely or efficiently within the interrupt handler itself. Softirqs allow the kernel to defer processing while still executing soon after the interrupt and without sleeping.
 
