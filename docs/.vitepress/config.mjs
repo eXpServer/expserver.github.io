@@ -187,7 +187,7 @@ export default defineConfig({
 								},
 								{
 									text: 'Stage 17: Directory Browsing',
-									link: '/roadmap/phase-3/stage-17',
+									link: '/roadmap/phase-2/stage-17',
 								},
 				
 							],

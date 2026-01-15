@@ -299,12 +299,8 @@ Workflow of `epoll_wait()` :
 ![epoll_wait.png](/assets/resources/linux-epoll-wait.png)
 
 
-
-
-
-
-# Glossary
-## Callback
+## Glossary
+### Callback
 
 **Definition**  
 A _callback_ is a kernel-registered function that the kernel invokes automatically when a specific internal event occurs.
@@ -336,7 +332,7 @@ A _callback_ is a kernel-registered function that the kernel invokes automatical
     
 -   Must not sleep.
 
-## Poll Table
+### Poll Table
 
 **Definition**  
 A _poll table_ is a kernel data structure used to register interest in future readiness changes of a file descriptor.
@@ -365,7 +361,7 @@ A _poll table_ is a kernel data structure used to register interest in future re
 
 ----------
 
-## Spin Lock
+### Spin Lock
 
 **Definition**  
 A _spin lock_ is a low-level kernel lock that causes the CPU to repeatedly check a lock variable until it becomes available.
@@ -399,15 +395,15 @@ A _spin lock_ is a low-level kernel lock that causes the CPU to repeatedly check
 -   Holding a spin lock for too long wastes CPU time.
 
 
-## Interrupt Context (Hard Interrupt Context)
+### Interrupt Context (Hard Interrupt Context)
 
-### Definition
+#### Definition
 
 **Interrupt context** is a kernel execution context entered when the CPU receives a hardware interrupt signal. Code running in interrupt context executes immediately, preempting the currently running task, and is subject to strict execution constraints.
 
 ----------
 
-### How interrupt context is entered (step by step)
+#### How interrupt context is entered (step by step)
 
 1.  The CPU is executing instructions (either user-space code or kernel code).
     
@@ -424,7 +420,7 @@ A _spin lock_ is a low-level kernel lock that causes the CPU to repeatedly check
 4.  The interrupt handler begins executing in **interrupt context**.
     
     
-    ### What runs in interrupt context
+    #### What runs in interrupt context
 
 -   Hardware interrupt handlers
     
@@ -437,7 +433,7 @@ A _spin lock_ is a low-level kernel lock that causes the CPU to repeatedly check
 
 Interrupt context code executes **without association to any user process or thread**.
 
-### Execution rules in interrupt context
+#### Execution rules in interrupt context
 
 The following rules are **strictly enforced**:
 
@@ -458,7 +454,7 @@ Allowed operations include:
     
 -   Scheduling deferred work
 
-### Why sleeping is forbidden
+#### Why sleeping is forbidden
 
 Sleeping would require the kernel scheduler to:
 
@@ -476,7 +472,7 @@ However, interrupt context:
 
 Sleeping in interrupt context would lead to kernel corruption or deadlock.
 
-### Relation to epoll
+#### Relation to epoll
 
 When a device event occurs (e.g., network packet arrival):
 
@@ -488,15 +484,15 @@ When a device event occurs (e.g., network packet arrival):
     
 -   Epoll callbacks are never allowed to sleep because they may be triggered from interrupt-related paths
 
-## Softirq Context
+### Softirq Context
 
-### Definition
+#### Definition
 
 **Softirq context** is a kernel execution context used to perform deferred work that was triggered by a hardware interrupt but could not be safely or efficiently completed inside the interrupt handler itself.
 
 ----------
 
-### Why softirq exists
+#### Why softirq exists
 
 Hardware interrupt handlers must execute **very quickly**.  
 However, many kernel subsystems (especially networking) require additional processing that:
@@ -510,7 +506,7 @@ However, many kernel subsystems (especially networking) require additional proce
 
 Softirqs provide a controlled way to defer this work.
 
-### How softirq context is entered 
+#### How softirq context is entered 
 1.  A hardware interrupt occurs.
     
 2.  The interrupt handler:
@@ -541,7 +537,7 @@ Softirqs may execute:
 
 ----------
 
-### What runs in softirq context
+#### What runs in softirq context
 
 -   Network packet processing
     
@@ -556,7 +552,7 @@ Softirqs may execute:
 
 Like interrupt context, softirq context is **not associated with a user process**.
 
-### Execution rules in softirq context
+#### Execution rules in softirq context
 
 The rules are similar to interrupt context:
 
@@ -576,7 +572,7 @@ Allowed operations:
 -   Updating kernel state
     
 -   Waking sleeping processes
-### Relation to epoll
+#### Relation to epoll
 
 In the networking stack:
 
