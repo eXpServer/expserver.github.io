@@ -152,12 +152,12 @@ union epoll_data {
 
 typedef  union epoll_data epoll_data_t;
 ```
+
 ::: tip NOTE
 
 The `epoll_data_t` union is defined and passed to the kernel by the programmer. So, when the kernel returns an event, this data can be used to identify which file descriptor triggered it—for example, to distinguish between a listening socket and a connection socket. In later stages, we will use the `void *ptr` field instead of the file descriptor to handle this logic.
 
 :::
-
 
 When `epoll_ctl()` is called:
 
@@ -307,25 +307,29 @@ While the process is sleeping, monitored file descriptors may change state. When
 
 Once the sleeping process is woken, execution resumes inside `epoll_wait()`. The kernel again acquires the epoll lock and rechecks the ready list. If entries are present, the kernel iterates over them and copies their associated `struct epoll_event` data into the user-space `events` array.
 
-After copying events, the kernel updates the ready list based on the triggering mode. In level-triggered mode, entries may remain in the ready list if the file descriptor is still ready. In edge-triggered mode, entries are removed and will only be reinserted when a new state change occurs.
+After copying events, the kernel updates the ready list based on the triggering mode. This will be explained below.
 
 Finally, the kernel releases the epoll lock and returns to user space, with `epoll_wait()` returning the number of events copied into the `events` array.
 
 Note: `epoll_wait()` itself does not detect I/O readiness; it only consumes events that were previously recorded in the ready list by kernel callbacks.
 
-## Level triggered mode
+## Level triggered mode (LT)
 
-In level-triggered mode, epoll reports a file descriptor as ready as long as the readiness condition persists. For EPOLLIN, readiness indicates that unread data is present in the kernel’s receive buffer; for EPOLLOUT, it indicates available space in the kernel’s send buffer. The file descriptor is returned by epoll_wait() on every call while these conditions remain true. Reading from the descriptor removes data from the receive buffer, and the descriptor continues to be reported until the buffer is fully drained. Similarly, writable events continue to be reported until the send buffer becomes full.
+In level-triggered mode, epoll reports a file/socket descriptor as ready as long as the readiness condition persists. For EPOLLIN, readiness indicates that unread data is present in the kernel’s receive buffer; for EPOLLOUT, it indicates available space in the kernel’s send buffer. The file descriptor is returned by epoll_wait() on every call while these conditions remain true.
 
-As a result, level-triggered mode reflects the current I/O state of the file descriptor rather than changes in that state, which can lead to repeated notifications if the application does not complete the required I/O operations.
+That is, if a file/socket is reported as ready to read by epoll_wait(), the user space code will read data from the file/socket into a user buffer. Suppose that the user buffer gets filled up, but there is still unread data in the file's/socket's kernel buffer. In level-trigerred mode, the descriptor continues to be maintained in the ready list and the next call to epoll_wait() will continue to notify the file/socket as ready to read. On the other hand, if the complete data in the kernel buffer is read into user space, the file/socket will be removed from the ready list (and will get back into the ready list only if new data arrives in the file/socket).
 
-## Edge triggered mode
+If a file/socket is notified as ready for write, it will continue to be maintained in the ready list and notified in each invocation of epoll_wait() as long as its kernel buffer has remaining free space.
+
+As a result, level-triggered mode reflects the current I/O state of the file/socket descriptor rather than changes in that state, which can lead to repeated notifications if the application does not complete the required I/O operations.
+
+## Edge triggered mode (ET)
 
 In edge-triggered mode, epoll reports events only when the readiness state changes (for example, when new data arrives on a socket that was previously empty). Once the event is delivered, epoll will not notify again until another state change occurs.
 
-Because **ET does not repeat events**, the application must read or write until the operation returns `EAGAIN`; otherwise, data may remain unread with no further notifications.
+Because **Edge triggered mode does not repeat events**, the application must read or write into the file/socket until the kernal buffer is empty/full - identified when read()/write()/recv()/send() system call returns `EAGAIN`. In edge triggered mode, a descriptor that is notified once by epoll_wait() to the user space will no longer continue in the ready list. A monitored descriptor will re-enter the ready list only when new data arrives (and ep_poll_callback() places the file descriptor again into the ready list).
 
-ET reduces unnecessary wakeups and is useful for high-performance servers, but requires more careful programming. This mode is enabled by passing the `EPOLLET` flag when registering the file descriptor with `epoll_ctl()`.
+Edge triggered mode reduces unnecessary wakeups and is useful for high-performance servers, but requires more careful application side programming. This mode is enabled by passing the `EPOLLET` flag when registering the file descriptor with `epoll_ctl()`.
 
 ::: tip NOTE
 `EAGAIN` is a common error code returned by non-blocking I/O operations (e.g., `read`, `write`, `recv`, `send`) when the operation cannot be completed immediately without blocking the calling process. In the context of `epoll` with non-blocking sockets, especially in Edge-Triggered mode, receiving `EAGAIN` indicates that there is no more data to read or the write buffer is full, and you should stop attempting the operation until a new event is reported by `epoll_wait()`.
@@ -335,11 +339,11 @@ ET reduces unnecessary wakeups and is useful for high-performance servers, but r
 
 Each `epitem` (monitored FD) transitions through three stages:
 
-| Stage          | Description                                      |
-| :------------- | :----------------------------------------------- |
-| **Registered** | In red-black tree, not ready yet                 |
-| **Ready**      | Added to ready list after kernel callback        |
-| **Delivered**  | Returned by `epoll_wait()`, removed or re-queued |
+| Stage          | Description                               |
+| :------------- | :---------------------------------------- |
+| **Registered** | In red-black tree, not ready yet          |
+| **Ready**      | Added to ready list after kernel callback |
+| **Delivered**  | Returned by `epoll_wait()` to user space  |
 
 ## Lifecycle of an Epoll Readiness Event
 
@@ -385,6 +389,8 @@ A spinlock is a low-level kernel synchronization primitive used to protect share
 
 Spinlocks are used in epoll because parts of the epoll subsystem, including callbacks, may execute in interrupt or softirq context where sleeping is not allowed. Epoll uses spinlocks to protect short critical sections, such as updates to the ready list or internal bookkeeping structures. Because spinning consumes CPU time, spinlocks must be held only for very short durations.
 
+Note: The use of spinlock by epoll is completely within the kernel context and there is no application involvement.
+
 ## Interrupt Context (Hard Interrupt Context)
 
 Interrupt context is a kernel execution context entered when the CPU receives a hardware interrupt from a device such as a network card, disk controller, or timer. When an interrupt occurs, the CPU immediately suspends the currently running code, switches to kernel mode if necessary, and begins executing the registered interrupt handler.
@@ -392,8 +398,6 @@ Interrupt context is a kernel execution context entered when the CPU receives a 
 Code running in interrupt context is not associated with any user process or kernel thread. Because interrupt handlers must execute quickly and predictably, strict rules apply: sleeping, blocking, acquiring sleep-based locks, and accessing user-space memory are forbidden. Only minimal work is performed in interrupt context, such as acknowledging the interrupt and scheduling deferred processing.
 
 In the context of epoll, interrupt handlers do not directly invoke epoll logic. Instead, they typically schedule deferred work that later leads to epoll callbacks being triggered.
-
----
 
 ## Softirq Context
 

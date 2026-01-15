@@ -153,6 +153,12 @@ void accept_connection(int listen_sock_fd) {
 
 Try and implement the function `connect_upstream()` to create a connection to the upstream server.
 
+:::tip NOTE
+
+Since the upstream server is a python file server, the concurrent connections are handled reliably by it's own implementation.
+
+:::
+
 ```c
 int connect_upstream() {
 
