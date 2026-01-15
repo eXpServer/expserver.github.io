@@ -6,7 +6,7 @@ In the previous stages, we updated the server to handle HTTP messages. Stage 14 
 
 ## Learning Objectives
 
-- Implement directory browsing to display folder contents
+- Implement directory browsing as a fallback when no index file is present
 - Create a new `xps_directory` module to handle directory listing
 
 ## Introduction
