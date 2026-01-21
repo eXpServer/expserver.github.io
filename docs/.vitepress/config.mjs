@@ -6,6 +6,7 @@ export default defineConfig({
 	description: 'Documentation for eXpServer',
 	head: [['link', { rel: 'icon', href: '/images/icon.png' }]],
 	base: '/',
+	ignoreDeadLinks: true,
 	themeConfig: {
 		outline: { level: 'deep' },
 		// https://vitepress.dev/reference/default-theme-config
@@ -239,7 +240,6 @@ export default defineConfig({
 		},
 
 		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer' }],
-		ignoreDeadLinks: true,
 	},
 	sitemap: {
 		hostname: 'https://expserver.github.io',
