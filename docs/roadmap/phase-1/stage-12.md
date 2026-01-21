@@ -58,6 +58,7 @@ The function `xps_get_mime()` returns the MIME type of a file based on its exten
 #include "../xps.h"
 //here, some extension-mime types pairs are given, you can add as required
 xps_keyval_t mime_types[] = {
+    {".h", "text/x-c"},
     {".c", "text/x-c"},
     {".cc", "text/x-c"},
     {".cpp", "text/x-c"},
@@ -86,7 +87,11 @@ const char *xps_get_mime(const char *file_path) {
     return NULL;
 }
 ```
-:::   
+:::
+
+:::tip NOTE
+If you want to add more **MIME** types, you can refer to this [link](/assets/stage-12/mime_types.txt).
+:::
 
 As we are mapping the MIME type based on the file extension, a function for finding the file extension is added in `xps_utils.h`. Add the below given function in `xps_utils.c`
 
@@ -385,8 +390,6 @@ Update the `build.sh` to include the newly created modules.
 In the expserver folder, create a new folder public. Inside this create a file sample.txt with any content. This path is given while calling the `xps_file_create` function.
 
 Now start the server as mentioned in previous stages. Connect a client on port 8002 using `netcat localhost 8002`. Verify that the contents in file sample.txt is received by the client in terminal. Thus we have successfully implemented a basic file server which can send files in local disk to the client.
-
- 
 
 ## Conclusion
 

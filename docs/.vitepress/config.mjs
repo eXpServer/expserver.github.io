@@ -25,7 +25,6 @@ export default defineConfig({
 			{ text: 'Roadmap', link: '/roadmap/' },
 			{ text: 'Guides', link: '/guides/' },
 			{ text: 'About', link: '/about' },
-			// { text: 'Feedback', link: '/feedback' },
 		],
 
 		sidebar: {
@@ -49,10 +48,7 @@ export default defineConfig({
 							text: 'Introduction to Linux epoll',
 							link: '/guides/resources/introduction-to-linux-epoll',
 						},
-						// {
-						// 	text: 'Linux epoll tutorial',
-						// 	link: '/guides/resources/linux-epoll-tutorial',
-						// },
+						
 						{
 							text: 'Linux epoll',
 							link: '/guides/resources/linux-epoll',
@@ -62,7 +58,7 @@ export default defineConfig({
 							link: '/guides/resources/blocking-and-non-blocking-sockets',
 						},
 						{ text: 'HTTP', link: '/guides/resources/http' },
-						
+
 						// { text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },
 						// { text: 'File descriptors', link: '/guides/resources/file-descriptors' },
 
@@ -111,7 +107,7 @@ export default defineConfig({
 								{
 									text: 'Stage 4: Linux epoll',
 									link: '/roadmap/phase-0/stage-4',
-									
+
 								},
 								{
 									text: 'Stage 5 a): TCP Proxy',
@@ -187,9 +183,9 @@ export default defineConfig({
 								},
 								{
 									text: 'Stage 17: Directory Browsing',
-									link: '/roadmap/phase-3/stage-17',
+									link: '/roadmap/phase-2/stage-17',
 								},
-				
+
 							],
 						},
 						{
@@ -239,9 +235,10 @@ export default defineConfig({
 					],
 				},
 			],
+
 		},
 
-		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer'  }],
+		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer' }],
 	},
 	sitemap: {
 		hostname: 'https://expserver.github.io',
