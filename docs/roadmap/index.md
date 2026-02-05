@@ -33,8 +33,7 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 - <span v-if="!isProd">✅</span> [Stage 2: TCP Client](phase-0/stage-2)
 - <span v-if="!isProd">🟡</span> [Stage 3: UDP with Multi-threading](phase-0/stage-3)
 - <span v-if="!isProd">✅</span> [Stage 4: Linux Epoll](phase-0/stage-4)
-- <span v-if="!isProd">✅</span> [Stage 5 a): TCP Proxy](phase-0/stage-5-a)
-- <span v-if="!isProd">🟡</span> [Stage 5 b): File Transfer using TCP](phase-0/stage-5-b)
+- <span v-if="!isProd">✅</span> [Stage 5: TCP Proxy](phase-0/stage-5)
 
 ### Phase 1: Building the core of eXpServer by creating reusable modules
 

@@ -114,12 +114,8 @@ export default defineConfig({
 									
 								},
 								{
-									text: 'Stage 5 a): TCP Proxy',
-									link: '/roadmap/phase-0/stage-5-a',
-								},
-								{
-									text: 'Stage 5 b): File Transfer using TCP',
-									link: '/roadmap/phase-0/stage-5-b',
+									text: 'Stage 5: TCP Proxy',
+									link: '/roadmap/phase-0/stage-5',
 								},
 							],
 						},

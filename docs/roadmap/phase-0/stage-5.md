@@ -1,4 +1,4 @@
-# Stage 5 a): TCP Proxy
+# Stage 5: TCP Proxy
 
 ## Recap
 
@@ -394,6 +394,12 @@ Screenshots of opening files using proxy server. Try to open the files from the 
 ![proxy_server2.png](/assets/resources/proxy_server2.png)
 ![proxy_server3.png](/assets/resources/proxy_server3.png)
 
+## Practice Problem (Optional)
+
+You can do the optional practice problem to implement a very basic file transfer system using TCP. This task is intended for you to get familiarized with Linux file operations.
+
+[File Transfer using TCP](/roadmap/phase-0/stage-5-b)
+
 ## Conclusion
 
-In this stage we succesfully implemented the TCP proxy. In the next stage which act as a supplimenatary stage to this, we will implement a simple File Transfer System for transferring the the contents of a file to another file using TCP. 
+In this stage, we successfully implemented the TCP proxy. This marks the end of Phase 0. Phase 0 laid the foundation as to what is about to come next. Starting from the next phase, we will start building eXpServer. Read more about Phase 1 [**here**](/roadmap/phase-1/). 

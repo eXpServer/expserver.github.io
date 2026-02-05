@@ -1,14 +1,13 @@
 # File Transfer using TCP
-## Recap
-
-- In the previous stage, We made a TCP proxy by combining the functionalities of a TCP server and client which relays the communication between a web browser and a python file server.
 
 ## Learning Objectives
-- We will modify our TCP server and client code to implement a simple File Transfer System.
+
+- Implement a simple File Transfer System using TCP sockets.
+- Practice file handling operations in C.
 
 ## Introduction
 
-In the previous stage we made a TCP proxy for relaying the communication between web browser and a python file server. In this stage we are modifying our TCP server and client code to perform a simple file transfer system using socket programming. Here we are modifying the client code to send a text file's content to the server, the modified tcp server will receive the data from the client and store the data in a specified file. This system mimics fundamental operations of [File Transfer Protocol(FTP).](https://en.wikipedia.org/wiki/File_Transfer_Protocol)
+In this practice problem, we will implement a simple file transfer system using socket programming. We will create a client that reads a text file's content and sends it to the server. The server will receive the data from the client and store it in a new file. This system mimics fundamental operations of [File Transfer Protocol (FTP)](https://en.wikipedia.org/wiki/File_Transfer_Protocol).
 
 ## Implementation
 
@@ -163,10 +162,8 @@ Now we completed the `send_file()` function. In `main()`, close the `client_sock
 
 ## Milestone 2
 
-We have successfully created our TCP client for file transfer. Now we can compile both fp_server.c and fp_client.c codes. After successful execution of the file transfer system we can observe the contents of t1.txt file is transfered in to the file t2.txt. Open the file t2.txt and see the new contents saved into it after the compilation of the codes.
+We have successfully created our TCP client for file transfer. Now we can compile both fp_server.c and fp_client.c codes. After successful execution of the file transfer system we can observe the contents of `t1.txt` file is transfered in to the file `t2.txt`. Open the file t2.txt and see the new contents saved into it after the compilation of the codes.
 
 ## Conclusion
 
-This marks the end of Phase 0.
-
-Phase 0 laid the foundation as to what is about to come next. Starting from the next phase, we start building eXpServer. Read more about Phase 1 [**here**](/roadmap/phase-1/).
+This exercise demonstrated the core principles of reliable file transfer over TCP: combining standard file I/O operations with network socket communication.
