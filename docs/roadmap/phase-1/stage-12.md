@@ -2,11 +2,11 @@
 
 ## Recap
 
-We have implemented an upstream server for incoming connections to port 8001.
+- We have implemented an upstream server for incoming connections to port 8001.
 
 ## Learning Objectives
 
-We would be implementing a file server for incoming connections to port 8002.
+- We will be implementing a file server for incoming connections to port 8002.
 
 ## Introduction
 
@@ -35,7 +35,7 @@ Create a new folder disk in src, this would be used for adding necessary modules
 The code below has the contents of the header file for `xps_mime`. Have a look at it and make a copy of it in your codebase.
 
 :::details **expserver/src/disk/xps_mime.h**
-    
+
 ```c
 #ifndef XPS_MIME_H
 #define XPS_MIME_H
@@ -46,14 +46,15 @@ const char *xps_get_mime(const char *file_path);
 
 #endif
 ```
-:::   
+
+:::
 
 ### `xps_mime.c`
 
 The function `xps_get_mime()` returns the MIME type of a file based on its extension. A MIME type lookup table (`mime_types`) maps file extensions (e.g., ".html", ".jpg") to their corresponding MIME types (e.g., "text/html", "image/jpeg"). This tells the browser how to display or interact with the file. For example, an HTML file is rendered as a web page, while an image is displayed as a picture. We won’t be using this functionality in the present stage but would be looking into in later stages.
 
 :::details **expserver/src/disk/xps_mime.c**
-    
+
 ```c
 #include "../xps.h"
 //here, some extension-mime types pairs are given, you can add as required
@@ -87,6 +88,7 @@ const char *xps_get_mime(const char *file_path) {
     return NULL;
 }
 ```
+
 :::
 
 :::tip NOTE
@@ -105,7 +107,7 @@ const char *get_file_ext(const char *file_path) {
 }
 ```
 
-Also declare the newly created function in utility.h
+Also declare the newly created function in `utility.h`.
 
 ## `xps_file` Module
 
@@ -114,7 +116,7 @@ Also declare the newly created function in utility.h
 The code below has the contents of the header file for `xps_file.c`. Have a look at it and make a copy of it in your codebase.
 
 :::details **expserver/src/disk/xps_file.h**
-    
+
 ```c
 #ifndef XPS_FILE_H
 #define XPS_FILE_H
@@ -135,8 +137,8 @@ void xps_file_destroy(xps_file_t *file);
 
 #endif
 ```
+
 :::
-    
 
 A struct `xps_file_s` is introduced to store the information regarding the file. The fields in the struct are briefly described:
 
@@ -157,204 +159,178 @@ A struct `xps_file_s` is introduced to store the information regarding the file.
 Several file system-related C standard library functions are used to handle file operations such as opening, reading, seeking, and closing files. Let us look in to the file system call that we would be using:
 
 - `fopen()`
-    
-    ```c
-    FILE *fopen(const char *filename, const char *mode);
-    ```
-    
-    Opens a file specified by filename and returns a pointer to a FILE structure that represents the file stream. If mode given as “rb”, it opens the file in binary read mode. **Returns**: A pointer to a FILE structure if successful, or NULL if the file cannot be opened. 
-    
+  ```c
+  FILE *fopen(const char *filename, const char *mode);
+  ```
+  Opens a file specified by filename and returns a pointer to a FILE structure that represents the file stream. If mode given as “rb”, it opens the file in binary read mode. **Returns**: A pointer to a FILE structure if successful, or NULL if the file cannot be opened.
 - `fclose()`
-    
-    ```c
-    int fclose(FILE *stream);
-    ```
-    
-    Closes the file associated with the given FILE stream and releases any resources related to the file. **Returns**: 0 on success, or EOF (End Of File) on error.
-    
+  ```c
+  int fclose(FILE *stream);
+  ```
+  Closes the file associated with the given FILE stream and releases any resources related to the file. **Returns**: 0 on success, or EOF (End Of File) on error.
 - `fseek()`
-    
-    ```c
-    int fseek(FILE *stream, long offset, int whence);
-    ```
-    
-    Moves the file pointer to a specific location in the file.
-    
-    - offset: The number of bytes to move the file pointer.
-    - whence: Specifies how the offset is interpreted:
-        - SEEK_SET: The offset is set relative to the beginning of the file.
-        - SEEK_CUR: The offset is added to the current position.
-        - SEEK_END: The offset is set relative to the end of the file.
-    
-    **Returns**: 0 on success, or -1 on error.
-    
+  ```c
+  int fseek(FILE *stream, long offset, int whence);
+  ```
+  Moves the file pointer to a specific location in the file.
+  - offset: The number of bytes to move the file pointer.
+  - whence: Specifies how the offset is interpreted:
+    - SEEK_SET: The offset is set relative to the beginning of the file.
+    - SEEK_CUR: The offset is added to the current position.
+    - SEEK_END: The offset is set relative to the end of the file.
+      **Returns**: 0 on success, or -1 on error.
 - `ftell()`
-    
-    ```c
-    long ftell(FILE *stream);
-    ```
-    
-    Returns the current position of the file pointer in the file, measured in bytes from the beginning of the file. **Returns**: The current position (in bytes) on success, or -1L on error.
-    
+  ```c
+  long ftell(FILE *stream);
+  ```
+  Returns the current position of the file pointer in the file, measured in bytes from the beginning of the file. **Returns**: The current position (in bytes) on success, or -1L on error.
 - `fread()`
-    
-    ```c
-    size_t fread(void *ptr, size_t size, size_t count, FILE *stream);
-    ```
-    
-    Reads data from the file into a buffer.
-    
-    - ptr: The buffer where the data will be stored.
-    - size: The size of each data element.
-    - count: The number of elements to read.
-    - stream: The file stream to read from.
-    
+  ```c
+  size_t fread(void *ptr, size_t size, size_t count, FILE *stream);
+  ```
+  Reads data from the file into a buffer.
+  - `ptr`: The buffer where the data will be stored.
+  - `size`: The size of each data element.
+  - `count`: The number of elements to read.
+  - `stream`: The file stream to read from.
     **Returns**: The number of elements successfully read. If an error occurs, the return value will be less than the requested number of elements.
-    
 - `ferror()`
-    
-    ```c
-    int ferror(FILE *stream);
-    ```
-    
-    Checks whether an error occurred while performing file I/O operations on the given file stream. **Returns**: 0 if no error has occurred, or a non-zero value if an error has occurred.
-    
+  ```c
+  int ferror(FILE *stream);
+  ```
+  Checks whether an error occurred while performing file I/O operations on the given file stream. **Returns**: 0 if no error has occurred, or a non-zero value if an error has occurred.
 - `feof()`
-    
-    ```c
-    int feof(FILE *stream);
-    ```
-    
-    Checks whether the end of the file has been reached. **Returns**: A non-zero value if the end of the file has been reached, or 0 otherwise.
-    
+  ```c
+  int feof(FILE *stream);
+  ```
+  Checks whether the end of the file has been reached. **Returns**: A non-zero value if the end of the file has been reached, or 0 otherwise.
 
 `errno` determines the specific error when an operation fails. In case of `fopen()`, `EACCES` indicates a permission denied error and `ENOENT` indicates the specified file or directory doesn't exist.
 
 The functions in `xps_file.c` are given below:
 
 1. **`xps_file_create()`**
-    
-    Opens the file using `fopen()`, calculates the size by seeking to the end and then getting the current position, creates a `xps_file_s` struct instance and initialize it.
-    
-    ```c
-    xps_file_t *xps_file_create(xps_core_t *core, const char *file_path, int *error) {
-      /*assert*/
-    
-      *error = E_FAIL;
-    
-     // Opening file
-      FILE *file_struct = fopen(file_path, "rb");
-      /*handle EACCES,ENOENT or any other error*/
-      if (file_struct == NULL) {
-        /*logs EACCES,ENOENT or any other error*/ 
-        return NULL;
-      }
-    
-      // Getting size of file
-    
-      // Seeking to end
-      if (/*seek end of file using fseek()*/ != 0) {
-        /*logs error*/
-        /*close file_struct*/
-        return NULL;
-      }
-    
-      // Getting curr position which is the size
-      long temp_size = /*get current position using ftell()*/
-      if (temp_size < 0) {
-        /*logs error*/
-        /*close file_struct*/
-        return NULL;
-      }
-    
-      // Seek back to start
-      if (/*seek start of file using fseek()*/ != 0) {
-        /*logs error*/
-        /*close file_struct*/
-        return NULL;
-      }
-    
-      const char *mime_type = /*get mime type*/
-    
-      /*Alloc memory for instance of xps_file_t*/
-      xps_pipe_source_t *source =
-        xps_pipe_source_create((void *)file, file_source_handler, file_source_close_handler);
-      /*if source is null, close file_struct and return*/
-      
-      // Init values
-      source->ready = true;
-      /*initialise the fields of file instance*/
-      
-    	*error = OK;
-    
-      logger(LOG_DEBUG, "xps_file_create()", "created file");
-    
-      return file;
-    }
-    ```
-    
-2. **`xps_file_destroy()`**
-    
-    Closes the file, destroys the associated pipe source, and frees the memory allocated for the file structure.
-    
-    ```c
-    void xps_file_destroy(xps_file_t *file) {
-      /*assert*/
-    
-      /*fill as mentioned above*/
-    
-      logger(LOG_DEBUG, "xps_file_destroy()", "destroyed file");
-    }
-    
-    ```
-    
-3. **`file_source_handler()`**
-    
-    It reads from the file into the buffer and upon successful reading, writes it to pipe.
-    
-    ```c
-    void file_source_handler(void *ptr) {
-      /*assert*/
-    
-      xps_pipe_source_t *source = ptr;
-      /*get file from source ptr*/
-    
-      /*create buffer and handle any error*/
-    
-      // Read from file
-      size_t read_n = fread(buff->data, 1, buff->size, file->file_struct);
-      buff->len = read_n;
-    
-      // Checking for read errors
-      if (ferror(file->file_struct)) {
-    	  /*destroy buff, file and return*/
-      }
-    
-      // If end of file reached
-      if (read_n == 0 && feof(file->file_struct)) {
-        /*destroy buff, file and return*/
-      }
-    
-      /*Write to pipe form buff*/
-    	/*destroy buff*/
-    }
-    ```
-    
-4. **`file_source_close_handler()`**
-    
-    This function is called when the file source is closed, triggering the destruction of the file object.
-    
-    ```c
-    void file_source_close_handler(void *ptr) {
-      /*assert*/
-    	xps_pipe_source_t *source = ptr;
-      /*get file from source ptr*/
-    	/*destroy file*/
-    }
-    ```
-    
 
-Update the xps.h by adding two newly created structs xps_file_s and 
+   Opens the file using `fopen()`, calculates the size by seeking to the end and then getting the current position, creates a `xps_file_s` struct instance and initialize it.
+
+   ```c
+   xps_file_t *xps_file_create(xps_core_t *core, const char *file_path, int *error) {
+     /*assert*/
+
+     *error = E_FAIL;
+
+    // Opening file
+     FILE *file_struct = fopen(file_path, "rb");
+     /*handle EACCES,ENOENT or any other error*/
+     if (file_struct == NULL) {
+       /*logs EACCES,ENOENT or any other error*/
+       return NULL;
+     }
+
+     // Getting size of file
+
+     // Seeking to end
+     if (/*seek end of file using fseek()*/ != 0) {
+       /*logs error*/
+       /*close file_struct*/
+       return NULL;
+     }
+
+     // Getting curr position which is the size
+     long temp_size = /*get current position using ftell()*/
+     if (temp_size < 0) {
+       /*logs error*/
+       /*close file_struct*/
+       return NULL;
+     }
+
+     // Seek back to start
+     if (/*seek start of file using fseek()*/ != 0) {
+       /*logs error*/
+       /*close file_struct*/
+       return NULL;
+     }
+
+     const char *mime_type = /*get mime type*/
+
+     /*Alloc memory for instance of xps_file_t*/
+     xps_pipe_source_t *source =
+       xps_pipe_source_create((void *)file, file_source_handler, file_source_close_handler);
+     /*if source is null, close file_struct and return*/
+
+     // Init values
+     source->ready = true;
+     /*initialise the fields of file instance*/
+
+   	*error = OK;
+
+     logger(LOG_DEBUG, "xps_file_create()", "created file");
+
+     return file;
+   }
+   ```
+
+2. **`xps_file_destroy()`**
+
+   Closes the file, destroys the associated pipe source, and frees the memory allocated for the file structure.
+
+   ```c
+   void xps_file_destroy(xps_file_t *file) {
+     /*assert*/
+
+     /*fill as mentioned above*/
+
+     logger(LOG_DEBUG, "xps_file_destroy()", "destroyed file");
+   }
+
+   ```
+
+3. **`file_source_handler()`**
+
+   It reads from the file into the buffer and upon successful reading, writes it to pipe.
+
+   ```c
+   void file_source_handler(void *ptr) {
+     /*assert*/
+
+     xps_pipe_source_t *source = ptr;
+     /*get file from source ptr*/
+
+     /*create buffer and handle any error*/
+
+     // Read from file
+     size_t read_n = fread(buff->data, 1, buff->size, file->file_struct);
+     buff->len = read_n;
+
+     // Checking for read errors
+     if (ferror(file->file_struct)) {
+   	  /*destroy buff, file and return*/
+     }
+
+     // If end of file reached
+     if (read_n == 0 && feof(file->file_struct)) {
+       /*destroy buff, file and return*/
+     }
+
+     /*Write to pipe form buff*/
+   	/*destroy buff*/
+   }
+   ```
+
+4. **`file_source_close_handler()`**
+
+   This function is called when the file source is closed, triggering the destruction of the file object.
+
+   ```c
+   void file_source_close_handler(void *ptr) {
+     /*assert*/
+   	xps_pipe_source_t *source = ptr;
+     /*get file from source ptr*/
+   	/*destroy file*/
+   }
+   ```
+
+Update the xps.h by adding two newly created structs xps_file_s and
 
 ```c
 struct xps_keyval_s {

@@ -1,4 +1,5 @@
 # Stage 14: HTTP Request Module
+
 ## Recap
 
 - In the previous phase, we have implemented a server with upstream and file server features on certain ports with the help of pipe and session mechanisms.
@@ -9,8 +10,9 @@
 - We will implement a HTTP Request parser from the ground up
 
 ::: tip PRE-REQUISITE READING
+
 - Read about [HTTP](/guides/resources/http)
-:::
+  :::
 
 ## Introduction
 
@@ -19,10 +21,10 @@ Before proceeding further, make sure you have a thorough understanding of the HT
 HTTP request:
 
 ```
-GET /index.html HTTP/1.1 
-Host: example.com 
-Content-Type: text/html 
-Content-Length: 123   
+GET /index.html HTTP/1.1
+Host: example.com
+Content-Type: text/html
+Content-Length: 123
 ```
 
 1. **Request Line Parsing**
@@ -39,7 +41,7 @@ HTTP Version: `HTTP/1.1`
 
 The next part of the HTTP request contains headers. For each header, the parser extracts the key-value pairs(Host, Content-Type, Content-Length), for eg, the key ‘Host’ has value ‘example.com’.
 
-The request line and the headers are collectively known as the head of the request. 
+The request line and the headers are collectively known as the head of the request.
 
 In this stage, we would be only parsing HTTP request messages. The parsing of HTTP response messages would be done in the next stage. The server won't be able to act as a proxy server as it cannot parse the HTTP response message from the upstream. Thus, in this stage upstream server is not implemented and irrespective of the connection port number the server acts as a file server.
 
@@ -74,73 +76,73 @@ Create a new folder http in src, this would be used for adding necessary modules
 The code below has the contents of the header file for `xps_http_req`. Have a look at it and make a copy of it in your codebase.
 
 :::details **expserver/src/http/xps_http_req.h**
-    
-  ```c
-  #ifndef XPS_HTTP_REQ_H
-  #define XPS_HTTP_REQ_H
-  
-  #include "../xps.h"
-  
-  struct xps_http_req_s {
-    xps_http_parser_state_t parser_state;
-  
-    xps_http_method_t method_n;
-  
-    char *request_line; // POST https://www.devdiary.live:3000/api/problems HTTP/1.1
-    u_char *request_line_start;
-    u_char *request_line_end;
-  
-    char *method; // POST
-    u_char *method_start;
-    u_char *method_end;
-  
-    char *uri; // https://www.devdiary.live:3000/api/problems?key=val
-    u_char *uri_start;
-    u_char *uri_end;
-  
-    char *schema; // https
-    u_char *schema_start;
-    u_char *schema_end;
-  
-    char *host; // www.devdiary.live
-    u_char *host_start;
-    u_char *host_end;
-  
-    int port; // 3000
-    u_char *port_start;
-    u_char *port_end;
-  
-    char *path; // /api/problems?key=val
-    u_char *path_start;
-    u_char *path_end;
-  
-    char *pathname; // /api/problems
-    u_char *pathname_start;
-    u_char *pathname_end;
-  
-    char *http_version; // 1.1
-    u_char *http_major;
-    u_char *http_minor;
-  
-    vec_void_t headers;
-  
-    u_char *header_key_start;
-    u_char *header_key_end;
-    u_char *header_val_start;
-    u_char *header_val_end;
-  
-    size_t header_len;
-    size_t body_len;
-  };
-  
-  xps_http_req_t *xps_http_req_create(xps_core_t *core, xps_buffer_t *buff, int *error);
-  void xps_http_req_destroy(xps_core_t *core, xps_http_req_t *http_req);
-  xps_buffer_t *xps_http_req_serialize(xps_http_req_t *http_req);
-  
-  #endif
-  ```
+
+```c
+#ifndef XPS_HTTP_REQ_H
+#define XPS_HTTP_REQ_H
+
+#include "../xps.h"
+
+struct xps_http_req_s {
+  xps_http_parser_state_t parser_state;
+
+  xps_http_method_t method_n;
+
+  char *request_line; // POST https://www.devdiary.live:3000/api/problems HTTP/1.1
+  u_char *request_line_start;
+  u_char *request_line_end;
+
+  char *method; // POST
+  u_char *method_start;
+  u_char *method_end;
+
+  char *uri; // https://www.devdiary.live:3000/api/problems?key=val
+  u_char *uri_start;
+  u_char *uri_end;
+
+  char *schema; // https
+  u_char *schema_start;
+  u_char *schema_end;
+
+  char *host; // www.devdiary.live
+  u_char *host_start;
+  u_char *host_end;
+
+  int port; // 3000
+  u_char *port_start;
+  u_char *port_end;
+
+  char *path; // /api/problems?key=val
+  u_char *path_start;
+  u_char *path_end;
+
+  char *pathname; // /api/problems
+  u_char *pathname_start;
+  u_char *pathname_end;
+
+  char *http_version; // 1.1
+  u_char *http_major;
+  u_char *http_minor;
+
+  vec_void_t headers;
+
+  u_char *header_key_start;
+  u_char *header_key_end;
+  u_char *header_val_start;
+  u_char *header_val_end;
+
+  size_t header_len;
+  size_t body_len;
+};
+
+xps_http_req_t *xps_http_req_create(xps_core_t *core, xps_buffer_t *buff, int *error);
+void xps_http_req_destroy(xps_core_t *core, xps_http_req_t *http_req);
+xps_buffer_t *xps_http_req_serialize(xps_http_req_t *http_req);
+
+#endif
+```
+
 :::
-    
 
 A struct `xps_http_req_s` is introduced, which stores the information retrieved through parsing. The fields of the struct are briefly explained:
 
@@ -153,7 +155,7 @@ A struct `xps_http_req_s` is introduced, which stores the information retrieved 
 - `host`: Stores the host part of the URI (e.g., `www.devdiary.live`).
 - `port`: Stores the port number extracted from the URI (e.g., 3000).
 - `path`: Contains the full path (e.g., `/api/problems?key=val`).
-- `pathname`:  Contains just the path without any query parameters (e.g., `/api/problems`).
+- `pathname`: Contains just the path without any query parameters (e.g., `/api/problems`).
 - `http_version`: Stores the HTTP version (e.g., 1.1). `http_major` and `http_minor` point to the start of the major and minor version numbers in the buffer.
 - `headers`: Holds the parsed headers. Each header will be stored as a key-value pair in this vector.
 - `header_key_start`, `header_key_end`, `header_val_start`, `header_val_end`: These pointers are used during header parsing to mark the start and end of the key and value of each header.
@@ -173,112 +175,113 @@ We would be completing this module after implementation of the parsing functions
 The code below has the contents of the header file for `xps_http`. Have a look at it and make a copy of it in your codebase.
 
 :::details **expserver/src/http/xps_http.h**
-    
-  ```c
-  #ifndef XPS_HTTP_H
-  #define XPS_HTTP_H
-  
-  #include "../xps.h"
-  
-  #define CR '\r'
-  #define LF '\n'
-  
-  typedef enum {
-    HTTP_GET,
-    HTTP_HEAD,
-    HTTP_POST,
-    HTTP_PUT,
-    HTTP_DELETE,
-    HTTP_OPTIONS,
-    HTTP_TRACE,
-    HTTP_CONNECT,
-  } xps_http_method_t;
-  
-  typedef enum {
-    HTTP_OK = 200,
-    HTTP_CREATED = 201,
-  
-    HTTP_MOVED_PERMANENTLY = 301,
-    HTTP_MOVED_TEMPORARILY = 302,
-    HTTP_NOT_MODIFIED = 304,
-    HTTP_TEMPORARY_REDIRECT = 307,
-    HTTP_PERMANENT_REDIRECT = 308,
-  
-    HTTP_BAD_REQUEST = 400,
-    HTTP_UNAUTHORIZED = 401,
-    HTTP_FORBIDDEN = 403,
-    HTTP_NOT_FOUND = 404,
-    HTTP_REQUEST_TIME_OUT = 408,
-    HTTP_TOO_MANY_REQUESTS = 429,
-  
-    HTTP_INTERNAL_SERVER_ERROR = 500,
-    HTTP_NOT_IMPLEMENTED = 501,
-    HTTP_BAD_GATEWAY = 502,
-    HTTP_SERVICE_UNAVAILABLE = 503,
-    HTTP_GATEWAY_TIMEOUT = 504,
-    HTTP_HTTP_VERSION_NOT_SUPPORTED = 505
-  } xps_http_status_code_t;
-  
-  typedef enum {
-    /* Request line states */
-    RL_START = 0,
-    RL_METHOD,
-    RL_SP_AFTER_METHOD,
-  
-    RL_SCHEMA,
-    RL_SCHEMA_SLASH,
-    RL_SCHEMA_SLASH_SLASH,
-    RL_HOST_START, // maybe Ipv4 or Ipv6
-    RL_HOST,
-    RL_HOST_END,
-    RL_HOST_IP_LITERAL, // Ipv6; map to RL_HOST_END
-    RL_PORT,
-    RL_SLASH, // path
-    RL_CHECK_URI,
-    RL_PATH,
-    RL_PATHNAME,
-    RL_SP_AFTER_URI,
-  
-    RL_VERSION_START,
-    RL_VERSION_H,
-    RL_VERSION_HT,
-    RL_VERSION_HTT,
-    RL_VERSION_HTTP,
-    RL_VERSION_HTTP_SLASH,
-    RL_VERSION_MAJOR,
-    RL_VERSION_DOT,
-    RL_VERSION_MINOR,
-    RL_CR,
-    RL_LF,
-  
-    /* Header states */
-    H_START = 0,
-    H_NAME,
-    H_COLON,
-    H_SP_AFTER_COLON,
-    H_VAL,
-    H_CR,
-    H_LF,
-    H_LF_CR,
-    H_LF_LF,
-    H_LF_CR_LF,
-  
-  } xps_http_parser_state_t;
-  
-  int xps_http_parse_request_line(xps_http_req_t *http_req, xps_buffer_t *buffer);
-  int xps_http_parse_header_line(xps_http_req_t *http_req, xps_buffer_t *buffer);
-  
-  const char *xps_http_get_header(vec_void_t *headers, const char *key);
-  xps_buffer_t *xps_http_serialize_headers(vec_void_t *headers);
-  
-  #endif
-  ```
+
+```c
+#ifndef XPS_HTTP_H
+#define XPS_HTTP_H
+
+#include "../xps.h"
+
+#define CR '\r'
+#define LF '\n'
+
+typedef enum {
+  HTTP_GET,
+  HTTP_HEAD,
+  HTTP_POST,
+  HTTP_PUT,
+  HTTP_DELETE,
+  HTTP_OPTIONS,
+  HTTP_TRACE,
+  HTTP_CONNECT,
+} xps_http_method_t;
+
+typedef enum {
+  HTTP_OK = 200,
+  HTTP_CREATED = 201,
+
+  HTTP_MOVED_PERMANENTLY = 301,
+  HTTP_MOVED_TEMPORARILY = 302,
+  HTTP_NOT_MODIFIED = 304,
+  HTTP_TEMPORARY_REDIRECT = 307,
+  HTTP_PERMANENT_REDIRECT = 308,
+
+  HTTP_BAD_REQUEST = 400,
+  HTTP_UNAUTHORIZED = 401,
+  HTTP_FORBIDDEN = 403,
+  HTTP_NOT_FOUND = 404,
+  HTTP_REQUEST_TIME_OUT = 408,
+  HTTP_TOO_MANY_REQUESTS = 429,
+
+  HTTP_INTERNAL_SERVER_ERROR = 500,
+  HTTP_NOT_IMPLEMENTED = 501,
+  HTTP_BAD_GATEWAY = 502,
+  HTTP_SERVICE_UNAVAILABLE = 503,
+  HTTP_GATEWAY_TIMEOUT = 504,
+  HTTP_HTTP_VERSION_NOT_SUPPORTED = 505
+} xps_http_status_code_t;
+
+typedef enum {
+  /* Request line states */
+  RL_START = 0,
+  RL_METHOD,
+  RL_SP_AFTER_METHOD,
+
+  RL_SCHEMA,
+  RL_SCHEMA_SLASH,
+  RL_SCHEMA_SLASH_SLASH,
+  RL_HOST_START, // maybe Ipv4 or Ipv6
+  RL_HOST,
+  RL_HOST_END,
+  RL_HOST_IP_LITERAL, // Ipv6; map to RL_HOST_END
+  RL_PORT,
+  RL_SLASH, // path
+  RL_CHECK_URI,
+  RL_PATH,
+  RL_PATHNAME,
+  RL_SP_AFTER_URI,
+
+  RL_VERSION_START,
+  RL_VERSION_H,
+  RL_VERSION_HT,
+  RL_VERSION_HTT,
+  RL_VERSION_HTTP,
+  RL_VERSION_HTTP_SLASH,
+  RL_VERSION_MAJOR,
+  RL_VERSION_DOT,
+  RL_VERSION_MINOR,
+  RL_CR,
+  RL_LF,
+
+  /* Header states */
+  H_START = 0,
+  H_NAME,
+  H_COLON,
+  H_SP_AFTER_COLON,
+  H_VAL,
+  H_CR,
+  H_LF,
+  H_LF_CR,
+  H_LF_LF,
+  H_LF_CR_LF,
+
+} xps_http_parser_state_t;
+
+int xps_http_parse_request_line(xps_http_req_t *http_req, xps_buffer_t *buffer);
+int xps_http_parse_header_line(xps_http_req_t *http_req, xps_buffer_t *buffer);
+
+const char *xps_http_get_header(vec_void_t *headers, const char *key);
+xps_buffer_t *xps_http_serialize_headers(vec_void_t *headers);
+
+#endif
+```
+
 :::
 
 Following enumerations are available in the above header file:
 
 - `xps_http_method_t`: defines the supported HTTP methods(eg: GET, POST, etc)
-- `xps_http_status_code_t`: ****defines various HTTP status codes that the server can respond with.
+- `xps_http_status_code_t`: \*\*\*\*defines various HTTP status codes that the server can respond with.
 - `xps_http_parser_state_t`: defines the different states of the HTTP request parsing process, split into two main sections: request line states and header states. Each of these states would be explained in detail while implementing the parsing functions.
 
 ### `xps_http.c`
@@ -291,7 +294,7 @@ Here is a brief idea of how the parser will work:
 - As we are aware of the syntax of a valid HTTP request message, we can use that to determine if the syntax is valid and also where we are currently in the parsing step
 - Place pointers at appropriate locations of the message for further processing later
 
- The codes used to return the status of parsing are as follows:
+The codes used to return the status of parsing are as follows:
 
 - `E_FAIL`: Parsing failed.
 - `E_AGAIN`: Incomplete data, indicating that more data is needed for successful parsing.
@@ -302,7 +305,7 @@ Let us go through each of the parsing functions separately.
 
 - **`xps_http_parse_request_line()`**
 
-Parses a single HTTP request line from a buffer, extracting various components such as the HTTP method, URI, host, port, and HTTP version. It also verifies the request line is of a valid format(i.e follows RFC conventions). `http_req` is a  pointer to a structure where parsed information will be stored. `buff` is a pointer to a buffer containing the request data to be parsed. Let us take an example for demonstrating request line parsing. Consider a request line:
+Parses a single HTTP request line from a buffer, extracting various components such as the HTTP method, URI, host, port, and HTTP version. It also verifies the request line is of a valid format(i.e follows RFC conventions). `http_req` is a pointer to a structure where parsed information will be stored. `buff` is a pointer to a buffer containing the request data to be parsed. Let us take an example for demonstrating request line parsing. Consider a request line:
 
 ```
 GET http://localhost:8080/path/to/resource HTTP/1.1
@@ -325,9 +328,9 @@ GET /path/to/resource HTTP/1.1
 GET http://localhost:8080/path/to/resource HTTP/1.1
 ```
 
-Our parser should be able to parse all the valid request line formats. 
+Our parser should be able to parse all the valid request line formats.
 
-The parser is implemented as a state machine which changes state while traversing `buff` on encountering certain characters. Each of the states of request line  parser are briefly explained:
+The parser is implemented as a state machine which changes state while traversing `buff` on encountering certain characters. Each of the states of request line parser are briefly explained:
 
 - `RL_START`: this is the initial state of the parser. Ignore leading `CR` (’\r’) or `LF` (’\n’) characters and detect the beginning of the HTTP method.
 - `RL_METHOD`: reads the HTTP method until a space character is encountered (e.g., `GET`, `POST`).
@@ -347,158 +350,158 @@ The parser is implemented as a state machine which changes state while traversin
 For each component the start pointer is assigned on beginning and and end pointer is assigned while the component ends. The pointer is made to the current position of `buff`.
 
 :::details **expserver/src/http/xps_http.c -** `xps_http_parse_request_line()`
-    
-  ```c
 
-  bool http_strcmp(u_char *str, const char *method, size_t length){
-    /* complete this */
-  }
+```c
 
-  int xps_http_parse_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
-    /*get current parser state*/
-    u_char *p_ch = buff->pos;//current buffer postion
-  
-    for (/*traverse through buffer and also increment buffer position*/) {
-      char ch = *p_ch;
-      switch (parser_state) {
-        case RL_START:
-          /*assign request_line_start, ignore CR and LF, fail if not upper case, assign method_start*/
-          parser_state = RL_METHOD;
-          break;
-  
-        case RL_METHOD:
-          if (ch == ' ') {
-            size_t method_len = p_ch - http_req->method_start;
-            if (method_len == 3 && http_strcmp(http_req->method_start, "GET", 3))
-              http_req->method_n = HTTP_GET;
-            /*similarly check for other methods PUT, HEAD, etc*/
-            /*assign method_end*/
-            parser_state = RL_SP_AFTER_METHOD;
-          }
-          break;
-  
-        case RL_SP_AFTER_METHOD:
-          if (ch == '/') {
-            /*assign start and end of schema,host,port and start of uri,path,pathname*/
-            /*next state is RL_PATH*/
-          } else {
-            char c = ch | 0x20; //convert to lower case
-            /*if lower case alphabets, assign start of schema and uri, next state is RL_SCHEMA*/
-            /*if not space(''), fails*/
-          }
-          break;
-  
-        case RL_SCHEMA:
-          /*on lower case alphabets break ie schema can have lower case alphabets*/
-          /*schema ends on ':' ,next state is RL_SCHEMA_SLASH*/
-          /*fails on all other inputs*/
-          break;
-  
-        case RL_SCHEMA_SLASH:
-          /*on '/' assign next state, fails on all other inputs*/
-          break;
-  
-        case RL_SCHEMA_SLASH_SLASH:
-          /*on '/' - assign next state, for start of host assign next position, fails on all other inputs*/
-          break;
-  
-        case RL_HOST:
-          /*host can have lower case alphabets, numbers, '-', '.' */
-          /*on ':' - host ends, for start of port assign next position, next state is RL_PORT*/
-          /*on '/' - host ends, assign start of path,pathname, end of port, next state is RL_PATH*/
-          /*on ' ' - host ends, assign end of uri, start and end of port,path,pathname, next state is RL_VERSION_START*/
-          /*on all other input, fails*/
-          break;
-  
-        case RL_PORT:
-          /*port can only have numbers */
-          /*on '/' - port ends, assign start of path,pathname, next state is RL_PATH*/
-          /*on ' ' - port ends, assign end of uri, start and end of path,pathname, next state is RL_VERSION_START*/
-          /*on all other input, fails*/
-          break;
-  
-        case RL_PATH:
-          /*on ' ' - path ends, assign end of path,pathname,uri next state is RL_VERSION_START*/
-          /*on '?'or'&'or'='or'#' - assign end of pathname, next state is RL_PATHNAME*/
-          /*on CR or LF, fails*/ 
-          break;
-  
-        case RL_PATHNAME:
-          /*on ' ' - assign end of uri,path, next state is RL_VERSION_START*/
-          /*on CR or LF, fails*/ 
-          break;
-  
-        case RL_VERSION_START:
-          /*can have space*/
-          /*on 'H' - next state is RL_VERSION_H*/
-          /*fails on all other input*/
-          break;
-  
-        case RL_VERSION_H:
-          /*fill this*/
-          break;
-  
-        case RL_VERSION_HT:
-          /*fill this*/
-          break;
-  
-        case RL_VERSION_HTT:
-          /*fill this*/
-          break;
-  
-        case RL_VERSION_HTTP:
-          /*fill this*/
-          break;
-  
-        case RL_VERSION_HTTP_SLASH:
-          /*on '1' - assign major, next state is RL_MAJOR, fails on all other inputs*/
-          break;
-  
-        case RL_VERSION_MAJOR:
-          /*fill ths*/
-          break;
-  
-        case RL_VERSION_DOT:
-          /*on '0' or '1' - assign minor to next position, next state is RL_VERSION_MINOR, fails on other inputs*/
-          break;
-  
-        case RL_VERSION_MINOR:
-          if (ch == CR) {
-            parser_state = RL_CR;
-          } else if (ch == LF) {
-            parser_state = RL_LF;
-          } else {
-            return E_FAIL;
-          }
-          break;
-  
-        case RL_CR:
-          /*fill this*/
-          break;
-  
-        case RL_LF:
-          if (http_req->request_line_end == NULL) {
-            http_req->request_line_end = p_ch;
-          }
-          http_req->parser_state = H_START;
-          buff->pos = p_ch;
-          return OK;
-  
-        default:
+bool http_strcmp(u_char *str, const char *method, size_t length){
+  /* complete this */
+}
+
+int xps_http_parse_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
+  /*get current parser state*/
+  u_char *p_ch = buff->pos;//current buffer postion
+
+  for (/*traverse through buffer and also increment buffer position*/) {
+    char ch = *p_ch;
+    switch (parser_state) {
+      case RL_START:
+        /*assign request_line_start, ignore CR and LF, fail if not upper case, assign method_start*/
+        parser_state = RL_METHOD;
+        break;
+
+      case RL_METHOD:
+        if (ch == ' ') {
+          size_t method_len = p_ch - http_req->method_start;
+          if (method_len == 3 && http_strcmp(http_req->method_start, "GET", 3))
+            http_req->method_n = HTTP_GET;
+          /*similarly check for other methods PUT, HEAD, etc*/
+          /*assign method_end*/
+          parser_state = RL_SP_AFTER_METHOD;
+        }
+        break;
+
+      case RL_SP_AFTER_METHOD:
+        if (ch == '/') {
+          /*assign start and end of schema,host,port and start of uri,path,pathname*/
+          /*next state is RL_PATH*/
+        } else {
+          char c = ch | 0x20; //convert to lower case
+          /*if lower case alphabets, assign start of schema and uri, next state is RL_SCHEMA*/
+          /*if not space(''), fails*/
+        }
+        break;
+
+      case RL_SCHEMA:
+        /*on lower case alphabets break ie schema can have lower case alphabets*/
+        /*schema ends on ':' ,next state is RL_SCHEMA_SLASH*/
+        /*fails on all other inputs*/
+        break;
+
+      case RL_SCHEMA_SLASH:
+        /*on '/' assign next state, fails on all other inputs*/
+        break;
+
+      case RL_SCHEMA_SLASH_SLASH:
+        /*on '/' - assign next state, for start of host assign next position, fails on all other inputs*/
+        break;
+
+      case RL_HOST:
+        /*host can have lower case alphabets, numbers, '-', '.' */
+        /*on ':' - host ends, for start of port assign next position, next state is RL_PORT*/
+        /*on '/' - host ends, assign start of path,pathname, end of port, next state is RL_PATH*/
+        /*on ' ' - host ends, assign end of uri, start and end of port,path,pathname, next state is RL_VERSION_START*/
+        /*on all other input, fails*/
+        break;
+
+      case RL_PORT:
+        /*port can only have numbers */
+        /*on '/' - port ends, assign start of path,pathname, next state is RL_PATH*/
+        /*on ' ' - port ends, assign end of uri, start and end of path,pathname, next state is RL_VERSION_START*/
+        /*on all other input, fails*/
+        break;
+
+      case RL_PATH:
+        /*on ' ' - path ends, assign end of path,pathname,uri next state is RL_VERSION_START*/
+        /*on '?'or'&'or'='or'#' - assign end of pathname, next state is RL_PATHNAME*/
+        /*on CR or LF, fails*/
+        break;
+
+      case RL_PATHNAME:
+        /*on ' ' - assign end of uri,path, next state is RL_VERSION_START*/
+        /*on CR or LF, fails*/
+        break;
+
+      case RL_VERSION_START:
+        /*can have space*/
+        /*on 'H' - next state is RL_VERSION_H*/
+        /*fails on all other input*/
+        break;
+
+      case RL_VERSION_H:
+        /*fill this*/
+        break;
+
+      case RL_VERSION_HT:
+        /*fill this*/
+        break;
+
+      case RL_VERSION_HTT:
+        /*fill this*/
+        break;
+
+      case RL_VERSION_HTTP:
+        /*fill this*/
+        break;
+
+      case RL_VERSION_HTTP_SLASH:
+        /*on '1' - assign major, next state is RL_MAJOR, fails on all other inputs*/
+        break;
+
+      case RL_VERSION_MAJOR:
+        /*fill ths*/
+        break;
+
+      case RL_VERSION_DOT:
+        /*on '0' or '1' - assign minor to next position, next state is RL_VERSION_MINOR, fails on other inputs*/
+        break;
+
+      case RL_VERSION_MINOR:
+        if (ch == CR) {
+          parser_state = RL_CR;
+        } else if (ch == LF) {
+          parser_state = RL_LF;
+        } else {
           return E_FAIL;
-      }
+        }
+        break;
+
+      case RL_CR:
+        /*fill this*/
+        break;
+
+      case RL_LF:
+        if (http_req->request_line_end == NULL) {
+          http_req->request_line_end = p_ch;
+        }
+        http_req->parser_state = H_START;
+        buff->pos = p_ch;
+        return OK;
+
+      default:
+        return E_FAIL;
     }
-  
-    return E_AGAIN;
   }
-  
-  ```
+
+  return E_AGAIN;
+}
+
+```
+
 :::
-    
 
 Let us walk though an example on how state transitions occur during parsing:
 
-```c
+```
 GET http://example.com/index.html HTTP/1.1
 ```
 
@@ -531,7 +534,7 @@ GET http://example.com/index.html HTTP/1.1
 
 7. State: RL_HOST
 
-- The parser reads the characters of the host (`example.com`). When it encounters a `/`, it marks the end of the host  and switches to the `RL_PATH` state.
+- The parser reads the characters of the host (`example.com`). When it encounters a `/`, it marks the end of the host and switches to the `RL_PATH` state.
 
 8. State: RL_PATH
 
@@ -546,8 +549,9 @@ GET http://example.com/index.html HTTP/1.1
 - After reading the version and encountering a newline (`LF`), the parser sets the state to `H_START` to begin parsing headers.
 
 ::: tip TRY
+
 - Similarly, try tracing the states for two request line examples provided earlier.
-:::
+  :::
 
 Once the request line parsing is done, we would start the request headers pasring.
 
@@ -567,47 +571,46 @@ Let us look into the states in header parsing:
 - `H_CR`: The parser expects a line feed after the carriage return. If the `LF` is found, it moves to `H_LF`. Any other character is treated as incorrect syntax.
 - `H_LF`: Indicates the end of the current header line. If a second line feed is encountered, it moves to `H_LF_LF`, indicating that the entire header section is done. Otherwise, it moves back to `H_START` to process the next header.
 - `H_LF_LF` and `H_LF_CR`: These states signify the end of the HTTP header section. If they reach the correct termination character sequence, the function returns `OK`.
-:::details **expserver/src/http/xps_http.c -** `xps_http_parse_header_line()`
-    
+  :::details **expserver/src/http/xps_http.c -** `xps_http_parse_header_line()`
   ```c
   int xps_http_parse_header_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
     assert(http_req != NULL);
     assert(buff != NULL);
-  
+
     u_char *p_ch = buff->pos;
     xps_http_parser_state_t parser_state = http_req->parser_state;
-  
+
     for (/*iterarte though buffer, also increments the buffer position*/) {
       char ch = *p_ch;
-  
+
       switch (parser_state) {
         case H_START:
           /*fill this*/
           break;
-  
+
         case H_NAME:
           /*fill this*/
           break;
-  
+
         case H_COLON:
           /*fill this*/
           break;
-  
+
         case H_SP_AFTER_COLON:
           /*fill this*/
           break;
-  
+
         case H_VAL:
           if (ch == CR || ch == LF) {
             /*fill this*/
             parser_state = (ch == CR) ? H_CR : H_LF;
           }
           break;
-  
+
         case H_CR:
           /*fill this*/
           break;
-  
+
         case H_LF:
           if (ch == LF) {
             /*fill this*/
@@ -618,12 +621,12 @@ Let us look into the states in header parsing:
             return E_NEXT; // This header is done, repeat for the next
           }
           break;
-  
+
         case H_LF_LF:
           buff->pos = p_ch;
           http_req->parser_state = H_START;
           return OK; // HTTP complete header section done
-  
+
         case H_LF_CR:
           if (ch == LF) {
             buff->pos = p_ch;
@@ -633,18 +636,17 @@ Let us look into the states in header parsing:
             return E_FAIL;
           }
           break;
-  
+
         default:
           return E_FAIL;
       }
     }
-  
+
     return E_AGAIN;
   }
-  
+
   ```
-:::
-    
+  :::
 
 Let us walk through an example, the headers be as given below:
 
@@ -705,8 +707,9 @@ const char *xps_http_get_header(vec_void_t *headers, const char *key) {
 ```
 
 ::: tip TRY
+
 - Try to do a case insensitive comparison of key in the above function.
-:::
+  :::
 
 - **`xps_http_serialize_headers()`**
 
@@ -744,7 +747,7 @@ Let us go through each of the functions to be implemented:
 
 - **`http_process_request_line()`**
 
-Processes the HTTP request line by calling `xps_http_parse_request_line()` and populating the relevant fields of `http_req` object. `str_from_ptrs()` takes two pointers, and creates a new string containing the characters between them. 
+Processes the HTTP request line by calling `xps_http_parse_request_line()` and populating the relevant fields of `http_req` object. `str_from_ptrs()` takes two pointers, and creates a new string containing the characters between them.
 
 ```c
 int http_process_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
@@ -766,28 +769,26 @@ int http_process_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
 Add the `str_from_ptrs()` utility function. Update `xps_utils.h` accordingly.
 
 - `expserver/src/utils/xps_utils.c`
-    
-    ```c
-    char *str_from_ptrs(const char *start, const char *end) {
-      assert(start != NULL);
-      assert(end != NULL);
-      assert(start <= end);
-    
-      size_t len = end - start;
-    
-      char *str = malloc(sizeof(char) * (len + 1));
-      if (str == NULL) {
-        logger(LOG_ERROR, "str_from_ptrs()", "malloc() failed for 'str'");
-        return NULL;
-      }
-    
-      memcpy(str, start, len);
-      str[len] = '\0';
-    
-      return str;
+  ```c
+  char *str_from_ptrs(const char *start, const char *end) {
+    assert(start != NULL);
+    assert(end != NULL);
+    assert(start <= end);
+
+    size_t len = end - start;
+
+    char *str = malloc(sizeof(char) * (len + 1));
+    if (str == NULL) {
+      logger(LOG_ERROR, "str_from_ptrs()", "malloc() failed for 'str'");
+      return NULL;
     }
-    ```
-    
+
+    memcpy(str, start, len);
+    str[len] = '\0';
+
+    return str;
+  }
+  ```
 - **`http_process_headers()`**
 
 Processes the headers of the HTTP request by repeatedly calling `xps_http_parse_header_line()` to parse each header line.
@@ -836,7 +837,7 @@ xps_buffer_t *xps_http_req_serialize(xps_http_req_t *http_req) {
 
 - **`xps_http_req_create()`**
 
-Creates a new HTTP request object, processes the request line and headers, and sets up the request structure.  The initial parser state is `RL_START`, indicating the starting of request line parsing. `buff` is the input buffer holding the HTTP request data which has to be parsed.
+Creates a new HTTP request object, processes the request line and headers, and sets up the request structure. The initial parser state is `RL_START`, indicating the starting of request line parsing. `buff` is the input buffer holding the HTTP request data which has to be parsed.
 
 ```c
 xps_http_req_t *xps_http_req_create(xps_core_t *core, xps_buffer_t *buff, int *error) {
@@ -860,7 +861,7 @@ xps_http_req_t *xps_http_req_create(xps_core_t *core, xps_buffer_t *buff, int *e
 
 - **`xps_http_req_destroy()`**
 
-Frees the memory and resources allocated for the HTTP request object. 
+Frees the memory and resources allocated for the HTTP request object.
 
 ```c
 void xps_http_req_destroy(xps_core_t *core, xps_http_req_t *http_req) {
@@ -913,7 +914,7 @@ void session_process_request(xps_session_t *session) {
     strcpy(file_path, "../public");
     strcat(file_path, session->http_req->path); //the path from http_req is taken as file to be opened
     int error;
-    /*create file for above path and attach to file field of session*/ 
+    /*create file for above path and attach to file field of session*/
 		/*handle all possible errors on file creation (E_PERMISSION,E_NOTFOUND,any other)
 		by giving corresponding http response messages*/
     if (session->file->mime_type) {
@@ -949,17 +950,17 @@ void client_sink_handler(void *ptr) {
     // set http_req_buff to from_client_buff and clear the pipe // [!code ++]
     // process the session  // [!code ++]
   } else {// [!code ++]
-  set_from_client_buff(session, buff); 
+  set_from_client_buff(session, buff);
   xps_pipe_sink_clear(sink, buff->len);
   }
 }
 ```
 
-Update `xps.h`  to reflect new modules and structs.
+Update `xps.h` to reflect new modules and structs.
 
 ## Milestone #1
 
-First we would be verifying the request line parsing. 
+First we would be verifying the request line parsing.
 
 For this, in the `http_process_request_line()` function, print each parsed components of `http_req`.
 
@@ -1015,7 +1016,7 @@ Now try how the browser responds if the file is not present in public folder.
 
 ## Experiment #1
 
-In the previous file server implementation, the outputs were printed in terminal and we encountered problem in opening image files as mentioned in Experiment #1 of stage12. 
+In the previous file server implementation, the outputs were printed in terminal and we encountered problem in opening image files as mentioned in Experiment #1 of stage12.
 
 Try to open image files through the browser as mentioned in Milestone #3 above, and verify that images are displayed correctly in browser. You can now try opening any file with a valid MIME type. Also try opening files from different ports other than 8001 used above.
 
