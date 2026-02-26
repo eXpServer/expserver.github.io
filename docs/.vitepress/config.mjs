@@ -22,9 +22,9 @@ export default defineConfig({
 		},
 
 		nav: [
-			// { text: 'Home', link: '/' },
 			{ text: 'Roadmap', link: '/roadmap/' },
 			{ text: 'Guides', link: '/guides/' },
+			{ text: 'Tests', link: '/tester/' },
 			{ text: 'About', link: '/about' },
 		],
 
@@ -232,7 +232,38 @@ export default defineConfig({
 					],
 				},
 			],
-
+			'/tester/': [
+				{
+					text: 'Installation',
+					collapsed: true,
+					items: [
+						{ text: 'Installation', link: '/tester/installation/' },
+						{ text: 'Frontend', link: '/tester/installation/frontend' },
+						{ text: 'Backend', link: '/tester/installation/backend' }
+					]
+				},
+				{
+					text: 'Tests',
+					collapsed: false,
+					items: [
+						{ text: 'Stage 1: TCP Server', link: '/tester/tests/stage1' },
+						{ text: 'Stage 3: UDP Multithreading', link: '/tester/tests/stage3' },
+						{ text: 'Stage 4: Linux Epoll', link: '/tester/tests/stage4' },
+						{ text: 'Stage 5: TCP Proxy', link: '/tester/tests/stage5' },
+						{ text: 'Stage 6: Listener & Connection Module', link: '/tester/tests/stage6' },
+						{ text: 'Stage 7: Core & Loop Module', link: '/tester/tests/stage7' },
+						{ text: 'Stage 8: Non-Blocking Sockets', link: '/tester/tests/stage8' },
+						{ text: 'Stage 9: Epoll Edge Triggering', link: '/tester/tests/stage9' },
+						{ text: 'Stage 10: Pipe Module', link: '/tester/tests/stage10' },
+						{ text: 'Stage 11: Upstream Module', link: '/tester/tests/stage11' },
+						{ text: 'Stage 12: File Module', link: '/tester/tests/stage12' },
+						{ text: 'Stage 13: Session Module', link: '/tester/tests/stage13' },
+						{ text: 'Stage 14: HTTP Request Module', link: '/tester/tests/stage14' },
+						{ text: 'Stage 15: HTTP Response Module', link: '/tester/tests/stage15' },
+						{ text: 'Stage 16: HTTP Config Module', link: '/tester/tests/stage16' },
+					],
+				},
+			],
 		},
 
 		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer' }],
