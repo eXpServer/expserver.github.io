@@ -8,7 +8,7 @@
 
 ## Learning Objectives
 
-- Modularize event loop by creating the `xps_loop` module by shifting it out of the main.c file
+- Modularize event loop by creating the `xps_loop` module by shifting it out of the `main.c` file
 - Create a module called `xps_core` which will encapsulate all the global data beloinging to eXpServer
 
 ## Introduction
@@ -52,7 +52,7 @@ Find below the updated `xps.h` file.
 ::: tip NOTE
 Modifications to files we've worked with before will be indicated by the following:
 
-```txt
+```c
 Line added // [!code ++]
 Line removed // [!code --]
 ```
@@ -256,7 +256,7 @@ typedef void (*xps_handler_t)(void *ptr);
 - `read_cb`: Callback function to be called when read event occurs
 - `ptr`: Pointer to instance of `xps_listener_t` or `xps_connection_t`
 
-A pointer to an instance to `loop_event_t` will be assigned to `e.data.ptr` . So, when we get a notification after `epoll_wait()` we can typecast `e.data.ptr` to `loop_event_t` and access the callback function(s).
+A pointer to an instance to `loop_event_t` will be assigned to `e.data.ptr`. So, when we get a notification after `epoll_wait()` we can typecast `e.data.ptr` to `loop_event_t` and access the callback function(s).
 
 Currently there is only the read callback. In upcoming stages we will be adding `write_cb` and `close_cb` both of type `xps_handler_t`. Looking at the typedef for `xps_handler_t` you can see that it is a function that takes a void pointer. We will pass the `ptr` from `loop_event_t` when we call the callback(s). The callback functions are assigned such that, they will know to typecast `ptr` appropriately to `xps_listener_t *` or `xps_connection_t *`. This will be more clear later in the stage where we talk about changes to listener and connection module.
 
