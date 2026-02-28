@@ -117,7 +117,7 @@ This will create a parson directory inside `expserver/src/lib/` and download all
 }
 ```
 
-This JSON configuration describes the setup of the eXpServer. The `workers` denotes the number of cores to be created, 4 in this case. `servers` is an array containing configuration for individual servers. Each server includes listeners (IP and port bindings) and routes (handling of HTTP requests). The above given is an example configuration and can be modified  to add more ports or changing the route types for a port.
+This JSON configuration describes the setup of the eXpServer. The `workers` denotes the number of cores to be created, 4 in this case. `servers` is an array containing configuration for individual servers. Each server includes listeners (IP and port bindings) and routes (handling of HTTP requests). The above given is an example configuration and can be modified to add more ports or changing the route types for a port.
 
 ### xps_config
 
@@ -128,7 +128,7 @@ A new folder, config, is added for creating a server with the configurations men
 The code below has the contents of the header file for `xps_config`. Have a look at it and make a copy of it in your codebase.
 
 :::details **expserver/src/config/xps_config.h**
-    
+
 ```c
 #ifndef XPS_CONFIG_H
 #define XPS_CONFIG_H
@@ -166,12 +166,12 @@ struct xps_config_route_s {
 	bool keep_alive;
 };
 
-typedef enum xps_req_type_e { 
-	REQ_FILE_SERVE, 
-	REQ_REVERSE_PROXY, 
-	REQ_REDIRECT, 
-	REQ_METRICS, 
-	REQ_INVALID 
+typedef enum xps_req_type_e {
+	REQ_FILE_SERVE,
+	REQ_REVERSE_PROXY,
+	REQ_REDIRECT,
+	REQ_METRICS,
+	REQ_INVALID
 } xps_req_type_t;
 
 struct xps_config_lookup_s {
@@ -205,16 +205,16 @@ void xps_config_lookup_destroy(xps_config_lookup_t *config_lookup, xps_core_t *c
 
 #endif
 ```
+
 :::
-    
 
 The names of the structs and its fields are intuitive, try to go through each and understand its use.
 
-The struct `xps_config_s` represents the overall configuration of the server. 
+The struct `xps_config_s` represents the overall configuration of the server.
 
 The struct `xps_config_server_s` describes individual server configurations.
 
-The struct `xps_config_lookup_s`  represents a lookup result from configuration where `xps_req_type_t type` indicates thr type of request (REQ_FILE_SERVE, REQ_REVERSE_PROXY, etc.).
+The struct `xps_config_lookup_s` represents a lookup result from configuration where `xps_req_type_t type` indicates thr type of request (REQ_FILE_SERVE, REQ_REVERSE_PROXY, etc.).
 
 Fields `file_path`, `dir_path`, `file_start` used by a file server, `upstream` used by a reverse proxy server and `http_status_code`, `redirect_url` used by a redirect.
 
@@ -275,36 +275,36 @@ xps_config_lookup_t *xps_config_lookup(xps_config_t *config, xps_http_req_t *htt
       break;
     }
   }
-  
+
   xps_config_server_t *server = config->servers.data[target_server_index];
-  
+
   /*Find matching route block*/
   // Route matching uses prefix matching with longest-match-first strategy.
   // This is important because:
   // - For file serving routes (e.g., "/"), we need to match any path under it
   //   (e.g., "/index.html", "/css/style.css" should all match route "/")
   // - For specific routes (e.g., "/api"), we want them to take precedence over "/"
-  // 
+  //
   // Example: If we have routes "/" and "/api"
   // - Request "/index.html" matches "/" only → serves file from "/"
   // - Request "/api/users" matches both "/" and "/api" → use "/api" (longest match)
-  
+
   xps_config_route_t *route = NULL;
   size_t best_match_len = -1;  // Track the longest matching route path
-  
+
   for (int i = 0; i < server->routes.length; i++) {
 		xps_config_route_t *current_route = server->routes.data[i];
 		size_t route_path_len = /*find current route requested path length*/
-		
+
 		// Check if this route's path is a prefix of the request path
 		if (str_starts_with(pathname, current_route->req_path)) {
 				// If this is a longer match than we've found so far, use it
 			if (route_path_len > best_match_len) {
 				/*fill the rest*/
-			}	
+			}
 		}
   }
-  
+
   if (route == NULL) {
       *error = E_NOTFOUND;  // No matching route found - 404
       return NULL;
@@ -314,8 +314,8 @@ xps_config_lookup_t *xps_config_lookup(xps_config_t *config, xps_http_req_t *htt
   if (lookup->type == REQ_FILE_SERVE) {
     char *resource_path = /*use path_join to join paths*/
     if (!is_abs_path(
-            resource_path)) { 
-      /* we require abosulte path so we need to see 
+            resource_path)) {
+      /* we require abosulte path so we need to see
         if the current path is absolute or not */
       /*fill here*/
     }
@@ -342,12 +342,13 @@ xps_config_lookup_t *xps_config_lookup(xps_config_t *config, xps_http_req_t *htt
   }
 }
 ```
+
 - For supporting functions you can refer to the [`xps_utils.c`](#xps-utils-c)
 - `xps_config_lookup_destroy` : Implement yourself
-- `parse_server` : Parses the server_object from the JSON configuration and populates the `xps_config_server_t` structure.  Extracts and initializes server listeners, hostnames, and routes. For each listener, it calls `parse_listener`, and for each route, it calls `parse_route`. It then stores the parsed information into the server structure. Implement it.
+- `parse_server` : Parses the server_object from the JSON configuration and populates the `xps_config_server_t` structure. Extracts and initializes server listeners, hostnames, and routes. For each listener, it calls `parse_listener`, and for each route, it calls `parse_route`. It then stores the parsed information into the server structure. Implement it.
 - `parse_route` : Parses the route configuration from the route_object in the JSON and fills the `xps_config_route_t` structure. Extracts the `req_path` and type of the route (the route type could be file_serve, reverse_proxy, or redirect). Based on the route type, it extracts additional information such as `dir_path` (for file serving), upstreams (for reverse proxy), and `redirect_url` (for redirects). It also manages the index files for file serving routes. Implement it.
 - `parse_listener` : Purpose: Parses listener configuration from the listener_object in the JSON and populates the `xps_config_listener_t` structure. Extracts the host and port values for the listener and validates them. Populates the listener structure with this data. Implement it.
-- `parse_all_listener` : The function iterates through all the servers and their listeners in the configuration. It checks whether each listener (identified by its host and port) already exists in the  `_all_listeners` array. If the listener doesn't exist, it adds it to the _all_listeners array. This ensures that all listeners are collected in `_all_listeners`, but duplicates (based on the same host and port) are avoided. Implement it.
+- `parse_all_listener` : The function iterates through all the servers and their listeners in the configuration. It checks whether each listener (identified by its host and port) already exists in the `_all_listeners` array. If the listener doesn't exist, it adds it to the \_all_listeners array. This ensures that all listeners are collected in `_all_listeners`, but duplicates (based on the same host and port) are avoided. Implement it.
 
 ### Core Module - Modifications
 
@@ -367,7 +368,7 @@ if (lookup->type == REQ_FILE_SERVE) {
   if (lookup->file_path) {
     ...
   /*implementation already given*/
-    
+
 } else if (lookup->type == REQ_REVERSE_PROXY) {
   ...
   sscanf(lookup->upstream, "%[^:]:%u", host, &port);
@@ -423,7 +424,7 @@ int cores_create(xps_config_t *config) {
   /*Duplicate (use dup(fd) to duplicate file descriptor) and add listeners to cores*/
   /*Initialize dup_listener values*/
   /*Attach dup_listener to loop*/
-  /*Add listener to 'listeners' list of core*/ 
+  /*Add listener to 'listeners' list of core*/
   /*Destory listeners*/
 }
 
@@ -436,68 +437,68 @@ void sigint_handler(int signum) {
 }
 ```
 
-
-
 ### Additional utilities to be added
 
 - Cliargs : To handle and store command-line arguments related to the configuration file path.
-:::details **expserver/src/utils/xps_cliargs.h**
-    
+  :::details **expserver/src/utils/xps_cliargs.h**
+
   ```c
   #ifndef XPS_CLIARGS_H
   #define XPS_CLIARGS_H
-  
+
   #include "../xps.h"
-  
+
   struct xps_cliargs_s {
     char *config_path;
   };
-  
+
   xps_cliargs_t *xps_cliargs_create(int argc, char *argv[]);
   void xps_cliargs_destroy(xps_cliargs_t *cilargs);
-  
+
   #endif
   ```
-:::
-    
+
+  :::
+
 :::details **expserver/src/utils/xps_cliargs.c**
-    
-  ```c
-  #include "../xps.h"
-  
-  xps_cliargs_t *xps_cliargs_create(int argc, char *argv[]) {
-    if (argc < 2) {
-      printf("No config file path given\nUSAGE: xps <config_file_path>\n");
-      return NULL;
-    }
-  
-    xps_cliargs_t *cliargs = malloc(sizeof(xps_cliargs_t));
-    if (cliargs == NULL) {
-      logger(LOG_ERROR, "xps_cliargs_create()", "malloc() failed for 'cliargs'");
-      return NULL;
-    }
-  
-    if (is_abs_path(argv[1]))
-      cliargs->config_path = str_create(argv[1]);
-    else
-      cliargs->config_path = realpath(argv[1], NULL);
-  
-    return cliargs;
-  }
-  
-  void xps_cliargs_destroy(xps_cliargs_t *cliargs) {
-    assert(cliargs != NULL);
-  
-    free(cliargs->config_path);
-    free(cliargs);
+
+```c
+#include "../xps.h"
+
+xps_cliargs_t *xps_cliargs_create(int argc, char *argv[]) {
+  if (argc < 2) {
+    printf("No config file path given\nUSAGE: xps <config_file_path>\n");
+    return NULL;
   }
 
-  ```
+  xps_cliargs_t *cliargs = malloc(sizeof(xps_cliargs_t));
+  if (cliargs == NULL) {
+    logger(LOG_ERROR, "xps_cliargs_create()", "malloc() failed for 'cliargs'");
+    return NULL;
+  }
+
+  if (is_abs_path(argv[1]))
+    cliargs->config_path = str_create(argv[1]);
+  else
+    cliargs->config_path = realpath(argv[1], NULL);
+
+  return cliargs;
+}
+
+void xps_cliargs_destroy(xps_cliargs_t *cliargs) {
+  assert(cliargs != NULL);
+
+  free(cliargs->config_path);
+  free(cliargs);
+}
+
+```
+
 :::
 
-- Utility functions required for checking directory, file, absolute path. 
-:::details **expserver/src/utils/xps_utils.c** {#xps-utils-c}
-    
+- Utility functions required for checking directory, file, absolute path.
+  :::details **expserver/src/utils/xps_utils.c** {#xps-utils-c}
+
   ```c
 
   bool str_starts_with(const char *str, const char *prefix) {
@@ -516,7 +517,7 @@ void sigint_handler(int signum) {
     // checking boundary condition eg /api2 and /api (these should not match)
     // BUT if prefix ends with '/', it's already a clear boundary
     if (prefix_len > 0 && prefix[prefix_len - 1] == '/') {
-      return true; 
+      return true;
     }
 
     char next = str[prefix_len];
@@ -546,7 +547,7 @@ void sigint_handler(int signum) {
 
     return new_str;
   }
-  
+
   bool is_dir(const char *path) {
     assert(path != NULL);
 
@@ -570,10 +571,10 @@ void sigint_handler(int signum) {
   bool is_abs_path(const char *path) {
     assert(path != NULL);
     return path[0] == '/';
-  } 
+  }
   ```
-:::
-    
+
+  :::
 
 - Also update `xps_utils.h` accordingly.
 
@@ -583,26 +584,29 @@ void sigint_handler(int signum) {
 
 First we have to run the server by giving the JSON file containing the configuration information as command line argument.
 
-![exp1-img1.png](/assets/stage-16/exp1-img1.png)
+```bash
+./xps ../src/xps_config.json
+```
 
 Three port would be created as given:
 
 ![exp1-img2.png](/assets/stage-16/exp1-img2.png)
 
-- First, we would be verifying the file server functionality. An `index.html`  file as mentioned in the xps_config.json is created in the public folder. Add some standard html code in this file. The contents can be viewed on [localhost:8001](http://localhost:8001) on the browser.
+- First, we would be verifying the file server functionality. An `index.html` file as mentioned in the `xps_config.json` is created in the public folder. Add some standard html code in this file. The contents can be viewed on [localhost:8001](http://localhost:8001) on the browser.
 
 Try by replacing files of different format. You have to update JSON configuration file accordingly.
 
 - Now, run a python file server as done earlier in Phase 0.
-    
-  ![exp1-img3.png](/assets/stage-16/exp1-img3.png)
-  
-  This will create the upstream server mentioned in xps_config.json.
-    
+
+```bash
+python3 -m http.server 3000
+```
+
+This will create the upstream server mentioned in xps_config.json.
 
 The files in the directory in which the python server is running can be viewed from the urls [`localhost:8001/hello`](http://localhost:800/hello) and [`localhost:8002`](http://localhost:8002) . In this case, the url is redirected to the second one.
 
-- `localhost:8003`  would be redirecting to the `redirect_url` mentioned in the JSON configuration file.
+- `localhost:8003` would be redirecting to the `redirect_url` mentioned in the JSON configuration file.
 
 Try adding more ports and redirect to different urls.
 
@@ -614,19 +618,16 @@ You can verify your implementation using the [Stage 16 Automated Tests](/tester/
 
 ### Experiment #1
 
-eXpServer uses a **Longest Prefix Match** strategy to decide which route to use when multiple routes match a request path. To see this in action, open your `xps_config.json` and add two overlapping routes for the same server: Route A with `req_path: "/"` (Type: `file_serve`) and Route B with `req_path: "/api"` (Type: `redirect` to `http://localhost:8002`). 
+eXpServer uses a **Longest Prefix Match** strategy to decide which route to use when multiple routes match a request path. To see this in action, open your `xps_config.json` and add two overlapping routes for the same server: Route A with `req_path: "/"` (Type: `file_serve`) and Route B with `req_path: "/api"` (Type: `redirect` to `http://localhost:8002`).
 
 Now, try requesting `http://localhost:8001/api/data`. You will notice that Route B is chosen because `/api` is a longer match than `/`. If you request `/ap`, where do you think it will be routed to?
 
 ### Experiment #2
 
-In this experiment, we will explore how the server behaves when an index file is missing. Open `xps_config.json` and change the `dir_path` for the root route of port `8001` from `../public/` to `../../` (your project root). 
+In this experiment, we will explore how the server behaves when an index file is missing. Open `xps_config.json` and change the `dir_path` for the root route of port `8001` from `../public/` to `../../` (your project root).
 
 Now, navigate to `http://localhost:8001/` in your browser. You will notice that the server returns a **404 Not Found** error. Take a moment to think about why this happens even though the directory clearly exists on your system.
-
 
 ## Conclusion
 
 In this stage, we transitioned from a hardcoded server setup to a dynamic, configuration-driven architecture using JSON. By implementing the `config` module, eXpServer now supports multiple worker cores, reverse proxying, and URL redirects. While the server currently returns a 404 error when an index file is missing from a directory, we will resolve this in the next stage by implementing a dedicated directory module.
-
-  
