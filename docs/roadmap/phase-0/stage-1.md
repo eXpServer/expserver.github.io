@@ -52,7 +52,6 @@ Let us start by adding all the header includes and defines. The use of each head
 #define MAX_ACCEPT_BACKLOG 5
 ```
 
-
 **Setting up the server:**
 
 The first step is to create a listening socket for the clients to be able to connect to the server. This is done using the [`socket()`](https://en.wikipedia.org/wiki/Berkeley_sockets#:~:text=the%20specified%20socket.-,socket,-%5Bedit%5D) function from the [`<sys/socket.h>`](https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html) header.
@@ -62,7 +61,6 @@ int main() {
   // Creating listening sock
   int listen_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 ```
-
 
 The `socket()` function creates a socket, and upon successful creation, returns a **socket file descriptor**. A [file descriptor](https://en.wikipedia.org/wiki/File_descriptor) is a unique integer that designates a socket and allows application programs to refer to it when needed.
 
@@ -299,10 +297,7 @@ Now that `buff` has the reversed string, it is time to send it to the client. We
 
 The final code should look like this. {#tcp-server-c}
 
-
 ::: details expserver/phase_0/tcp_server.c
-
-
 
 ```c
 #include <arpa/inet.h>
@@ -388,6 +383,10 @@ int main() {
 :::
 
 ### Milestone #2
+
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 1 Automated Tests](/tester/tests/stage1).
+:::
 
 It is time to test the server! As before, open 2 terminals, one for the TCP server that we just wrote and another for the netcat client. Start the server followed by the client.
 

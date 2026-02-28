@@ -261,5 +261,9 @@ First start the server and in the browser enter an HTTP request (eg: `http://loc
 
 Inside networks tab you can see all the requests made by the client. Click on the current request(ie sample.txt). Then select the headers tab seen on top. In the headers section, you can see response headers section. Check whether the response headers that we created are getting displayed correctly. Also verify the status code displayed is correct or not.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 15 Automated Tests](/tester/tests/stage15).
+:::
+
 ## Conclusion
 In this stage, we modularized the HTTP response handling by introducing the xps_http_res module, which manages the creation, cleanup, and serialization of HTTP responses. This replaced the earlier hardcoded approach with a structured system that adheres to standard HTTP response formats, including status lines, headers, and body content. The xps_http_res_s structure was implemented to represent responses, and new functions were added for setting headers and serializing data. We also updated the xps_http and xps_session modules to integrate this new functionality. Successful testing through browser rendering and inspection confirmed that responses are correctly structured and transmitted.

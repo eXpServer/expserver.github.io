@@ -791,6 +791,10 @@ Time to test the code!
 
 Since we did not modify the functionality of the server, this milestone will is similar to [Milestone #2 from Stage 6](/roadmap/phase-1/stage-6#milestone-2). Follow the same steps and make sure you get the same result.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 7 Automated Tests](/tester/tests/stage7).
+:::
+
 ## Experiment
 
 ### Experiment #1

@@ -300,6 +300,10 @@ Here is the expected output:
 
 ![milestone-2.png](/assets/stage-3/milestone-2.png)
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 4 Automated Tests](/tester/tests/stage4).
+:::
+
 ## Conclusion
 
 The server is now capable of handling multiple clients simultaneously using the _epoll_ I/O event notification mechanism in Linux. Recall that this is one of the methods that can be done to provide concurrency.

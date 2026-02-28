@@ -947,6 +947,10 @@ Functions Modified
 
 Repeat the Experiment #2 of Stage8 and ensure memory utilization is reduced.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 10 Automated Tests](/tester/tests/stage10).
+:::
+
 ## Conclusion
 
 We have now solved both the issues specified in the Experiments of Stage8. The high CPU utilization was solved in stage 9 using edge-triggered epoll. In this stage, we have reduced the memory utilization by managing data flow through pipes. In the next stage, we would be implementing an upstream module.
