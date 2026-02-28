@@ -153,6 +153,10 @@ So now we have seen that all requests coming on port 8001 is being served by the
 
 Thus we have successfully implemented the upstream module.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 11 Automated Tests](/tester/tests/stage11).
+:::
+
 ## Conclusion
 
 So now we have implemented an upstream module. We have dedicated the port 8001, for using upstream module. All the requests coming on port 8001 gets forwarded to the upstream server, which is the python file server in this case with the help of upstream module. We have used pipes for sending data to upstream server and for receiving data back to client. In the next stage we will see how to implement a file server, which deals with accessing and delivering of files over a network.

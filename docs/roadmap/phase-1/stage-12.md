@@ -367,6 +367,10 @@ In the expserver folder, create a new folder public. Inside this create a file s
 
 Now start the server as mentioned in previous stages. Connect a client on port 8002 using `netcat localhost 8002`. Verify that the contents in file sample.txt is received by the client in terminal. Thus we have successfully implemented a basic file server which can send files in local disk to the client.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 12 Automated Tests](/tester/tests/stage12).
+:::
+
 ## Conclusion
 
 Now all the clients connected to port 8002, would be served the specified file. Thus we have implemented a basic file server. The file server is implemented along with the pipe mechanism itself with the only difference being source reading the file attached to its `ptr` field and writing it to pipe.

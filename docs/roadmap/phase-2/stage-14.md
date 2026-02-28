@@ -1014,6 +1014,10 @@ We can verify the modification by requesting the file through browser. Start the
 
 Now try how the browser responds if the file is not present in public folder.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 14 Automated Tests](/tester/tests/stage14).
+:::
+
 ## Experiment #1
 
 In the previous file server implementation, the outputs were printed in terminal and we encountered problem in opening image files as mentioned in Experiment #1 of stage12.

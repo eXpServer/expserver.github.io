@@ -529,6 +529,10 @@ So now we have implemented the session module. Let’s check whether session mod
 - Open two another terminals. Try connecting a netcat client on port 8001 and on port 8002.
 - Check whether the client connected from port 8001 is accessing the upstream server and client from port 8002 being served with the static file. If so, our session module is working properly.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 13 Automated Tests](/tester/tests/stage13).
+:::
+
 ## Conclusion
 
 We have successfully created and implemented the session module. Session module acts as a link between client_connection module, upstream module and file module. Session module is responsible for directing the client requests to corresponding modules. In this stage session module is directing all the requests received on port 8001 to upstream and those on 8002 to file modules. From next stage on wards, session will do this based on the HTTP request received. We will implement a new module named `xps_http` in the next stage. When an HTTP request is received, the incoming bytes get parsed by `xps_http` module. The session module will decide whether to serve a file or reverse proxy the request, based on the parsed HTTP request.

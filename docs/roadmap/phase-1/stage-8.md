@@ -269,6 +269,10 @@ Lets test out the changes. Make sure to modify `build.sh` to include `xps_buffer
 - Now we should be able to see that the process does not block.
 - New connections should be accepted and processed even when the huge file is being sent to the server.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 8 Automated Tests](/tester/tests/stage8).
+:::
+
 ## Experiments
 
 ### Experiment #1

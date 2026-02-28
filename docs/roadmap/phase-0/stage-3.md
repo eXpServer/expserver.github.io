@@ -310,6 +310,10 @@ int main() {
     return 0;
 }
 ```
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 3 Automated Tests](/tester/tests/stage3).
+:::
+
 ## Conclusion
 
 Now our UDP server is capable of handling multiple client requests simultaneously. Here we have achieved concurrency using multithreading. We are creating a new thread for each of the incoming client requests. In this stage we worked with UDP protocol. However, starting from the next stage onwards we will continue with the TCP protocol itself. In the next stage we will see how to make a server concurrent using epoll mechanism which is used by most of the modern web servers for obtaining concurrency.
