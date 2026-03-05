@@ -605,7 +605,7 @@ The files in the directory in which the python server is running can be viewed f
 Try adding more ports and redirect to different urls.
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 16 Automated Tests](/tester/tests/stage16).
+Verify your implementation using the [Stage 16 Automated Tests](/tester/tests/stage16).
 :::
 
 ## Experiments

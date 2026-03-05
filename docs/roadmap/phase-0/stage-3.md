@@ -315,7 +315,7 @@ int main() {
 }
 ```
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 3 Automated Tests](/tester/tests/stage3).
+Verify your implementation using the [Stage 3 Automated Tests](/tester/tests/stage3).
 :::
 
 ## Conclusion

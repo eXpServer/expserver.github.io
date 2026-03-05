@@ -63,7 +63,7 @@ export default defineConfig({
 						// { text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },
 						// { text: 'File descriptors', link: '/guides/resources/file-descriptors' },
 
-						// { text: 'MIME Types', link: '/guides/resources/mime-types' },
+						{ text: 'MIME Types', link: '/guides/resources/mime-types' },
 					],
 				},
 				{

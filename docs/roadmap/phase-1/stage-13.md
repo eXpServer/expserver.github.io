@@ -533,7 +533,7 @@ So now we have implemented the session module. Let’s check whether session mod
 - Check whether the client connected from port 8001 is accessing the upstream server and client from port 8002 being served with the static file. If so, our session module is working properly.
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 13 Automated Tests](/tester/tests/stage13).
+Verify your implementation using the [Stage 13 Automated Tests](/tester/tests/stage13).
 :::
 
 ## Conclusion
