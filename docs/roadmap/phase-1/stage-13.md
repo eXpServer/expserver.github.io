@@ -44,13 +44,13 @@ Let’s have a clear picture about the changes required in this stage before pro
 The code below has the contents of xps_session.h. Have a look at it and make a copy of it in your code base.
 
 ::: details **expserver/src/core/xps_session.h**
-    
+
 ```c
 #ifndef XPS_SESSION_H
 #define XPS_SESSION_H
-    
+
 #include "../xps.h"
-    
+
 struct xps_session_s {
   xps_core_t *core;
   xps_connection_t *client;
@@ -63,17 +63,18 @@ struct xps_session_s {
   xps_pipe_sink_t *client_sink;
   xps_pipe_source_t *upstream_source;
   xps_pipe_sink_t *upstream_sink;
-  xps_pipe_sink_t *file_sink; 
+  xps_pipe_sink_t *file_sink;
   xps_buffer_t *to_client_buff;
   xps_buffer_t *from_client_buff;
 };
-    
+
 xps_session_t *xps_session_create(xps_core_t *core, xps_connection_t *client);
 void xps_session_destroy(xps_session_t *session);
 
 #endif
 ```
-:::    
+
+:::
 
 `xps_session.h`
 
@@ -87,7 +88,7 @@ struct `xps_session_s` contains all the details associated with a session instan
 - `u_long upstream_write_bytes` : the number of bytes that can be written to upstream
 - `xps_file_t *file` : pointer to the file instance.
 - `xps_pipe_source_t *client_source` , `xps_pipe_source_t *upstream_source`: pipe source for client connection and upstream connection.
-- `xps_pipe_sink_t *client_sink`, `xps_pipe_sink_t *upstream_sink` , `xps_pipe_sink_t *file_sink`  : pipe sink for client, upstream and file.
+- `xps_pipe_sink_t *client_sink`, `xps_pipe_sink_t *upstream_sink` , `xps_pipe_sink_t *file_sink` : pipe sink for client, upstream and file.
 - `xps_buffer_t *to_client_buff` : the buffer that stores the data to be written to the pipe from session to client
 - `xps_buffer_t *from_client_buff` : the buffer carrying the data that is read from the pipe between client and session.
 
@@ -97,7 +98,7 @@ There are two main functions associated with a session instance. They are sessio
 
 **xps_session_create()**
 
-This function is responsible for creating a session instance. It is called from the `listener_connection_handler()` function. On accepting a connection on the listening socket, the `listener_connection_handler()` will create a connection instance as well as a session instance. Further all the communications between client and either upstream or file module takes place through this session instance. 
+This function is responsible for creating a session instance. It is called from the `listener_connection_handler()` function. On accepting a connection on the listening socket, the `listener_connection_handler()` will create a connection instance as well as a session instance. Further all the communications between client and either upstream or file module takes place through this session instance.
 
 An overview of `xps_session_create()` function is as follows:
 
@@ -108,8 +109,8 @@ An overview of `xps_session_create()` function is as follows:
 - If listener port is 8001, create an upstream module and then creates a pipe between `session->upstream_source` and `upstream->sink` as well as between `upstream->source` and `session->upstream_sink`
 - If listener port is 8002, create a file module and then creates a pipe between `file->source` and `session->file_sink`
 
-:::details  **expserver/src/core/xps_session.c  `xps_session_create()`**
-    
+:::details **expserver/src/core/xps_session.c `xps_session_create()`**
+
 ```c
 xps_session_t *xps_session_create(xps_core_t *core, xps_connection_t *client) {
   /* validate parameters */
@@ -217,36 +218,36 @@ xps_session_t *xps_session_create(xps_core_t *core, xps_connection_t *client) {
   return session;
 }
 ```
-:::    
+
+:::
 
 In `xps_session.c` several handler functions are there for handling various events, they are as follows
 
-- `void client_source_handler()` :  is used while writing data from session instance to client connection instance( `session->client_source`  to `client->sink` ). Whatever data is stored in `session->to_client_buff` is written into the pipe. After successful write, the `session->to_client_buff` is set to NULL.
+- `void client_source_handler()` : is used while writing data from session instance to client connection instance( `session->client_source` to `client->sink` ). Whatever data is stored in `session->to_client_buff` is written into the pipe. After successful write, the `session->to_client_buff` is set to NULL.
 
-- `void client_sink_handler()` :  is used when data is read from client connection instance to session instance(`client->source` to  `session->client_sink`  ). The read data from pipe is then stored into `session->from_client_buff` .
+- `void client_sink_handler()` : is used when data is read from client connection instance to session instance(`client->source` to `session->client_sink` ). The read data from pipe is then stored into `session->from_client_buff` .
 
-- `void upstream_source_handler()`  : is used when data is written from session to upstream. Whatever data is stored in `session->from_client_buff` is written into the pipe. After successful write the `session->from_client_buff` is set to NULL. The `upstream_connected` flag is set to true, if some data has been moved from session to upstream.
+- `void upstream_source_handler()` : is used when data is written from session to upstream. Whatever data is stored in `session->from_client_buff` is written into the pipe. After successful write the `session->from_client_buff` is set to NULL. The `upstream_connected` flag is set to true, if some data has been moved from session to upstream.
 
-- `void upstream_sink_handler()` :  deals with reading of data from upstream to session. Here the `session->upstream_connected` is set to true. After successfully reading the data, it is then stored in the `session->to_client_buff` .
+- `void upstream_sink_handler()` : deals with reading of data from upstream to session. Here the `session->upstream_connected` is set to true. After successfully reading the data, it is then stored in the `session->to_client_buff` .
 
-- `void file_sink_handler()` :  is similar to `upstream_sink_handler()` . Here data is read from file to session and it is stored in `session->to_client_buff` .
+- `void file_sink_handler()` : is similar to `upstream_sink_handler()` . Here data is read from file to session and it is stored in `session->to_client_buff` .
 
-- `void client_source_close_handler()`, `void client_sink_close_handler()`, `void upstream_source_close_handler()`, `void upstream_sink_close_handler()`, `void file_sink_close_handler()` : all these are sink/source close handlers, which deals with closing of the session instance. In the upstream source/sink close handlers, if upstream is not connected and `upstream_error_res_set` flag is not set, then  `upstream_error_res_set` is set to true.
+- `void client_source_close_handler()`, `void client_sink_close_handler()`, `void upstream_source_close_handler()`, `void upstream_sink_close_handler()`, `void file_sink_close_handler()` : all these are sink/source close handlers, which deals with closing of the session instance. In the upstream source/sink close handlers, if upstream is not connected and `upstream_error_res_set` flag is not set, then `upstream_error_res_set` is set to true.
 
-- `void upstream_error_res()`  is used to set the `session->upstream_error_res_set` as true.
+- `void upstream_error_res()` is used to set the `session->upstream_error_res_set` as true.
 
-- `set_to_client_buff()` : This function plays an important role in setting the ready flags for source and sink for the session, upstream and file. Here if the `session->to_client_buff`  is found to be null, then it implies that data has been already written into the pipe. So now session is ready to receive data from upstream or file. Therefore, `session->client_source->ready` is set to false and then `session->upstream_sink->ready` and `session->file_sink->ready` are set to true.
+- `set_to_client_buff()` : This function plays an important role in setting the ready flags for source and sink for the session, upstream and file. Here if the `session->to_client_buff` is found to be null, then it implies that data has been already written into the pipe. So now session is ready to receive data from upstream or file. Therefore, `session->client_source->ready` is set to false and then `session->upstream_sink->ready` and `session->file_sink->ready` are set to true.
 
 - `set_from_client_buff()` : This function also sets the source and sink ready flags. Here if the `session->from_client_buf` is found to be null, then it implies that no data has been read from client to session. Session is now ready to accept data from client. Therefore `session->client_sink->ready` is set to true and `session->upstream_source->ready` is set to false.
 
 - `session_check_destroy()` : This function checks whether the session instance is working properly or whether it has to be destroyed. In this function various data flows are checked for verifying whether session is working or not. They are:
-    1. client to upstream flow : If `session->upstream_source` is active and either `session - >client_sink` is active or if there is some data in `from_client_buff`, then it implies there can be a data flow from client to upstream. 
-    2. upstream to client flow : If `session->client_source` is active and either `session->upstream_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between upstream and client.
-    3. file to client flow : If `session->client_source` is active and either `session->file_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between file and client.
-    
-    If none of these flows are present then session instance gets destroyed.
-    
-::: details **expserver/src/core/xps_session.c  - handler functions**
+  1. client to upstream flow : If `session->upstream_source` is active and either `session - >client_sink` is active or if there is some data in `from_client_buff`, then it implies there can be a data flow from client to upstream.
+  2. upstream to client flow : If `session->client_source` is active and either `session->upstream_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between upstream and client.
+  3. file to client flow : If `session->client_source` is active and either `session->file_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between file and client.
+  If none of these flows are present then session instance gets destroyed.
+
+::: details **expserver/src/core/xps_session.c - handler functions**
 
 ```c
 void client_source_handler(void *ptr) {
@@ -294,7 +295,7 @@ void client_sink_handler(void *ptr) {
 void client_sink_close_handler(void *ptr) {
 
   /* fill this */
-  
+
 }
 
 void upstream_source_handler(void *ptr) {
@@ -329,7 +330,7 @@ void upstream_source_close_handler(void *ptr) {
 }
 
 void upstream_sink_handler(void *ptr) {
-  
+
   /* fill this */
 
   session->upstream_connected = true;
@@ -361,7 +362,7 @@ void upstream_error_res(xps_session_t *session) {
 }
 
 void file_sink_handler(void *ptr) {
-  
+
   /* fill this */
 
   xps_buffer_t *buff = xps_pipe_sink_read(/* fill this */);
@@ -375,9 +376,9 @@ void file_sink_handler(void *ptr) {
 }
 
 void file_sink_close_handler(void *ptr) {
-  
+
   /* fill this */
-  
+
 }
 
 void set_to_client_buff(xps_session_t *session, xps_buffer_t *buff) {
@@ -426,10 +427,10 @@ void session_check_destroy(xps_session_t *session) {
     xps_session_destroy(/* fill this */);
 }
 ```
-:::        
-    
 
- Now let’s see the next function in `xps_session` module,
+:::
+
+Now let’s see the next function in `xps_session` module,
 
 **xps_session_destroy()**
 
@@ -439,14 +440,14 @@ This function is responsible for destroying the session instance. It is similar 
 - Destroy the buffers, `session->to_client_buff` and `session->from_client_buff` .
 - Set the entry for session in `core->sessions` as NULL.
 - Free the session instance.
-::: details **expserver/src/core/xps_session.c  `xps_session_destroy()`**
-    
+  ::: details **expserver/src/core/xps_session.c `xps_session_destroy()`**
+
 ```c
 void xps_session_destroy(xps_session_t *session) {
   /* validate parameters */
 
   /* destroy client_source, client_sink, upstream_source, upstream_sink and file_sink attached to session */
-  
+
   if (session->to_client_buff != NULL)
     xps_buffer_destroy(session->to_client_buff);
   if (session->from_client_buff != NULL)
@@ -460,7 +461,8 @@ void xps_session_destroy(xps_session_t *session) {
   logger(LOG_DEBUG, "xps_session_destroy()", "destroyed session");
 }
 ```
-:::   
+
+:::
 
 ## Modifications to `xps_core` Module
 
@@ -468,16 +470,16 @@ void xps_session_destroy(xps_session_t *session) {
 
 In the struct `xps_core_s` , similar to listeners, connections and pipes we have to add a list for `session` and `n_null_sessions` to keep track of number of NULL pointers in sessions list.
 
-`xps_core.c` 
+`xps_core.c`
 
-- `xps_core_create()`  -  initialize `core->sessions` and set `n_null_sessions` to 0.
-- `xps_core_destroy()`  -  destroy the sessions created. De-initialise the `core->sessions`  list.
+- `xps_core_create()` - initialize `core->sessions` and set `n_null_sessions` to 0.
+- `xps_core_destroy()` - destroy the sessions created. De-initialise the `core->sessions` list.
 
 ## Modifications to `xps_loop` Module
 
-`void filter_nulls()` 
+`void filter_nulls()`
 
-In this function similar to pipes, listeners and connections filter out the number of null session instances from `core->sessions` . Set `core->n_null_sessions`  to 0.
+In this function similar to pipes, listeners and connections filter out the number of null session instances from `core->sessions` . Set `core->n_null_sessions` to 0.
 
 ## Modifications to `xps_listener` Module
 
@@ -505,7 +507,7 @@ void listener_connection_handler(void *ptr) {
       continue;
     }
     client->listener = listener;
-    
+
     xps_session_t *session = /* fill this */ ;
     if (session == NULL) {
       logger(LOG_ERROR, "listener_connection_handler()", "xps_session_create() failed");
@@ -517,11 +519,12 @@ void listener_connection_handler(void *ptr) {
   }
 }
 ```
+
 So we have made all the necessary changes required for this stage. Now it’s time to test the code.
 
 ## Milestone #1
 
-So now we have implemented the session module. Let’s check whether session module is properly acting as an intermediary for transferring client requests correctly to either upstream or file modules. 
+So now we have implemented the session module. Let’s check whether session module is properly acting as an intermediary for transferring client requests correctly to either upstream or file modules.
 
 - First modify the `build.sh` to include the `xps_session` module.
 - Open a terminal, then compile and run the eXpServer.

@@ -18,7 +18,7 @@ In the previous stages, we have seen that all the requests coming from the clien
 
 ## Design
 
-In this stage we are creating a new module named `xps_upstream`. An upstream module acts as an intermediary between client requests and an upstream server. From this stage on wards all the requests coming on port 8001 will be directed to an upstream server. Here our upstream server will be a python file server, serving a folder on our local hard drive. Pipes are used between client connection instance and upstream module for exchanging data. So whenever any client request is received on port 8001, an upstream module is created, which is then connected to the upstream server. An upstream module is essentially a connection instance which has it’s own source, sink. The data transmission between client and upstream is done via pipes. A pipe is created between client source and upstream sink for data transmission from client to upstream and another pipe is created between upstream source and client sink for upstream to client data transmission.
+In this stage we are creating a new module named `xps_upstream`. An upstream module acts as an intermediary between client requests and an upstream server. From this stage onwards all the requests coming on port 8001 (this port number should be known to the client) will be directed to an upstream server. Here our upstream server will be a python file server, serving a folder on our local hard drive. (At the present stage we will be hard coding the upstream server's ip address and port, but in the later stages this will be configurable.) Pipes are used between client connection instance and upstream module for exchanging data. So whenever any client request is received on port 8001, an upstream module is created, which is then connected to the upstream server. An upstream module is essentially a connection instance which has it’s own source, sink. The data transmission between client and upstream is done via pipes. A pipe is created between client source and upstream sink for data transmission from client to upstream and another pipe is created between upstream source and client sink for upstream to client data transmission.
 
 ## Implementation
 
@@ -30,7 +30,7 @@ In this stage a new module named `xps_upstream` is added. The following existing
 
 ### `xps_upstream` Module
 
-This module is responsible for creating a connection instance with the upstream server for each of the client requests(on port 8001).
+This module is responsible for creating a connection instance with the upstream server for each of the client requests (on port 8001).
 
 `xps_upstream.h`
 
@@ -83,7 +83,7 @@ xps_connection_t *xps_upstream_create(xps_core_t *core, const char *host, u_int 
 
 In `xps_listener` the `listener_connection_handler()` function is having modifications. If the client requests are on port number 8001, an upstream connection instance is created using `xps_upstream_create()` function. Further using `xps_pipe_create()` pipes are created between client source and upstream sink as well as between upstream source and client sink. So the changes are as follows,
 
-- An upstream connection instance is created if `listener->port` is 8001. The connection should be made to **127.0.0.1** on port **3000**.
+- An upstream connection instance is created if `listener->port` is 8001. The connection should be made to **127.0.0.1** (add wiki link) on port **3000**.
 - A pipe is created between client source and upstream sink.
 - A pipe is created between upstream source and client sink.
 

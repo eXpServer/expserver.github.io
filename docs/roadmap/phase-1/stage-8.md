@@ -196,7 +196,6 @@ Make necessary changes in `xps_loop.c`. Here are a few hints:
   ```
 
   :::
-
   - Make sure to add a corresponding function prototype in `xps_utils.h`
   - Include `<fcntl.h>` header in `xps.h` to get the declaration for `fcntl()`
   - Handle errors properly

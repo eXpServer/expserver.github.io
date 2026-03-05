@@ -2,19 +2,19 @@
 
 ## Recap
 
-- We have implemented an upstream server for incoming connections to port 8001.
+We have implemented a proxy server in port 8001 for connecting to an upstream python server using `xps_upstream` module. 
 
 ## Learning Objectives
 
-- We will be implementing a file server for incoming connections to port 8002.
+We would be implementing a file server for incoming connections to port 8002. 
 
 ## Introduction
 
-A file server stores and delivers files to clients over a network, enabling remote access. It allows users to download, upload, and modify files. In this stage, we would be implementing a basic file server, which delivers files upon client request. When there are incoming connections to port 8002, the server serves a static file to the client through the pipe mechanism discussed earlier.
+A file server stores and delivers files to clients over a network, enabling remote access. It allows users to download, upload, and modify files. In this stage, we would be implementing a rudimentary file server, which delivers files upon client request. Our server only allows files residing inside the `public` folder to be downloaded, and the files must have read access granted to `others`. When there are incoming connections to port 8002, the server serves a static file to the client through the pipe mechanism discussed earlier.At this point, the client is expected to know the filename to be downloaded from the `public` folder. In later stages, we'll be adding support for directory browsing on the `public` folder.
 
 ## Design
 
-Two new modules `xps_file` and `xps_mime` are introduced. In `xps_file`, an `xps_file_s` struct is introduced which stores the information regarding the file including file path, file size, MIME type(describes the format of file), and file structure pointer. `xps_file` has functions for opening a file and creating an instance of `xps_file_s` struct for it, for destruction of file instance, for reading data from file and writing to the pipe, and for closing the file source. Earlier the source was receiving data using `recv()` and writes it to the pipe, but in a file server the source takes data from the file attached to it and writes it to the pipe. Here, the `ptr` field in `xps_source_s` struct points to an instance of `xps_file_s` struct which has to be read, instead of pointing to the connection instance as in earlier stages. `file_souce_handler()` reads data from the file and writes it to pipe.
+Two new modules `xps_file` and `xps_mime` are introduced. In `xps_file`, an `xps_file_s` struct is introduced which stores the information regarding the file including file path, file size, [MIME](https://en.wikipedia.org/wiki/MIME) type(describes the format of file), and file structure pointer. `xps_file` has functions for opening a file and creating an instance of `xps_file_s` struct for it, for destruction of file instance, for reading data from file and writing to the pipe, and for closing the file source. Earlier the source was receiving data using `recv()` and writes it to the pipe, but in a file server the source takes data from the file attached to it and writes it to the pipe. Here, the `ptr` field in `xps_source_s` struct points to an instance of `xps_file_s` struct which has to be read, instead of pointing to the connection instance as in earlier stages. `file_souce_handler()` reads data from the file and writes it to pipe.
 
 The `xps_mime` module is used for getting the MIME type of the file. A MIME type (Multipurpose Internet Mail Extensions type) is a standard that indicates the nature and format of a file. Originally developed for email systems to specify the type of data attached in emails, MIME types are now used extensively on the internet, particularly in HTTP, to describe the content being transferred. We would be exploring more on this in later stages.
 
@@ -92,7 +92,7 @@ const char *xps_get_mime(const char *file_path) {
 :::
 
 :::tip NOTE
-If you want to add more **MIME** types, you can refer to this [link](/assets/stage-12/mime_types.txt).
+If you want to add more **MIME** types, you can refer to this [link](https://mimetype.io/all-types).
 :::
 
 As we are mapping the MIME type based on the file extension, a function for finding the file extension is added in `xps_utils.h`. Add the below given function in `xps_utils.c`
@@ -148,7 +148,7 @@ A struct `xps_file_s` is introduced to store the information regarding the file.
 
 **`xps_pipe_source_t *source`**: a pointer to source, which handles reading data from the file and passing it to a pipe
 
-**`FILE *file_struct`**: a pointer representing the opened file, it is used to interact with the file, such as reading, writing, seeking(will be explained soon).
+**`FILE *file_struct`**: a pointer representing the opened file, it is used to interact with the file, such as reading, writing, seeking (will be explained soon).
 
 **`size_t size`**: holds the size of the file in bytes
 
@@ -156,7 +156,7 @@ A struct `xps_file_s` is introduced to store the information regarding the file.
 
 ### `xps_file.c`
 
-Several file system-related C standard library functions are used to handle file operations such as opening, reading, seeking, and closing files. Let us look in to the file system call that we would be using:
+Several file system-related C standard library functions are used to handle file operations such as opening, reading, seeking, and closing files. Let us look in to some common file system calls:
 
 - `fopen()`
   ```c
@@ -178,7 +178,7 @@ Several file system-related C standard library functions are used to handle file
     - SEEK_SET: The offset is set relative to the beginning of the file.
     - SEEK_CUR: The offset is added to the current position.
     - SEEK_END: The offset is set relative to the end of the file.
-      **Returns**: 0 on success, or -1 on error.
+  **Returns**: 0 on success, or -1 on error.
 - `ftell()`
   ```c
   long ftell(FILE *stream);
@@ -207,47 +207,96 @@ Several file system-related C standard library functions are used to handle file
 
 `errno` determines the specific error when an operation fails. In case of `fopen()`, `EACCES` indicates a permission denied error and `ENOENT` indicates the specified file or directory doesn't exist.
 
+The [`struct stat`](https://pubs.opengroup.org/onlinepubs/007904875/basedefs/sys/stat.h.html) data structure is used to store metadata about a file, such as its permissions and size. Its definition is as follows:
+
+```c
+struct stat {
+    mode_t    st_mode;    // file type and permissions
+    off_t     st_size;    // total size in bytes
+    ...
+};
+```
+
+The two fields relevant to us are `st_mode`, which encodes the file type and access permissions, and `st_size`, which holds the size of the file in bytes. The remaining fields store other metadata such as ownership, timestamps, etc. To populate this structure with a file's metadata, we use the `stat()` function.
+
+- `stat()`
+
+  ```c
+  int stat(const char *path, struct stat *file_stat);
+  ```
+
+  Retrieves information about the file specified by `path` and stores it in the `struct stat` object pointed to by `file_stat`. The `struct stat` structure contains several fields that describe the file's attributes. The fields relevant to us are:
+  - `st_size`: The size of the file in bytes, of type `off_t`.
+  - `st_mode`: The file type and permissions, of type `mode_t`. Permission bits can be checked using bitwise AND (`&`) with the following macros:
+    - `S_IRUSR`: Read permission for the file owner.
+    - `S_IWUSR`: Write permission for the file owner.
+    - `S_IXUSR`: Execute permission for the file owner.
+    - `S_IRGRP`: Read permission for the file's group.
+    - `S_IWGRP`: Write permission for the file's group.
+    - `S_IXGRP`: Execute permission for the file's group.
+    - `S_IROTH`: Read permission for others.
+    - `S_IWOTH`: Write permission for others.
+    - `S_IXOTH`: Execute permission for others.
+
+  **Returns**: 0 on success, or -1 on error (and `errno` is set to indicate the error).
+
 The functions in `xps_file.c` are given below:
 
 1. **`xps_file_create()`**
 
-   Opens the file using `fopen()`, calculates the size by seeking to the end and then getting the current position, creates a `xps_file_s` struct instance and initialize it.
+   Opens the file using `fopen()`, creates a `xps_file_s` struct instance and initialize it.
 
    ```c
    xps_file_t *xps_file_create(xps_core_t *core, const char *file_path, int *error) {
      /*assert*/
 
      *error = E_FAIL;
+     /*check if file is inside the public directory*/
+     char *resolved_path = realpath(file_path, NULL);
+     char *resolved_public = /*find realpath of "../public"*/
 
-    // Opening file
+     if (resolved_path == NULL || resolved_public == NULL) {
+       logger(LOG_ERROR, "xps_file_create()", "realpath() failed");
+       /*free both path*/
+       /*close file object*/
+       return NULL;
+     }
+
+     size_t public_len = strlen(resolved_public);
+     if (strncmp(resolved_path, resolved_public, public_len) != 0) {
+       logger(LOG_WARNING, "xps_file_create()", "file is not inside the public directory");
+       *error = E_PERMISSION;
+       /*free both path*/
+       /*close file object*/
+       return NULL;
+     }
+
+     /*free both path*/
+
+     /*check if others have read permission*/
+     struct stat file_stat;
+     if (stat(file_path, &file_stat) != 0) {
+       logger(LOG_ERROR, "xps_file_create()", "stat() failed");
+       perror("Error message");
+       /*close file object*/
+       return NULL;
+     }
+
+     if (!(file_stat.st_mode & S_IROTH)) {
+       logger(LOG_WARNING, "xps_file_create()", "others do not have read permission");
+       *error = E_PERMISSION;
+       /*close file object*/
+       return NULL;
+     }
+
+     // Getting size of file from stat (already called above)
+     long temp_size = file_stat.st_size;
+
+     // Opening file
      FILE *file_struct = fopen(file_path, "rb");
      /*handle EACCES,ENOENT or any other error*/
      if (file_struct == NULL) {
        /*logs EACCES,ENOENT or any other error*/
-       return NULL;
-     }
-
-     // Getting size of file
-
-     // Seeking to end
-     if (/*seek end of file using fseek()*/ != 0) {
-       /*logs error*/
-       /*close file_struct*/
-       return NULL;
-     }
-
-     // Getting curr position which is the size
-     long temp_size = /*get current position using ftell()*/
-     if (temp_size < 0) {
-       /*logs error*/
-       /*close file_struct*/
-       return NULL;
-     }
-
-     // Seek back to start
-     if (/*seek start of file using fseek()*/ != 0) {
-       /*logs error*/
-       /*close file_struct*/
        return NULL;
      }
 
@@ -270,6 +319,8 @@ The functions in `xps_file.c` are given below:
    }
    ```
 
+   The [`realpath()`](https://pubs.opengroup.org/onlinepubs/009696799/functions/realpath.html) function converts any path into its **absolute version**. It cleans up the path by resolving "../" (parent directory) and "./" (current directory). For example, it would transform `../public/index.html` into a complete path like `/home/user/project/public/index.html`. This ensures the server knows exactly where a file is located on the disk.
+
 2. **`xps_file_destroy()`**
 
    Closes the file, destroys the associated pipe source, and frees the memory allocated for the file structure.
@@ -280,7 +331,7 @@ The functions in `xps_file.c` are given below:
 
      /*fill as mentioned above*/
 
-     logger(LOG_DEBUG, "xps_file_destroy()", "destroyed file");
+     logger(LOG_DEBUG, "xps_file_destroy()", "destroyed file struct");
    }
 
    ```
@@ -304,29 +355,29 @@ The functions in `xps_file.c` are given below:
 
      // Checking for read errors
      if (ferror(file->file_struct)) {
-   	  /*destroy buff, file and return*/
+   	  /*deallocate buff, file_struct and return*/
      }
 
      // If end of file reached
      if (read_n == 0 && feof(file->file_struct)) {
-       /*destroy buff, file and return*/
+       /*deallocate buff, file_struct and return*/
      }
 
      /*Write to pipe form buff*/
-   	/*destroy buff*/
+   	/*deallocate buff*/
    }
    ```
 
 4. **`file_source_close_handler()`**
 
-   This function is called when the file source is closed, triggering the destruction of the file object.
+   This function is called when the file source is closed, triggering the deallocation of the file object.
 
    ```c
    void file_source_close_handler(void *ptr) {
      /*assert*/
    	xps_pipe_source_t *source = ptr;
      /*get file from source ptr*/
-   	/*destroy file*/
+   	/*deallocate file object*/
    }
    ```
 
@@ -359,6 +410,11 @@ As we have to serve file for the incoming connections on port 8002, the `listene
     }
 ```
 
+:::info NOTE
+Since
+
+:::
+
 ## Milestone #1
 
 Update the `build.sh` to include the newly created modules.
@@ -373,4 +429,4 @@ Verify your implementation using the [Stage 12 Automated Tests](/tester/tests/st
 
 ## Conclusion
 
-Now all the clients connected to port 8002, would be served the specified file. Thus we have implemented a basic file server. The file server is implemented along with the pipe mechanism itself with the only difference being source reading the file attached to its `ptr` field and writing it to pipe.
+Now all the clients connected to port 8002, would be served the specified file. Thus we have implemented a simple file transfer system. The file server is implemented along with the pipe mechanism itself with the only difference being source reading the file attached to its `ptr` field and writing it to pipe.

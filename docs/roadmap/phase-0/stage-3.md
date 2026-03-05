@@ -10,7 +10,6 @@
 
 - We will implement a UDP server with multi-threading to handle multiple clients concurrently.
 
-
 ---
 
 ::: tip PRE-REQUISITE READING
@@ -25,43 +24,45 @@
 
 At the end of [Stage 2](/roadmap/phase-0/stage-2), we noticed how the server is only able to cater to one client at a time. When the client disconnects, the server breaks out of the recv-send while loop and exits the program. Later in the exercises we modified the server to accept clients sequentially, one after the other.
 
-Now we will use multithreading to implement the same. We can use **multithreading** along with either TCP or UDP protocol. In this stage we will use **UDP** (User Dtagram Protocol) which is a connectionless and unreliable protocol. 
+Now we will use multithreading to implement the same. We can use **multithreading** along with either TCP or UDP protocol. In this stage we will use **UDP** (User Dtagram Protocol) which is a connectionless and unreliable protocol.
 
 We will be using the following functions to setup UDP connections:
 
 ![udp_flow.png](/assets/resources/udp_flow.png)
 
 ## Implementation
+
 ![udp_implementation.png](/assets/resources/udp_implementation.png)
 
 ### UDP server
 
- Create a file `udp_server.c` and place it inside `expserver/phase_0`. We would be implementing our server code here.
+Create a file `udp_server.c` and place it inside `expserver/phase_0`. We would be implementing our server code here.
 
 Let us start by adding all the headers mentioned in stage 1. In addition to these headers, add `#include <pthread.h>` , which provides the necessary functions and data types for creating and managing threads.
 
-Now we can start with the creation of socket in the main function. 
+Now we can start with the creation of socket in the main function.
 
 In `socket()` function, for TCP protocol we used `SOCK_STREAM` as the type. Here, for UDP we will be using `SOCK_DGRAM`. Datagram sockets provide a connectionless, unreliable, and message-oriented form of communication.
 
 ```c
 int sockfd = socket(/*todo*/ , SOCK_DGRAM, /*todo*/);
 ```
-Now, assign an address (consisting of an IP address and a port) to the socket using the data structure `struct sockaddr_in`  and then bind the socket created using `bind()`, as done in previous stages.
+
+Now, assign an address (consisting of an IP address and a port) to the socket using the data structure `struct sockaddr_in` and then bind the socket created using `bind()`, as done in previous stages.
 
 ::: tip IMPORTANT!
 
-User Datagram Protocol (UDP) is a connectionless protocol that doesn't require a connection to be established between the source and destination before data is transmitted, i.e datagrams can come in any order from any source. Therefore, `listen()`, `accept()` and `connect()` system calls are not required in UDP. 
+User Datagram Protocol (UDP) is a connectionless protocol that doesn't require a connection to be established between the source and destination before data is transmitted, i.e datagrams can come in any order from any source. Therefore, `listen()`, `accept()` and `connect()` system calls are not required in UDP.
 
 :::
 
 ::: tip IMPORTANT!
 
-We will be using `sendto()` and `recvfrom()` system calls, instead of `send()` and `recv()`  as used in TCP. Since we are not creating a connection socket, we use `sendto()` in order to specify the destination and `recvfrom()` to specify from where the data was received from.
+We will be using `sendto()` and `recvfrom()` system calls, instead of `send()` and `recv()` as used in TCP. Since we are not creating a connection socket, we use `sendto()` in order to specify the destination and `recvfrom()` to specify from where the data was received from.
 
 :::
 
-Now server is ready to receive messages from the clients. We can use `recvfrom()` to receive data from the client. 
+Now server is ready to receive messages from the clients. We can use `recvfrom()` to receive data from the client.
 
 ```C
 ssize_t n = recvfrom(sockfd, buffer, BUFF_SIZE, 0,(struct sockaddr*)&client_addr, &len);
@@ -114,7 +115,7 @@ void* handle_client(void* arg) {
 
     // Reverse the string
     /* todo */
-    
+
     // Send back the reversed string
     sendto(data->sockfd, data->message, strlen(data->message), 0,(struct sockaddr*)&(data->client_addr), data->addr_len);
 
@@ -130,9 +131,11 @@ After successful termination of the thread, control will reach the main function
 ```C
 pthread_detach(thread_id);
 ```
+
 - **thread_id:** thread id of the thread that must be detached.
 
 Our final code will look like this.
+
 ```C
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -185,7 +188,7 @@ int main() {
 
     // Create socket
     sockfd = /* TODO */
-    
+
 
     // Set server address parameters
     server_addr.sin_family = /* TODO */       // IPv4
@@ -251,7 +254,7 @@ Try sending messages from the client. Check whether you are getting the reversed
 
 Your UDP server is ready now.
 
- Next lets see our UDP client code.
+Next lets see our UDP client code.
 
 ### UDP Client
 
@@ -263,6 +266,7 @@ Create a socket of type `SOCK_DGRAM`. As mentioned earlier here we wont be using
 Here we are sending the message to server using `sendto()` and the reversed string is received using `recvfrom()`.
 
 Our final code looks like this.
+
 ```C
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -282,18 +286,18 @@ int main() {
 
     // Create socket
     int sockfd = socket(/* TODO */);
-    
+
     struct sockaddr_in server_addr;
 
     // Set server address parameters
     server_addr.sin_family = /* TODO */
     server_addr.sin_addr.s_addr = /* TODO */
     server_addr.sin_port = /* TODO */
-    
+
     while (1) {
         printf("Enter a string : ");
         fgets(message, BUFF_SIZE, stdin);
-        
+
 
         // Send the message to the server
         sendto(sockfd, message, strlen(message), 0,(struct sockaddr*)&server_addr, sizeof(server_addr));

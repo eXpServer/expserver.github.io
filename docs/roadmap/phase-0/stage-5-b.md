@@ -32,7 +32,7 @@ Now we can implement the `write_to_file()` function.
 void write_to_file(int conn_sock_fd) {
     char buffer[BUFF_SIZE];
     ssize_t bytes_received;
-    
+
     // Open the file to which the data from the client is being written
     FILE *fp;
     const char *filename="t2.txt";
@@ -48,18 +48,16 @@ The `fopen()` function in C is used to open a file specified by *filename* for 
 
 1. **`filename`**: This parameter specifies the name of the file to be opened. It could be a relative or absolute file path. For example, `"file.txt"` refers to a file in the current directory, while `"/home/user/file.txt"` refers to an absolute path. In this server code our file name is `“t2.txt”`.
 2. **`mode`**: This parameter specifies the file access mode, which determines how the file is opened (e.g., for reading, writing, appending, etc.). The mode is provided as a string and is crucial to determining the type of operations allowed on the file.
-    
-    The common modes are:
-    
-    - `"r"`: Open for reading. If the file doesn't exist, the function returns `NULL`.
-    - `"w"`: Open for writing. If the file exists, it truncates the file to zero length; otherwise, it creates a new file.
-    - `"a"`: Open for appending. Writes to the file are always appended to the end of the file, regardless of the current file pointer position. If the file doesn't exist, it is created.
-    - `"r+"`: Open for both reading and writing. The file must exist.
-    - `"w+"`: Open for both reading and writing. If the file exists, it is truncated; otherwise, a new file is created.
-    - `"a+"`: Open for both reading and appending. If the file doesn't exist, it is created.
-    
-    Here we are providing `mode` as `“w”` for writing the contents from the client to the text file. If the file exists, the function returns the file pointer in which the position of the file pointer is initially at the beginning of the file.
-    
+
+   The common modes are:
+   - `"r"`: Open for reading. If the file doesn't exist, the function returns `NULL`.
+   - `"w"`: Open for writing. If the file exists, it truncates the file to zero length; otherwise, it creates a new file.
+   - `"a"`: Open for appending. Writes to the file are always appended to the end of the file, regardless of the current file pointer position. If the file doesn't exist, it is created.
+   - `"r+"`: Open for both reading and writing. The file must exist.
+   - `"w+"`: Open for both reading and writing. If the file exists, it is truncated; otherwise, a new file is created.
+   - `"a+"`: Open for both reading and appending. If the file doesn't exist, it is created.
+
+   Here we are providing `mode` as `“w”` for writing the contents from the client to the text file. If the file exists, the function returns the file pointer in which the position of the file pointer is initially at the beginning of the file.
 
 we opened the file **t2.txt** for writing the contents from the client. Recieve the data from the client using the the `recv()` function call. Uppon succesful recieve of data from the client we can write the data into the text file using the `fprintf()` function.
 
@@ -110,13 +108,13 @@ Now you can test the server using a netcat client.Open another terminal in paral
 nc localhost 8080
 ```
 
-Try sending messages from the client and terminate the netcat client by `ctl + c` . Open the file **t2.txt** and you can see the  message sent is written into the file.
+Try sending messages from the client and terminate the netcat client by `ctl + c` . Open the file **t2.txt** and you can see the message sent is written into the file.
 
 Your TCP server for file transfer is ready now.
 
 ### TCP Client for File Transfer
 
- Next let's see our TCP client code for File Transfer. Create a file `fp_client.c` and place it inside `expserver/phase_0`. We would be implementing our client code here. Write the TCP client code that we learned in the second stage for making the connection with the server. After making a successful connection with the server we can call the `send_file()` function with `client_sock_fd` as argument.
+Next let's see our TCP client code for File Transfer. Create a file `fp_client.c` and place it inside `expserver/phase_0`. We would be implementing our client code here. Write the TCP client code that we learned in the second stage for making the connection with the server. After making a successful connection with the server we can call the `send_file()` function with `client_sock_fd` as argument.
 
 The `send_file()` function is used for performing operations like opening the text file, reading the contents of the file, transfering the data to the server and closing the file. Now let’s look how we can implement this function.
 

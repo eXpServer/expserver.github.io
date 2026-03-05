@@ -406,4 +406,4 @@ You can do the optional practice problem to implement a very basic file transfer
 
 ## Conclusion
 
-In this stage, we successfully implemented the TCP proxy. This marks the end of Phase 0. Phase 0 laid the foundation as to what is about to come next. Starting from the next phase, we will start building eXpServer. Read more about Phase 1 [**here**](/roadmap/phase-1/). 
+In this stage, we successfully implemented the TCP proxy. This marks the end of Phase 0. Phase 0 laid the foundation as to what is about to come next. Starting from the next phase, we will start building eXpServer. Read more about Phase 1 [**here**](/roadmap/phase-1/).

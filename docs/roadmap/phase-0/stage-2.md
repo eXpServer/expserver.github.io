@@ -2,7 +2,7 @@
 
 ## Recap
 
-- In stage 1, we built a simple TCP server using linux networking APIs. 
+- In stage 1, we built a simple TCP server using linux networking APIs.
 
 ## Learning Objectives
 
@@ -168,7 +168,6 @@ hello
 olleh
 ```
 
-
 ## Experiments
 
 ::: tip Iterative and Concurrent Server
@@ -200,12 +199,14 @@ Did you notice what happened when you closed the connected client instance? The 
 Modify the code such that the server does not terminate immedietly after a client disconnects.
 
 ::: info HINT
+
 - A while loop around the accept and recv-send loop could help.
 - Also break from the recv-send loop after each client disconnects.
-:::
+  :::
 
 Now, let us verify our modified code. Follow the same procedure in Experiment 1.
 We can observe the following:
+
 1. The server is not closed even after terminating the first client.
 2. Now, client #2 gets connected to the server.
 
@@ -220,12 +221,11 @@ Now,we can modify the client code for creating multiple clients in a single exec
 - Read about [Process and Threads](/guides/resources/process-and-threads)
 - Read about [System Calls](/guides/resources/system-calls)
 
-
 :::
 
-Create a file `tcp_multi_client.c` and place it inside `expserver/phase_0`. We would be implementing our client code here. 
+Create a file `tcp_multi_client.c` and place it inside `expserver/phase_0`. We would be implementing our client code here.
 
-Try to run the the modified server code from the experiment 2 and below client code written in the `tcp_multi_clients.c` file. Observe how multiple clients are created concurrently in a single client code using `fork()` system call and their corresponding output. Try to run it again by updating the number of clients created in the client code and observe how the server deals with it iteratively. 
+Try to run the the modified server code from the experiment 2 and below client code written in the `tcp_multi_clients.c` file. Observe how multiple clients are created concurrently in a single client code using `fork()` system call and their corresponding output. Try to run it again by updating the number of clients created in the client code and observe how the server deals with it iteratively.
 
 ```c
 #include <arpa/inet.h>

@@ -28,7 +28,6 @@ The guides feature supplementary documentation intended for your reference as yo
 - <span v-if="!isProd">🟡</span> [Blocking & Non-Blocking Sockets](/guides/resources/blocking-and-non-blocking-sockets)
 - <span v-if="!isProd">🟡</span> [HTTP](/guides/resources/http)
 
-
 ## References
 
 - <span v-if="!isProd">✅</span> [vec](/guides/references/vec)

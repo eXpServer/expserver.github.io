@@ -74,12 +74,12 @@ A MIME type most commonly consists of just two parts: a *type* and a *subtype
 type/subtype;parameter=value
 ```
 
-The **_type_** represents the general category into which the data type falls, such as `video` or `text`.
+The ***type*** represents the general category into which the data type falls, such as `video` or `text`.
 
-The **_subtype_** identifies the exact kind of data of the specified type the MIME type represents.
+The ***subtype*** identifies the exact kind of data of the specified type the MIME type represents.
 
 - For example, for the MIME type `text`, the subtype might be `plain`, `html`, or `calendar`.
 
-An optional **_parameter_** can be added to provide additional details.
+An optional ***parameter*** can be added to provide additional details.
 
 - For example, for any MIME type whose main type is `text`, you can add the optional `charset` parameter to specify the character set used for the characters in the data. If no `charset` is specified, the default is [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) . To specify a UTF-8 text file, the MIME type `text/plain;charset=UTF-8` is used.

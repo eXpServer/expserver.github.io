@@ -6,13 +6,14 @@ In the previous stages, we have updated our server to operate with HTTP messages
 
 ## Learning Objectives
 
-- Implementation of multiple cores
+<!-- - Implementation of multiple cores -->
+
 - Use JSON file to set-up server configuration
 - Implement reverse proxy and URL redirecting
 
 ## Introduction
 
-Till now, we have implemented a single core architecture i.e all listeners created were attached to the same core. In this stage, we are updating the server to operate with multiple cores thus enhancing the throughput. It allows the efficient processing of multiple requests concurrently. Now, all the listeners to be created are duplicated across each of the cores.
+<!-- Till now, we have implemented a single core architecture i.e all listeners created were attached to the same core. In this stage, we are updating the server to operate with multiple cores thus enhancing the throughput. It allows the efficient processing of multiple requests concurrently. Now, all the listeners to be created are duplicated across each of the cores. -->
 
 A JSON configuration file is used to configure the number of cores to be created and the listeners to be attached to those. It also specifies the `type` of each of the port for a given a `req_path`.
 
@@ -68,12 +69,13 @@ curl -O https://raw.githubusercontent.com/eXpServer/parson/master/parson.c
 
 This will create a parson directory inside `expserver/src/lib/` and download all the required source files.
 
+<!-- "workers": 4, to be added in the final stage as final stage handles multi-threaded architecture -->
+
 ### xps_config.json
 
 ```json
 {
 	"server_name": "eXpServer",
-	"workers": 4,
 	"servers": [
 		{
 			"listeners": [{ "host": "0.0.0.0", "port": 8001 }],
@@ -117,7 +119,9 @@ This will create a parson directory inside `expserver/src/lib/` and download all
 }
 ```
 
-This JSON configuration describes the setup of the eXpServer. The `workers` denotes the number of cores to be created, 4 in this case. `servers` is an array containing configuration for individual servers. Each server includes listeners (IP and port bindings) and routes (handling of HTTP requests). The above given is an example configuration and can be modified to add more ports or changing the route types for a port.
+<!-- The `workers` denotes the number of cores to be created, 4 in this case -->
+
+This JSON configuration describes the setup of the eXpServer. `servers` is an array containing configuration for individual servers. Each server includes listeners (IP and port bindings) and routes (handling of HTTP requests). The above given is an example configuration and can be modified to add more ports or changing the route types for a port.
 
 ### xps_config
 
@@ -138,7 +142,6 @@ The code below has the contents of the header file for `xps_config`. Have a loo
 struct xps_config_s {
 	const char *config_path;
 	const char *server_name;
-	u_int workers;
 	vec_void_t servers;
 	vec_void_t _all_listeners;
 	JSON_Value *_config_json;
@@ -232,7 +235,7 @@ xps_config_t *xps_config_create(const char *config_path) {
   /*initialize fields of config object*/
   JSON_Object *root_object = json_value_get_object(config_json);
   ...
-  /*initialize server_name,workers,servers fields - hint: use json_object_get_string
+  /*initialize server_name,servers fields - hint: use json_object_get_string
   ,json_object_get_number,json_object_get_array*/
   for (size_t i = 0; i < json_array_get_count(servers); i++) {
     /*fill this*/ = json_array_get_object(servers, i);
@@ -406,20 +409,12 @@ Instead of creating a single core, multiple cores are created as specified in th
 int main(int argc, char *argv[]) {
   signal(SIGINT, sigint_handler); //for handling ctrl+c
 	cliargs = xps_cliargs_create(argc, argv);//get commandline arguments
-	/*create config, create cores, start cores*/
+	/*create config, create core, start core*/
 }
 
-int cores_create(xps_config_t *config) {
+int core_create(xps_config_t *config) {
   /*assert*/
-  cores = malloc(sizeof(xps_core_t *) * config->workers);
-  // Create cores
-  for (int i = 0; /*fill this*/; i++) {
-    xps_core_t *core = xps_core_create(config);
-    if (core) {
-      cores[n_cores] = core;
-      n_cores += 1;
-    }
-  }
+  xps_core_t *core = xps_core_create(config);
   /*Create listeners*/
   /*Duplicate (use dup(fd) to duplicate file descriptor) and add listeners to cores*/
   /*Initialize dup_listener values*/
@@ -428,7 +423,7 @@ int cores_create(xps_config_t *config) {
   /*Destory listeners*/
 }
 
-void cores_destroy() {
+void core_destroy(xps_core_t *core) {
   /*fill this*/
 }
 
@@ -441,7 +436,7 @@ void sigint_handler(int signum) {
 
 - Cliargs : To handle and store command-line arguments related to the configuration file path.
   :::details **expserver/src/utils/xps_cliargs.h**
-
+  
   ```c
   #ifndef XPS_CLIARGS_H
   #define XPS_CLIARGS_H
@@ -457,7 +452,6 @@ void sigint_handler(int signum) {
 
   #endif
   ```
-
   :::
 
 :::details **expserver/src/utils/xps_cliargs.c**
