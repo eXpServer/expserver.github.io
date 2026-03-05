@@ -154,7 +154,7 @@ So now we have seen that all requests coming on port 8001 is being served by the
 Thus we have successfully implemented the upstream module.
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 11 Automated Tests](/tester/tests/stage11).
+Verify your implementation using the [Stage 11 Automated Tests](/tester/tests/stage11).
 :::
 
 ## Conclusion

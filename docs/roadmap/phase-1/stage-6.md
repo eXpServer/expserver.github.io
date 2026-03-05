@@ -760,7 +760,7 @@ Try the same test with 4 clients and 3 ports.
 :::
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 6 Automated Tests](/tester/tests/stage6).
+Verify your implementation using the [Stage 6 Automated Tests](/tester/tests/stage6).
 :::
 
 ### Function Call Order

@@ -1,4 +1,4 @@
-# Stage 4: Linux Epoll
+# Test - Stage 4: Linux Epoll
 
 ## Overview 
 We have explored UDP and multithreading in the previous stage. We now move back to TCP as our transport layer protocol, and explore an alternative to multithreading to handle multiple connections, namely [Linux Epoll](https://en.wikipedia.org/wiki/Epoll). The tests done in this stage, ensures that the server behaves exactly the same as it did in the previous stage, even after moving to the new protocol stack.

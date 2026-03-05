@@ -1,4 +1,4 @@
-# Stage 8: Non-Blocking Sockets
+# Test - Stage 8: Non-Blocking Sockets
 
 ## Overview
 Experiments conducted during the stage 7 showcased a fatal flaw within the implementation. The issue lied within the expectation of the server that the client always receives the data sent back. But when a client doesn't listen for responses sent back, it results in overflow of kernel buffer. In stage 8, we fixed the issue by decoupling `send` and `recv` operations as two different events, to prevent them from [blocking](https://en.wikipedia.org/wiki/Blocking_(computing)) each other. The following test cases test for the proper implementation of non-blocking sockets, while ensuring the previous functionality of the server is maintained.

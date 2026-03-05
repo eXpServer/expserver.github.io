@@ -1,4 +1,4 @@
-# Stage 1: TCP Server
+# Test - Stage 1: TCP Server
 
 ## Overview
 This stage aims at creating a basic tcp server, that has the ability to connect to a single client at once, receive data in the form of strings, reverse it and send it back. The following tests have been created to ensure the proper functionality of the code you have written.

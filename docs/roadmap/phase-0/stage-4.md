@@ -298,7 +298,7 @@ Here is the expected output:
 ![milestone-2.png](/assets/stage-3/milestone-2.png)
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 4 Automated Tests](/tester/tests/stage4).
+Verify your implementation using the [Stage 4 Automated Tests](/tester/tests/stage4).
 :::
 
 ## Conclusion
