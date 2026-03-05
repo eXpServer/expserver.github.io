@@ -1,4 +1,4 @@
-# Stage 9: Epoll Edge Triggering
+# Test - Stage 9: Epoll Edge Triggering
 
 ## Overview
 As of the previous stage, we have started working with non-blocking sockets, but we noticed during one of the experiments a very peculiar issue. Even during an idle TCP connection, CPU utilization kept increasing unnecessarily. This is due to the default behavior of Epoll. 

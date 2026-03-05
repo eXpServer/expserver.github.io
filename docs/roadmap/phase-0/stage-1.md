@@ -385,7 +385,7 @@ int main() {
 ### Milestone #2
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 1 Automated Tests](/tester/tests/stage1).
+Verify your implementation using the [Stage 1 Automated Tests](/tester/tests/stage1).
 :::
 
 It is time to test the server! As before, open 2 terminals, one for the TCP server that we just wrote and another for the netcat client. Start the server followed by the client.

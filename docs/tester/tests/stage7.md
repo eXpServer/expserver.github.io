@@ -1,4 +1,4 @@
-# Stage 7: Core & Loop Module
+# Test - Stage 7: Core & Loop Module
 
 ## Overview
 In this stage, we move around some of the existing functions to further clean up the code. The tests within this stage ensures that the functionality acheived in the previous stage is unaffected

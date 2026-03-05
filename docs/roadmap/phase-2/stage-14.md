@@ -1015,7 +1015,7 @@ We can verify the modification by requesting the file through browser. Start the
 Now try how the browser responds if the file is not present in public folder.
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 14 Automated Tests](/tester/tests/stage14).
+Verify your implementation using the [Stage 14 Automated Tests](/tester/tests/stage14).
 :::
 
 ## Experiment #1

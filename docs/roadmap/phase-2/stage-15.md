@@ -262,7 +262,7 @@ First start the server and in the browser enter an HTTP request (eg: `http://loc
 Inside networks tab you can see all the requests made by the client. Click on the current request(ie sample.txt). Then select the headers tab seen on top. In the headers section, you can see response headers section. Check whether the response headers that we created are getting displayed correctly. Also verify the status code displayed is correct or not.
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 15 Automated Tests](/tester/tests/stage15).
+Verify your implementation using the [Stage 15 Automated Tests](/tester/tests/stage15).
 :::
 
 ## Conclusion

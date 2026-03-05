@@ -948,7 +948,7 @@ Functions Modified
 Repeat the Experiment #2 of Stage8 and ensure memory utilization is reduced.
 
 ::: tip AUTOMATED TESTS
-You can verify your implementation using the [Stage 10 Automated Tests](/tester/tests/stage10).
+Verify your implementation using the [Stage 10 Automated Tests](/tester/tests/stage10).
 :::
 
 ## Conclusion
