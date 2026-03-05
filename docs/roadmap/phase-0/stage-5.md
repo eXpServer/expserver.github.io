@@ -384,6 +384,10 @@ The proxy should go back to the `epoll_wait` state and wait for more events.
 
 Keep testing the code by navigating across the file server, and opening files. Make sure the proxy does not exit out of the program.
 
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 5 Automated Tests](/tester/tests/stage5).
+:::
+
 ## Experiments
 
 ### Experiments #1

@@ -314,6 +314,9 @@ int main() {
     return 0;
 }
 ```
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 3 Automated Tests](/tester/tests/stage3).
+:::
 
 ## Conclusion
 

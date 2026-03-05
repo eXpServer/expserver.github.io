@@ -2,11 +2,11 @@
 
 ## Recap
 
-In the last stage we have seen how to use pipes for data transmission between source and sink.
+- In the last stage we have seen how to use pipes for data transmission between source and sink.
 
 ## Learning Objective
 
-In this stage we will be implementing an upstream module with the help of pipes as discussed in stage 10.
+- In this stage we will be implementing an upstream module with the help of pipes as discussed in stage 10.
 
 ## Introduction
 
@@ -152,6 +152,10 @@ Now the python file server and our eXpServer are both running. If the implementa
 So now we have seen that all requests coming on port 8001 is being served by the python file server which acts as the upstream server here.
 
 Thus we have successfully implemented the upstream module.
+
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 11 Automated Tests](/tester/tests/stage11).
+:::
 
 ## Conclusion
 

@@ -755,8 +755,12 @@ Let us do a detailed test to check if everything works as expected.
 
    ![milestone2-5.png](/assets/stage-6/milestone2-5.png)
 
-::: danger Test
+::: danger TEST
 Try the same test with 4 clients and 3 ports.
+:::
+
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 6 Automated Tests](/tester/tests/stage6).
 :::
 
 ### Function Call Order

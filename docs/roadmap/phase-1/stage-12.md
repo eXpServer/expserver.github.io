@@ -107,7 +107,7 @@ const char *get_file_ext(const char *file_path) {
 }
 ```
 
-Also declare the newly created function in utility.h
+Also declare the newly created function in `utility.h`.
 
 ## `xps_file` Module
 
@@ -189,11 +189,11 @@ Several file system-related C standard library functions are used to handle file
   size_t fread(void *ptr, size_t size, size_t count, FILE *stream);
   ```
   Reads data from the file into a buffer.
-  - ptr: The buffer where the data will be stored.
-  - size: The size of each data element.
-  - count: The number of elements to read.
-  - stream: The file stream to read from.
-  **Returns**: The number of elements successfully read. If an error occurs, the return value will be less than the requested number of elements.
+  - `ptr`: The buffer where the data will be stored.
+  - `size`: The size of each data element.
+  - `count`: The number of elements to read.
+  - `stream`: The file stream to read from.
+    **Returns**: The number of elements successfully read. If an error occurs, the return value will be less than the requested number of elements.
 - `ferror()`
   ```c
   int ferror(FILE *stream);
@@ -422,6 +422,10 @@ Update the `build.sh` to include the newly created modules.
 In the expserver folder, create a new folder public. Inside this create a file sample.txt with any content. This path is given while calling the `xps_file_create` function.
 
 Now start the server as mentioned in previous stages. Connect a client on port 8002 using `netcat localhost 8002`. Verify that the contents in file sample.txt is received by the client in terminal. Thus we have successfully implemented a basic file server which can send files in local disk to the client.
+
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 12 Automated Tests](/tester/tests/stage12).
+:::
 
 ## Conclusion
 

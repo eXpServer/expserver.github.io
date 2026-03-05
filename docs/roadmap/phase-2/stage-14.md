@@ -501,7 +501,7 @@ int xps_http_parse_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
 
 Let us walk though an example on how state transitions occur during parsing:
 
-```c
+```
 GET http://example.com/index.html HTTP/1.1
 ```
 
@@ -1013,6 +1013,10 @@ As in the previous file server implementation, the file to be opened should be p
 We can verify the modification by requesting the file through browser. Start the server and in browser, enter http request message for getting the file. For eg: `http://localhost:8001/sample.txt` . Here, sample.txt is the file to be opened and it is present in the public folder. Verify that the contents of file are displayed in browser.
 
 Now try how the browser responds if the file is not present in public folder.
+
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 14 Automated Tests](/tester/tests/stage14).
+:::
 
 ## Experiment #1
 

@@ -436,6 +436,7 @@ void sigint_handler(int signum) {
 
 - Cliargs : To handle and store command-line arguments related to the configuration file path.
   :::details **expserver/src/utils/xps_cliargs.h**
+  
   ```c
   #ifndef XPS_CLIARGS_H
   #define XPS_CLIARGS_H
@@ -577,27 +578,35 @@ void xps_cliargs_destroy(xps_cliargs_t *cliargs) {
 
 First we have to run the server by giving the JSON file containing the configuration information as command line argument.
 
-![exp1-img1.png](/assets/stage-16/exp1-img1.png)
+```bash
+./xps ../src/xps_config.json
+```
 
 Three port would be created as given:
 
 ![exp1-img2.png](/assets/stage-16/exp1-img2.png)
 
-- First, we would be verifying the file server functionality. An `index.html` file as mentioned in the xps_config.json is created in the public folder. Add some standard html code in this file. The contents can be viewed on [localhost:8001](http://localhost:8001) on the browser.
+- First, we would be verifying the file server functionality. An `index.html` file as mentioned in the `xps_config.json` is created in the public folder. Add some standard html code in this file. The contents can be viewed on [localhost:8001](http://localhost:8001) on the browser.
 
 Try by replacing files of different format. You have to update JSON configuration file accordingly.
 
 - Now, run a python file server as done earlier in Phase 0.
 
-  ![exp1-img3.png](/assets/stage-16/exp1-img3.png)
+```bash
+python3 -m http.server 3000
+```
 
-  This will create the upstream server mentioned in xps_config.json.
+This will create the upstream server mentioned in xps_config.json.
 
 The files in the directory in which the python server is running can be viewed from the urls [`localhost:8001/hello`](http://localhost:800/hello) and [`localhost:8002`](http://localhost:8002) . In this case, the url is redirected to the second one.
 
 - `localhost:8003` would be redirecting to the `redirect_url` mentioned in the JSON configuration file.
 
 Try adding more ports and redirect to different urls.
+
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 16 Automated Tests](/tester/tests/stage16).
+:::
 
 ## Experiments
 
@@ -615,4 +624,4 @@ Now, navigate to `http://localhost:8001/` in your browser. You will notice that 
 
 ## Conclusion
 
-In this stage, we transitioned from a hardcoded server setup to a dynamic, configuration-driven architecture using JSON. By implementing the `config` module, eXpServer now supports reverse proxying, and URL redirects. While the server currently returns a 404 error when an index file is missing from a directory, we will resolve this in the next stage by implementing a dedicated directory module.
+In this stage, we transitioned from a hardcoded server setup to a dynamic, configuration-driven architecture using JSON. By implementing the `config` module, eXpServer now supports multiple worker cores, reverse proxying, and URL redirects. While the server currently returns a 404 error when an index file is missing from a directory, we will resolve this in the next stage by implementing a dedicated directory module.

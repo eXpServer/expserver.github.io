@@ -243,7 +243,11 @@ So now we have successfully made the required changes to enable epoll edge trigg
 
 Now we will check for the CPU utilization as done in the previous stage. First compile and run the eXpServer. Then in a new terminal run the htop utility. Now connect a netcat client to the server and observe the trend in CPU utilization.
 
-Here we can observe that as compared to the previous stage the CPU utilization has reduced drastically. Since there are no repeated notifications as in level triggered mode, the TCP idle connection is no more consuming more CPU cycles. Thus through edge triggered epoll we are now able to optimize CPU utilization.
+Here we can observe that as compared to the previous stage the CPU utilization has reduced drastically. Since there are no repeated notifications as in level triggered mode, the TCP idle connection is no more consuming more CPU cycles. Thus through edge triggered epoll we are now able to optimize CPU utilization. 
+
+::: tip AUTOMATED TESTS
+You can verify your implementation using the [Stage 9 Automated Tests](/tester/tests/stage9).
+:::
 
 ## Conclusion
 
