@@ -238,7 +238,8 @@ export default defineConfig({
 					items: [
 						{ text: 'Installation', link: '/tester/installation/' },
 						{ text: 'Frontend', link: '/tester/installation/frontend' },
-						{ text: 'Backend', link: '/tester/installation/backend' }
+						{ text: 'Backend', link: '/tester/installation/backend' },
+						{ text: 'Tutorial', link: '/tester/installation/tutorial' }
 					]
 				},
 				{

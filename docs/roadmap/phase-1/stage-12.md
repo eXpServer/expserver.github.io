@@ -244,7 +244,7 @@ The functions in `xps_file.c` are given below:
 
 1. **`xps_file_create()`**
 
-   Opens the file using `fopen()`, creates a `xps_file_s` struct instance and initialize it.
+   This function checks if the file is inside the `public` directory and has read permissions for others, then opens the file using `fopen()` to create and initialize a new `xps_file_s` instance.
 
    ```c
    xps_file_t *xps_file_create(xps_core_t *core, const char *file_path, int *error) {
@@ -264,7 +264,7 @@ The functions in `xps_file.c` are given below:
 
      size_t public_len = strlen(resolved_public);
      if (strncmp(resolved_path, resolved_public, public_len) != 0) {
-       logger(LOG_WARNING, "xps_file_create()", "file is not inside the public directory");
+       logger(LOG_WARNING, "xps_file_create()", "file requested is outside of public directory");
        *error = E_PERMISSION;
        /*free both path*/
        /*close file object*/
