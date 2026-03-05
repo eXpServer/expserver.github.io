@@ -1,4 +1,5 @@
 # Stage 15: HTTP Response Module
+
 ## Recap
 
 - In the previous stage we have seen how to parse an HTTP request and create a request instance.
@@ -19,7 +20,7 @@ An **HTTP response** is sent by a server to a client as a reply to an HTTP reque
 
 Status line: is the first line that the client receives from the server after making a request. It provides essential information about result of the request. It consists of three parts such as, HTTP version, status code and status text.
 
-- **HTTP version**  - indicates the protocol version used by the server, which helps the client understand supported features like persistent connections or multiplexing(e.g., HTTP/1.1),
+- **HTTP version** - indicates the protocol version used by the server, which helps the client understand supported features like persistent connections or multiplexing(e.g., HTTP/1.1),
 - **Status code** - a three-digit number that categorizes the response—1xx for informational, 2xx for success (e.g., 200 OK), 3xx for redirection (e.g., 301 Moved Permanently), 4xx for client errors (e.g., 404 Not Found), and 5xx for server errors (e.g., 500 Internal Server Error).
 - **Status text** - a human-readable phrase that describes the status code, aiding in debugging and clarity.(e.g., OK, Not Found, Internal Server Error).
 
@@ -73,13 +74,13 @@ So now we are familiar with the HTTP response structure. In this stage we will i
 
 ## Design
 
-For implementing HTTP responses, a new module named `xps_http_res` has to be created. A new struct named `xps_http_res_s` is introduced in this module. The struct `xps_http_res_s` contain fields for response line, headers and body. `xps_http_res` module will take care of the creation, cleanup and serialization of the HTTP response headers. A new function named `xps_http_set_header()` has to be added in the `xps_http` module. This function is responsible for adding key-value pairs to the headers list. 
+For implementing HTTP responses, a new module named `xps_http_res` has to be created. A new struct named `xps_http_res_s` is introduced in this module. The struct `xps_http_res_s` contain fields for response line, headers and body. `xps_http_res` module will take care of the creation, cleanup and serialization of the HTTP response headers. A new function named `xps_http_set_header()` has to be added in the `xps_http` module. This function is responsible for adding key-value pairs to the headers list.
 
 ## Implementation
 
 ![design.png](/assets/stage-15/stage-15-design.png)
 
-In this stage we will be creating the new module named `xps_http_res`  and modifications are there in the existing modules like, `xps_http` , `xps_session`
+In this stage we will be creating the new module named `xps_http_res` and modifications are there in the existing modules like, `xps_http` , `xps_session`
 
 ## `xps_http_res` Module
 
@@ -88,29 +89,27 @@ In this stage we will be creating the new module named `xps_http_res`  and modif
 The code below has the contents of the header file for `xps_http_res`. Have a look at it and make a copy of it in your codebase.
 
 - **expserver/src/http/xps_http_res.h**
-    
-    ```c
-    #ifndef XPS_HTTP_RES_H
-    #define XPS_HTTP_RES_H
-    
-    #include "../xps.h"
-    
-    struct xps_http_res_s {
-      char response_line[70];
-      vec_void_t headers;
-      xps_buffer_t *body;
-    };
-    
-    xps_http_res_t *xps_http_res_create(xps_core_t *core, u_int code);
-    void xps_http_res_destroy(xps_http_res_t *res);
-    xps_buffer_t *xps_http_res_serialize(xps_http_res_t *res);
-    void xps_http_res_set_body(xps_http_res_t *http_res, xps_buffer_t *buff);
-    
-    #endif
-    ```
-    
+  ```c
+  #ifndef XPS_HTTP_RES_H
+  #define XPS_HTTP_RES_H
 
-A new struct `xps_http_res_s` is introduced here. From this stage on wards an HTTP response will be represented using this struct. It contain fields to carry the information related to HTTP responses. The fields of `xps_http_res_s`  are as follows,
+  #include "../xps.h"
+
+  struct xps_http_res_s {
+    char response_line[70];
+    vec_void_t headers;
+    xps_buffer_t *body;
+  };
+
+  xps_http_res_t *xps_http_res_create(xps_core_t *core, u_int code);
+  void xps_http_res_destroy(xps_http_res_t *res);
+  xps_buffer_t *xps_http_res_serialize(xps_http_res_t *res);
+  void xps_http_res_set_body(xps_http_res_t *http_res, xps_buffer_t *buff);
+
+  #endif
+  ```
+
+A new struct `xps_http_res_s` is introduced here. From this stage on wards an HTTP response will be represented using this struct. It contain fields to carry the information related to HTTP responses. The fields of `xps_http_res_s` are as follows,
 
 - `char response_line[70]` : a character array that contains the whole response line of the HTTP response. It will include HTTP version, status code and status text.
 - `vec_void_t headers` : an array of parsed headers in the form of key-value pairs.
@@ -134,7 +133,7 @@ xps_http_res_t *http_res = malloc(/* fill this */);
 ```
 
 - Initialize the response_line, headers and body fields of the struct. Initializing of the response line is done based on the status code received. The HTTP version used is `HTTP/1.1`, which is an improved version of `HTTP`. For each status code the status line is to be given appropriately. The response_line for status code 200 looks like `"HTTP/1.1 200 OK"` .
-- The headers are to be added to the headers field of the xps_http_res struct, in the form of key-value pairs. For this `xps_http_set_header()` can be used. Default headers like `Date`, `Server` and `Access-Control-Allow-Origin` are to be set here. Date header should contain current date and time, when the response is generated. Server name can be hard coded to eXpServer in xps.h, which is to be used as value for server key in the header. For `Access-Control-Allow-Origin`, the value can be set to “*”. This header tells browsers(clients) that they can allow any website to access the resource, effectively enabling cross-origin requests without restrictions.
+- The headers are to be added to the headers field of the xps_http_res struct, in the form of key-value pairs. For this `xps_http_set_header()` can be used. Default headers like `Date`, `Server` and `Access-Control-Allow-Origin` are to be set here. Date header should contain current date and time, when the response is generated. Server name can be hard coded to eXpServer in xps.h, which is to be used as value for server key in the header. For `Access-Control-Allow-Origin`, the value can be set to “\*”. This header tells browsers(clients) that they can allow any website to access the resource, effectively enabling cross-origin requests without restrictions.
 
 ```c
 xps_http_set_header(&(http_res->headers), "Date", time_buf);
@@ -143,8 +142,6 @@ xps_http_set_header(&(http_res->headers), "Access-Control-Allow-Origin", "*");
 ```
 
 - Finally return the response instance created.
-
- 
 
 `xps_http_res_destroy()` : releases the memory and resources allocated to the http_response object. The body of the response and keys and values present in each of the headers are released.
 
@@ -157,7 +154,7 @@ xps_http_set_header(&(http_res->headers), "Access-Control-Allow-Origin", "*");
 ```c
 xps_buffer_t *xps_http_res_serialize(xps_http_res_t *http_res) {
   /* valid params */
-  
+
   // Serialize headers
   xps_buffer_t *headers_str = /* fill this */;
   if (headers_str == NULL) {
@@ -204,7 +201,7 @@ int xps_http_set_header(vec_void_t *headers, const char *key, const char *val) {
     logger(LOG_ERROR, "xps_http_set_header()", "malloc() failed for 'header'");
     return E_FAIL;
   }
-  
+
   /* allocate memory for header->key and header->val */
 
   if (header->key == NULL || header->val == NULL) {
@@ -233,9 +230,9 @@ The `xps_http_res_create()` function is getting called from this function. Based
 - If the `HTTP` request was `NULL`, then an HTTP response is created with the response status code set to `HTTP_BAD_REQUEST`. It indicates that there was error from client due to which the server can’t process the request. (The HTTP request will become NULL, if the requested URL was incorrect or if there were some missing fields or invalid data types in the request.)
 - If there was error while creating the file to be served by the server, then an HTTP response is created with response status codes set to indicate those particular errors. For the error `E_PERMISSION`, the status code is set to `HTTP_FORBIDDEN` and for `E_NOTFOUND` it is set to `HTTP_NOT_FOUND`.
 
-    `HTTP_NOT_FOUND` indicates that the server could not find the requested resources.
+  `HTTP_NOT_FOUND` indicates that the server could not find the requested resources.
 
-    `HTTP_FORBIDDEN` indicates that the server is unable to authorize the request. It can be due to insufficient permissions or access controls. 
+  `HTTP_FORBIDDEN` indicates that the server is unable to authorize the request. It can be due to insufficient permissions or access controls.
 
 - If there were no errors with the request, then HTTP response is created with `HTTP_OK` status code.
 - If the path for the requested file is not found, then HTTP response is created with status code set to `HTTP_NOT_FOUND`.
@@ -245,9 +242,9 @@ The `xps_http_res_create()` function is getting called from this function. Based
 
 ## Milestone #1
 
-So now we have completed the implementation of the response module. Now it’s time to verify the implementation. In stage 14, we have seen on requesting a file in the public folder, through an HTTP request, the contents get displayed in the browser. (There we have hard coded the HTTP responses in the session process request function itself.) Similarly check whether on passing a valid HTTP request, whether contents in the file mentioned is getting displayed in the browser or not.  
+So now we have completed the implementation of the response module. Now it’s time to verify the implementation. In stage 14, we have seen on requesting a file in the public folder, through an HTTP request, the contents get displayed in the browser. (There we have hard coded the HTTP responses in the session process request function itself.) Similarly check whether on passing a valid HTTP request, whether contents in the file mentioned is getting displayed in the browser or not.
 
-First compile the changes and run the server. 
+First compile the changes and run the server.
 
 In the browser enter the HTTP request (eg : `http://localhost:8001/sample.txt`, sample.txt should be present in the public folder).
 
@@ -262,4 +259,5 @@ First start the server and in the browser enter an HTTP request (eg: `http://loc
 Inside networks tab you can see all the requests made by the client. Click on the current request(ie sample.txt). Then select the headers tab seen on top. In the headers section, you can see response headers section. Check whether the response headers that we created are getting displayed correctly. Also verify the status code displayed is correct or not.
 
 ## Conclusion
+
 In this stage, we modularized the HTTP response handling by introducing the xps_http_res module, which manages the creation, cleanup, and serialization of HTTP responses. This replaced the earlier hardcoded approach with a structured system that adheres to standard HTTP response formats, including status lines, headers, and body content. The xps_http_res_s structure was implemented to represent responses, and new functions were added for setting headers and serializing data. We also updated the xps_http and xps_session modules to integrate this new functionality. Successful testing through browser rendering and inspection confirmed that responses are correctly structured and transmitted.

@@ -1,4 +1,3 @@
-
 # GNU Debugger (GDB)
 
 ## Introduction
@@ -10,11 +9,8 @@ Errors like segmentation faults may be easier to find with the help of gdb.
 GDB allows you to:
 
 - Pause and continue its execution
-    
 - Set "break points" or conditions where the execution pauses so you can look at its state (the value of the variables at that point).
-    
 - View and "watch" variable values
-    
 - Step through the program line-by-line (or instruction by instruction)
 
 ## Installation
@@ -60,12 +56,12 @@ struct Node {
 void printList(struct Node* head) {
     struct Node* current = head;
     printf("Attempting to print list:\n");
-    
+
     while (current != NULL) {
         printf("%d -> ", current->data);
         current = current->next;
     }
-    
+
     printf("NULL\n");
 }
 
@@ -82,9 +78,9 @@ int main() {
     second->next = third;
 
     third->data = 30;
-    
-    third->next = second; 
-    
+
+    third->next = second;
+
 
     printf("Calling printList...\n");
     printList(head);
@@ -105,9 +101,7 @@ int main() {
 It contains:
 
 - A `struct Node` definition (with `int data` and `struct Node* next`).
-    
 - A `printList(struct Node* head)` function that iterates through the list and prints each node's data.
-    
 - A `main` function that builds a list (e.g., 10 -> 20 -> 30) but then incorrectly sets the 3rd node's `next` pointer back to the 2nd node, creating a `20 -> 30 -> 20...` cycle.
 
 We know that by manual tracing, the list should be: 10 -> 20 -> 30 -> NULL.
@@ -147,12 +141,14 @@ We know the program hangs, and we suspect the printList function is the problem.
 ```
 (gdb) break printList
 ```
+
 You can also set a breakpoint on a specific line number. This is useful if you know exactly which line you want to stop at.
+
 ```
 (gdb) break list_demo.c:14
 ```
 
-* This sets a breakpoint at **line 14 of `list_demo.c`**, pausing execution whenever that line is about to run.
+- This sets a breakpoint at **line 14 of `list_demo.c`**, pausing execution whenever that line is about to run.
 
 Alternatively, you can set a breakpoint by line number alone:
 
@@ -160,14 +156,12 @@ Alternatively, you can set a breakpoint by line number alone:
 (gdb) break 14
 ```
 
-* This sets a breakpoint at **line 14 of the “current” source file**.
-* The current file is usually:
-
-  * The file where execution currently is, or
-  * The file you last viewed using `list` or `layout src`.
+- This sets a breakpoint at **line 14 of the “current” source file**.
+- The current file is usually:
+  - The file where execution currently is, or
+  - The file you last viewed using `list` or `layout src`.
 
 Using breakpoints lets you pause execution at critical points and inspect variables to debug your program effectively.
-
 
 **`run`** - It runs the program until it encounters one of the break points.
 
@@ -221,8 +215,6 @@ This confirms that the node with data `30` points back to the node with data `20
 
 Since the `printList` function iterates through the list with a `while` loop, we can set a breakpoint on a line _inside_ that loop (e.g., line 14, `printf("%d -> ", current->data);`).
 
-
-
 ```
 (gdb) break 14
 Breakpoint 2 at 0x...: file list_demo.c, line 14.
@@ -233,7 +225,7 @@ Breakpoint 2, printList (head=...) at list_demo.c:14
 (gdb) print current->data
 $1 = 10
 (gdb) continue
-10 -> 
+10 ->
 Breakpoint 2, printList (head=...) at list_demo.c:14
 (gdb) print current->data
 $2 = 20
@@ -257,12 +249,11 @@ GDB will monitor the value of the `current` pointer, and whenever the value of t
 
 ### Infinite Loop
 
-One of the important use cases of GDB is when we encounter a segmentation fault or infinite loop. In such situations, using GDB to debug the code, and identify what went wrong is invaluable. It can save a significant amount of time and effort in troubleshooting these complex errors. 
+One of the important use cases of GDB is when we encounter a segmentation fault or infinite loop. In such situations, using GDB to debug the code, and identify what went wrong is invaluable. It can save a significant amount of time and effort in troubleshooting these complex errors.
 
 In this example, we can see an infinite loop. Let us see how we can use GDB to find the exact error in our linked list structure.
 
 ![gdb-infiniteloop.png](/assets/resources/gdb-infiniteloop.png)
-
 
 Let us print the memory addresses of the nodes.
 
@@ -288,7 +279,7 @@ The result `1` means **true**. We have definitively proven that a cyclic pointer
 
 Now, we will remove the loop live in GDB to confirm our fix.
 
-`set var`  - This command is used to modify the current value of a variable.
+`set var` - This command is used to modify the current value of a variable.
 
 We will use set to change the next pointer of the '30' node to NULL (which is 0x0), as it should be.
 
@@ -318,98 +309,80 @@ GDB, thus, helps us to find the root cause of complex bugs and even test fixes l
 Some of the important GDB commands are:
 
 - **`layout next`**: Opens a Graphical user interface.
-    
 - **`start`**: Starts debugging from top, and gives control to user.
-    
 - **`break`**: Sets a break point at a function or line number.
-    
 - **`continue`**: Runs until the next breakpoint is encountered.
-    
 - **`run`**: Runs the program until it encounters a breakpoint.
-    
 - **`next` or `n`**: Steps over to the next line in the current scope.
-    
 - **`step` or `s`**: Steps into a function call.
-    
 - **`print`**: Prints the value of a variable.
-    
 - **`set var`**: Modifies the current value of a variable.
-    
 - **`quit`**: Stops the debugging process.
-    
 - **`refresh`**: Restarts the debugging process from the top.
-    
 - **`clear`**: Clears set breakpoints.
-    
 - **`backtrace full`**: Shows a summary of how your program got where it is (useful for segmentation faults).
-    
 - **`watch`**: Stops execution when the value of an expression changes.
-    
 - **`rwatch`**: Stops execution when an expression is read.
-    
 - **`awatch`**: Stops execution when an expression is read or written to.
-    
 - **`info watch`**: Prints a list of watchpoints.
-    
 - **`info break`**: Prints a list of breakpoints.
-    
 - **`list`**: Lists the source code around the current line.
-    
 - **`delete {val}`**: Deletes a watchpoint or breakpoint by its number.
-    
 - **`x {var_name}`**: Shows the memory location and value of a variable.
-    
 
 ### Some Important Commands in Detail
 
-* **Run**
+- **Run**
+
   ```
    (gdb) run
-   ```
+  ```
 
-* **Break**
+- **Break**
+
   ```
    (gdb) break my_file_1.c:5
-   ```
+  ```
 
-* **Watch**
+- **Watch**
+
   ```
    (gdb) watch my_var
-   ```
+  ```
 
-* **Conditional Breakpoints**
+- **Conditional Breakpoints**
+
   ```
    (gdb) break my_file_1.c:5 if i >= SIZE_OF_ARRAY
-   ```
+  ```
 
-* **Pointer Operations**
+- **Pointer Operations**
+  - See the pointer's memory address:
 
-    * See the pointer's memory address:
-  
-    ```
-     (gdb) print struct_pointer
-    ```
+  ```
+   (gdb) print struct_pointer
+  ```
 
-    * See a specific field of a struct:
-  
-    ```
-     (gdb) print struct_pointer->name
-    ```
+  - See a specific field of a struct:
 
-    * Use dereference (`*`) and dot (`.`) operators:
-  
-    ```
-     (gdb) print (*struct_pointer).name
-    ```
+  ```
+   (gdb) print struct_pointer->name
+  ```
 
-    * See the entire contents of the struct:
-  
-    ```
-     (gdb) print *struct_pointer
-    ```
+  - Use dereference (`*`) and dot (`.`) operators:
 
-    * Follow pointers in a sequence (like a linked list):
-  
-    ```
-     (gdb) print list_prt->next->next->next->data
-    ```
+  ```
+   (gdb) print (*struct_pointer).name
+  ```
+
+  - See the entire contents of the struct:
+
+  ```
+   (gdb) print *struct_pointer
+  ```
+
+  - Follow pointers in a sequence (like a linked list):
+
+  ```
+   (gdb) print list_prt->next->next->next->data
+  ```

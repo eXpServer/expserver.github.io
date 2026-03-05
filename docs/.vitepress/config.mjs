@@ -49,7 +49,7 @@ export default defineConfig({
 							text: 'Introduction to Linux epoll',
 							link: '/guides/resources/introduction-to-linux-epoll',
 						},
-						
+
 						{
 							text: 'Linux epoll',
 							link: '/guides/resources/linux-epoll',
@@ -108,7 +108,6 @@ export default defineConfig({
 								{
 									text: 'Stage 4: Linux epoll',
 									link: '/roadmap/phase-0/stage-4',
-
 								},
 								{
 									text: 'Stage 5: TCP Proxy',
@@ -182,7 +181,6 @@ export default defineConfig({
 									text: 'Stage 17: Directory Browsing',
 									link: '/roadmap/phase-2/stage-17',
 								},
-
 							],
 						},
 						{
@@ -232,7 +230,6 @@ export default defineConfig({
 					],
 				},
 			],
-
 		},
 
 		socialLinks: [{ icon: 'github', link: 'https://github.com/eXpServer' }],

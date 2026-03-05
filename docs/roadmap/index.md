@@ -63,7 +63,7 @@ The eXpServer project comprises 24 stages, organized into 5 phases. Prior to the
 - [Stage 20: Load Balancing](phase-3/stage-20)
 - [Stage 21: Request timeouts](phase-3/stage-21)
 
-### Phase 4: Advanced features 
+### Phase 4: Advanced features
 
 - [Overview](phase-4/)
 - [Stage 22: Metrics](phase-4/stage-23)

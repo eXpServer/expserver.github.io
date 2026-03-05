@@ -39,12 +39,10 @@ See **[Spinlock](#spinlock)** in the glossary for details.
 The wait queue stores references to processes or threads that have called `epoll_wait()` and are currently blocked inside the kernel.
 
 - When a thread calls `epoll_wait()` and there are **no ready events**, the kernel:
-
   - Adds the calling thread to this wait queue.
   - Puts the thread to sleep.
 
 - The thread remains in the wait queue until one of the following occurs:
-
   - An event happens on a monitored file descriptor.
   - The timeout specified in `epoll_wait()` expires.
 
@@ -58,16 +56,13 @@ The ready list is a doubly linked list that contains entries for file descriptor
 
 - Each entry in the ready list corresponds to a monitored file descriptor for which at least one registered event condition is currently true (for example, data available to read).
 - When the kernel detects an event on a monitored file descriptor:
-
   - The corresponding entry is added to the ready list.
 
 - When `epoll_wait()` is called:
-
   - The kernel checks whether the ready list is empty.
   - If it is not empty, the kernel copies event information from the ready list into the user-provided buffer and returns immediately.
 
 - After events are reported:
-
   - Entries may be removed from the ready list, depending on whether the file descriptor is using [level-triggered](#level-triggered-mode) or [edge-triggered mode](#edge-triggered-mode). This will be explained later in this document.
 
 ### 3. The Red-Black Tree (`rbr`)
@@ -76,7 +71,6 @@ The [red-black tree](https://en.wikipedia.org/wiki/Red%E2%80%93black_tree) store
 
 - Each node in the tree corresponds to one monitored file descriptor and contains the information epoll needs to monitor track that file descriptor.
 - This tree allows the kernel to:
-
   - Quickly find a file descriptor when an event occurs.
   - Efficiently add, modify, or remove file descriptors.
 
@@ -373,9 +367,7 @@ When an application calls `epoll_wait()`, it essentially hands control to the ke
 Workflow of `epoll_wait()` :
 ![epoll_wait.png](/assets/resources/linux-epoll-wait.png)
 
-
 ## Glossary
-
 
 ### Callback
 
@@ -401,7 +393,7 @@ Code running in interrupt context is not associated with any user process or ker
 
 In the context of epoll, interrupt handlers do not directly invoke epoll logic. Instead, they typically schedule deferred work that later leads to epoll callbacks being triggered.
 
-----------
+---
 
 ### Softirq Context
 

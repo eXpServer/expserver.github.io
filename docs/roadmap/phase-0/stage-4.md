@@ -28,13 +28,11 @@ Let us clearly understand the requirement once again. We have one single port th
 Think of [`tcp_server.c`](/roadmap/phase-0/stage-1.md#tcp-server-c) (implemented in stage 1) as two parts:
 
 1. **Setting up the server and waiting for clients**
-
    - Creating the listening socket
    - Binding the socket to a port
    - Making the socket listen on the port
 
 2. **Accepting and serving clients**
-
    - Accept client connection
    - Revieve and send messages to client
 
@@ -60,9 +58,10 @@ The above code allowed us to connect to one client at a time and keep serving th
 Now let us modify this section and use epoll to achieve our goal of concurrency.
 
 ::: tip PRE-REQUISITE READING
+
 - Read about [Introduction to epoll](/guides/resources/introduction-to-linux-epoll).
 - Read about [Linux epoll](/guides/resources/linux-epoll)
-:::
+  :::
 
 First we’ll create an epoll instance using [`epoll_create1()`](https://man7.org/linux/man-pages/man2/epoll_create.2.html) given by the `<sys/epoll.h>` header. This returns a file descriptor (FD), and lets call it `epoll_fd`. Remember FD’s are just integers (unsigned integers, to be specific).
 
@@ -147,11 +146,9 @@ Integer fields for lightweight IDs or metadata.
 
 :::
 
-
 :::tip Union
 `epoll_data_t` is implemented as a union. Since all members overlap in memory, only one field holds a valid value at a time.
 :::
-
 
 We are now ready to utilize our epoll instance. The first FD we would like to monitor is the listening socket. So let us add that to the epoll. This will allow us to get notified of incoming connection requests.
 
@@ -303,5 +300,3 @@ Here is the expected output:
 ## Conclusion
 
 The server is now capable of handling multiple clients simultaneously using the _epoll_ I/O event notification mechanism in Linux. Recall that this is one of the methods that can be done to provide concurrency.
-
-
