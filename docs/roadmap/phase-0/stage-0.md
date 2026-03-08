@@ -26,6 +26,16 @@ Read the section on [GDB](/guides/resources/gdb) to learn how to use the GNU deb
 
 Use of a version control like [Git](https://git-scm.com/doc) is recommended.
 
+### Tester
+
+**eXpServer-Testbench** is an automated testing platform used throughout this course to validate your server implementations. Each stage has a corresponding set of tests that check whether your binary behaves as expected.
+
+:::tip
+
+- **Install** the tester by following the [Installation Guide](/tester/).
+- **Use** it to verify your implementation at the end of each stage.
+  :::
+
 ## Conclusion
 
 That is all the setup that is needed to get started on eXpServer! Let us proceed to the next stage where we will build a basic, but functional TCP server on our own.

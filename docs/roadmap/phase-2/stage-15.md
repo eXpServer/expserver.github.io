@@ -89,6 +89,7 @@ In this stage we will be creating the new module named `xps_http_res` and modifi
 The code below has the contents of the header file for `xps_http_res`. Have a look at it and make a copy of it in your codebase.
 
 - **expserver/src/http/xps_http_res.h**
+
   ```c
   #ifndef XPS_HTTP_RES_H
   #define XPS_HTTP_RES_H

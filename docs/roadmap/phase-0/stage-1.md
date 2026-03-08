@@ -384,10 +384,6 @@ int main() {
 
 ### Milestone #2
 
-::: tip AUTOMATED TESTS
-Verify your implementation using the [Stage 1 Automated Tests](/tester/tests/stage1).
-:::
-
 It is time to test the server! As before, open 2 terminals, one for the TCP server that we just wrote and another for the netcat client. Start the server followed by the client.
 
 Upon the successful connection of the client to the server, the server terminal should display:
@@ -414,6 +410,14 @@ The client will receive the reversed string.
 ```bash
 olleh
 ```
+
+### Milestone #3
+
+:::tip NOTE
+
+- Before proceeding further read [Expserver-Tester](/tester/installation/tutorial)
+- Verify your implementation using the [Stage 1 Automated Tests](/tester/tests/stage1).
+  :::
 
 ## Conclusion
 

@@ -572,6 +572,7 @@ Let us look into the states in header parsing:
 - `H_LF`: Indicates the end of the current header line. If a second line feed is encountered, it moves to `H_LF_LF`, indicating that the entire header section is done. Otherwise, it moves back to `H_START` to process the next header.
 - `H_LF_LF` and `H_LF_CR`: These states signify the end of the HTTP header section. If they reach the correct termination character sequence, the function returns `OK`.
   :::details **expserver/src/http/xps_http.c -** `xps_http_parse_header_line()`
+
   ```c
   int xps_http_parse_header_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
     assert(http_req != NULL);
@@ -646,6 +647,7 @@ Let us look into the states in header parsing:
   }
 
   ```
+
   :::
 
 Let us walk through an example, the headers be as given below:
@@ -769,6 +771,7 @@ int http_process_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
 Add the `str_from_ptrs()` utility function. Update `xps_utils.h` accordingly.
 
 - `expserver/src/utils/xps_utils.c`
+
   ```c
   char *str_from_ptrs(const char *start, const char *end) {
     assert(start != NULL);
@@ -789,6 +792,7 @@ Add the `str_from_ptrs()` utility function. Update `xps_utils.h` accordingly.
     return str;
   }
   ```
+
 - **`http_process_headers()`**
 
 Processes the headers of the HTTP request by repeatedly calling `xps_http_parse_header_line()` to parse each header line.

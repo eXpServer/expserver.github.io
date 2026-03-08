@@ -63,7 +63,7 @@ export default defineConfig({
 						// { text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },
 						// { text: 'File descriptors', link: '/guides/resources/file-descriptors' },
 
-						{ text: 'MIME Types', link: '/guides/resources/mime-types' },
+						// { text: 'MIME Types', link: '/guides/resources/mime-types' },
 					],
 				},
 				{
@@ -234,13 +234,13 @@ export default defineConfig({
 			'/tester/': [
 				{
 					text: 'Installation',
-					collapsed: true,
+					collapsed: false,
 					items: [
-						{ text: 'Installation', link: '/tester/installation/' },
+						{ text: 'Installation', link: '/tester/' },
 						{ text: 'Frontend', link: '/tester/installation/frontend' },
 						{ text: 'Backend', link: '/tester/installation/backend' },
-						{ text: 'Tutorial', link: '/tester/installation/tutorial' }
-					]
+						{ text: 'Tutorial', link: '/tester/installation/tutorial' },
+					],
 				},
 				{
 					text: 'Tests',

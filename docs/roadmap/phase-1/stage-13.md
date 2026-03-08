@@ -2,15 +2,17 @@
 
 ## Recap
 
-- In the last three stages we have created pipe module, upstream module and file module.
+- By the end of Stage 10, we addressed CPU and memory utilization issues in the server
+- In Stage 11, we implemented the upstream module, which enables our server to act as a proxy
+- In Stage 12, we implemented the file module, allowing the server to serve static files to clients
 
 ## Learning Objectives
 
-- In this stage we will implement a session module.
+- In this stage we will implement a session module which will act as an intermediary between client requests and other modules.
 
 ## Introduction
 
-In the previous stages we have implemented upstream and file modules. Whenever any client requests are received on port 8001, we created an upstream module which will interact with the upstream server. Similarly for requests received on port 8002, a file module was created which will serve the static files. Now we are introducing a new module named session module. Session module will play the role of an intermediary in handling client requests. From this stage on wards all the client requests will be first directed to the session module. Session module will decide whether it should serve a file or reverse the proxy. In the current stage, session module makes this decision based on the port on which the requests were received. In the later stages an xps_http module will be used, which will parse the incoming client requests. Session will then look at the configuration, based on the parsed HTTP request, to make the decision.
+In the previous stages we have implemented upstream and file modules. Whenever any client requests are received on port 8001, we created an upstream module which will interact with the upstream server. Similarly for requests received on port 8002, a file module was created which will serve the static files. Now we are introducing a new module named session module. Session module will play the role of an intermediary in handling client requests. From this stage onwards all the client requests will be first directed to the session module. Session module will decide whether it should serve a file or reverse the proxy. In the current stage, session module makes this decision based on the port on which the requests were received. In the later stages an xps_http module will be used, which will parse the incoming client requests. The session module will then look at the configuration, based on the parsed HTTP request and make the decision.
 
 ### File Structure for stage 13
 
@@ -162,7 +164,9 @@ xps_session_t *xps_session_create(xps_core_t *core, xps_connection_t *client) {
   session->upstream_sink->ready = /* fill this */
   session->file_sink->ready = /* fill this */
 
-  // Add to 'sessions' list of core
+  /*NOTE: We will be adding list of sessions as vec_void_t sessions to xps_core_s in xps_core module below*/
+  // Add current session to core->sessions
+
   /* fill this */
 
   // Attach client
@@ -245,7 +249,7 @@ In `xps_session.c` several handler functions are there for handling various even
   1. client to upstream flow : If `session->upstream_source` is active and either `session - >client_sink` is active or if there is some data in `from_client_buff`, then it implies there can be a data flow from client to upstream.
   2. upstream to client flow : If `session->client_source` is active and either `session->upstream_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between upstream and client.
   3. file to client flow : If `session->client_source` is active and either `session->file_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between file and client.
-  If none of these flows are present then session instance gets destroyed.
+     If none of these flows are present then session instance gets destroyed.
 
 ::: details **expserver/src/core/xps_session.c - handler functions**
 

@@ -2,15 +2,15 @@
 
 ## Recap
 
-We have implemented a proxy server in port 8001 for connecting to an upstream python server using `xps_upstream` module. 
+We have implemented a proxy server in port 8001 for connecting to an upstream python server using `xps_upstream` module.
 
 ## Learning Objectives
 
-We would be implementing a file server for incoming connections to port 8002. 
+We would be implementing a file server for incoming connections to port 8002.
 
 ## Introduction
 
-A file server stores and delivers files to clients over a network, enabling remote access. It allows users to download, upload, and modify files. In this stage, we would be implementing a rudimentary file server, which delivers files upon client request. Our server only allows files residing inside the `public` folder to be downloaded, and the files must have read access granted to `others`. When there are incoming connections to port 8002, the server serves a static file to the client through the pipe mechanism discussed earlier.At this point, the client is expected to know the filename to be downloaded from the `public` folder. In later stages, we'll be adding support for directory browsing on the `public` folder.
+A file server stores and delivers files to clients over a network, enabling remote access. It allows users to download, upload, and modify files. In this stage, we would be implementing a rudimentary file server, which delivers files upon client request. Our server only allows files residing inside the `public` folder to be downloaded, and the files must have read access granted to `others`. When there are incoming connections to port 8002, the server serves a static file to the client through the pipe mechanism discussed earlier. At this stage, due to the absence of HTTP parsing the client is unable to request for a specific file so as of now the file will be predifined. In later stages, we'll be adding support for directory browsing on the `public` folder.
 
 ## Design
 
@@ -178,7 +178,7 @@ Several file system-related C standard library functions are used to handle file
     - SEEK_SET: The offset is set relative to the beginning of the file.
     - SEEK_CUR: The offset is added to the current position.
     - SEEK_END: The offset is set relative to the end of the file.
-  **Returns**: 0 on success, or -1 on error.
+      **Returns**: 0 on success, or -1 on error.
 - `ftell()`
   ```c
   long ftell(FILE *stream);
@@ -409,11 +409,6 @@ As we have to serve file for the incoming connections on port 8002, the `listene
       ...
     }
 ```
-
-:::info NOTE
-Since
-
-:::
 
 ## Milestone #1
 

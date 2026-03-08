@@ -104,7 +104,7 @@ const batch2022 = [
     title: 'Developer',
     links: [
       { icon: 'github', link: 'https://github.com/Shibin-Ez' },
-      { icon: 'linkedin', link: '' }
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/shibin-ez-892347250/' }
     ]
   }
 ]

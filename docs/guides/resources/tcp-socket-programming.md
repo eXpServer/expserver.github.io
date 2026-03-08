@@ -18,6 +18,7 @@ The working of [TCP protocol](https://en.wikipedia.org/wiki/Transmission_Control
    5. Connection establishment - On receiving the **ACK** from client, the server side kernel now moves this **fully established connection** from the **request queue** to the **accept queue** (also called the **completed connection queue**). Once this step is complete, the connection is fully established. If the server fails to receive **ACK** from the client at time out, then the **SYN-ACK** packet is re-transmitted and the client must sent **ACK** again. (These attempts could be repeated a few times (typically 5 times by most Linux kernels) to take care of packet losses, and the connection is dropped from the request queue if three-way-handshake fails to get completed.) The **accept queue** holds connections that are fully established but are waiting for the server to call the `accept()` system call. The `accept()` system call will block till the accept queue is non-empty.
 
       Each entry in the **accept queue** represents a client that has successfully established the connection. After the **three-way handshake** in TCP, when the server calls `accept()`, the **first fully established connection** in the **accept queue** is retrieved. At this point, the kernel creates a **new dedicated socket** called the **connection socket** on the server side for communication with that specific client. This new socket (bounded to same port as the listening socket) is distinct from the original listening socket and is used exclusively for data exchange with that particular client. The original listening socket continues to listen for new incoming connections, and is not used for data transfer. Each TCP connection is thus uniquely determined by the four tuple - **_(server IP, server port, client IP and client port)_.**
+
 2. **Data Transmission:** Data transmission in TCP occurs through the `send()` and `recv()` system calls. Since the connection is already established, these functions do not require specifying the target address, as the kernel on the respective machine (client/server) identifies the socket with the corresponding connection internally.
 
    Here are some internal details on how `send()` and `recv()` system call works.
@@ -89,6 +90,7 @@ int bind ( int sockfd, const struct sockaddr *addr, socklen_t addrlen );
 - **`const struct sockaddr *addr`** - A pointer to a variable of type `struct sockaddr` that contains the address to be bound to the socket. The caller is responsible for declaring and initializing this variable. More details on `struct sockaddr` is provided below:
   - `struct sockaddr`
     The **`sockaddr`** structure is used to define a socket address. It is a general structure used to represent a socket address in a protocol independent way (it is used with both IPv4 and IPv6). It is typically used in functions like `bind()`, `connect()` and `accept()`, when the specific address structure is not known at the compile time. The `<sys/socket.h>` header shall define the **sockaddr** structure that includes the following members:
+
     ```c
     struct sockaddr{
 
@@ -100,8 +102,9 @@ int bind ( int sockfd, const struct sockaddr *addr, socklen_t addrlen );
 
     - **`sa_family_t`** is defined as an **unsigned integer** type in `<sys/socket.h>` header. The sa_family argument is used to denote the socket’s address family.(eg AF_INET is used with IPv4 , AF_INET6 is used with IPv6, AF_UNIX for unix domain sockets )
     - **`sa_data`** is a character array that holds the actual address, which varies depending on the protocol. In case of IPv4, **sa_data** stores an IPv4 address, which consists of the IP address (4 bytes) and the port number (2 bytes). In case of IPv6, **sa_data** that stores an IPv6 address, which consists of the IP address (16 bytes) and the port number (2 bytes).
-    As the `struct sockaddr` is a generic address structure, it cannot directly hold an IPv4 or IPv6 in a fully usable form. Thus we don’t declare and initialize `struct sockaddr` directly in the code. Instead a specialized version of `struct sockaddr` named `struct sockaddr_in` is used for IPv4 addresses and `struct sockaddr_in6` is used for IPv6 addresses. These specific address structures are then typecast into `struct sockaddr`.
-    The `struct sockaddr_in` is a specialized address structure used typically with IPv4 addresses. This structure is defined in the `<netinet/in.h>` header. The fields are as follows:
+      As the `struct sockaddr` is a generic address structure, it cannot directly hold an IPv4 or IPv6 in a fully usable form. Thus we don’t declare and initialize `struct sockaddr` directly in the code. Instead a specialized version of `struct sockaddr` named `struct sockaddr_in` is used for IPv4 addresses and `struct sockaddr_in6` is used for IPv6 addresses. These specific address structures are then typecast into `struct sockaddr`.
+      The `struct sockaddr_in` is a specialized address structure used typically with IPv4 addresses. This structure is defined in the `<netinet/in.h>` header. The fields are as follows:
+
     ```c
     struct sockaddr_in {
 
@@ -120,8 +123,9 @@ int bind ( int sockfd, const struct sockaddr *addr, socklen_t addrlen );
     - **`in_port_t`** : This is a data type used to represent port number in socket programming. It is defined as an unsigned 16 bit integer in `<netinet/in.h>` header. (Since it is an unsigned 16-bit integer, it can hold values in the range from 0 to 65535, which corresponds to the valid port range). It holds port numbers in **network byte order** (big-endian format). Functions like `htons()` (host-to-network short) are used to convert the port number from host byte order to network byte order. (eg `in_port_t port = htons(8080);` )
     - **`struct in_addr` :** This is a structure that represents IPv4 addresses in network byte order. It has a single field of type `in_addr_t`, which actually stores the 4 byte IPv4 addresses.
     - **`in_addr_t`** : This is a data type used to store IPV4 address in network byte order. This is defined as an unsigned 32 bit integer in the `<netinet/in.h>` header. Usually in the code we use IP addresses in standard dotted decimal string representation (e.g., `"192.168.1.1"`). Thus to convert this into `in_addr_t`, a function named `inet_addr()` can be used. It automatically stores the value in **network byte order**.
-    **NOTE**: network byte order refers to the standard way in which data is transmitted over a network. It follows the big-endian format. Host byte order refers to byte order used by a particular machine to store multi byte data. It can be either big endian or little endian depending on the architecture of the machine. In big-endian format, the **most significant byte (MSB)** is stored first, at the smallest memory address. In little-endian format, the **least significant byte (LSB)** is stored first, at the smallest memory address.
-    In case of IPv6, `struct sockaddr_in6` is used instead of `struct sockaddr_in`. The structure of `struct sockaddr_in6` is as follows:
+      **NOTE**: network byte order refers to the standard way in which data is transmitted over a network. It follows the big-endian format. Host byte order refers to byte order used by a particular machine to store multi byte data. It can be either big endian or little endian depending on the architecture of the machine. In big-endian format, the **most significant byte (MSB)** is stored first, at the smallest memory address. In little-endian format, the **least significant byte (LSB)** is stored first, at the smallest memory address.
+      In case of IPv6, `struct sockaddr_in6` is used instead of `struct sockaddr_in`. The structure of `struct sockaddr_in6` is as follows:
+
     ```c
     struct sockaddr_in6 {
 
@@ -137,7 +141,9 @@ int bind ( int sockfd, const struct sockaddr *addr, socklen_t addrlen );
     uint8_t   s6_addr[16];
     };
     ```
+
     This is similar to `struct sockaddr_in` except that there are additional fields for flow information and scope of interfaces. Here the family field should be set to IPv6 and IP address will be of 128 bits. Port number is 16 bits itself as in IPv4. In eXpserver we will be working with IPv4 addresses only thus we mainly deals with `struct sockaddr_in` in the project.
+
 - **`socklen_t addrlen`** - it specifies the length of the `sockaddr` structure pointed to by the `addr` argument. This length is necessary because the operating system needs to know how much memory to read for the address, as different address families can use structures of different sizes. (`socklen_t` is of unsigned integer type)
 
   **Return Value :** On success, `bind()` returns `0`. On failure, it returns `-1`, and the global variable `errno` is set to indicate the specific error. Common errors for `bind()` include **`EADDRINUSE`**, which occurs when the address is already in use by another socket; **`EACCES`**, which indicates the process doesn't have permission to bind to the address; **`EINVAL`**, when the address is invalid; and **`ENOTSOCK`**, which means the provided file descriptor is not a valid socket.

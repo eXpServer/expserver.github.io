@@ -436,7 +436,7 @@ void sigint_handler(int signum) {
 
 - Cliargs : To handle and store command-line arguments related to the configuration file path.
   :::details **expserver/src/utils/xps_cliargs.h**
-  
+
   ```c
   #ifndef XPS_CLIARGS_H
   #define XPS_CLIARGS_H
@@ -452,6 +452,7 @@ void sigint_handler(int signum) {
 
   #endif
   ```
+
   :::
 
 :::details **expserver/src/utils/xps_cliargs.c**

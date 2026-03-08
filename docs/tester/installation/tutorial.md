@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to the **eXpServer-Testbench** platform — a comprehensive solution designed to simplify and automate the process of testing server-side applications in a controlled and insightful environment.
+This guide walks you through the **eXpServer-Testbench** platform — a solution designed to simplify and automate the process of testing server-side applications in a controlled and insightful environment.
 
 This platform is especially useful for developers, students, and educators who are working on low-level network or systems programming and want a streamlined way to test compiled binaries with predefined test cases, real-time logs, and system resource monitoring.
 
@@ -26,8 +26,8 @@ Let’s get started!
 
 ## Overview
 
-1. On the left, there is a sidebar which can be used to toggle between phases and stages.  
-2. In the center, there is a detailed test description which explains what will be tested and the expected behavior.  
+1. On the left, there is a sidebar which can be used to toggle between phases and stages.
+2. In the center, there is a detailed test description which explains what will be tested and the expected behavior.
 3. On the right, there is an execution tab where you can upload a compiled binary file, run it, and see the real-time test status and results.
 
 ![overview](/assets/tester/intro_1.png)
@@ -43,15 +43,15 @@ The Console displays real-time server logs while the test is running.
 
 On the left, we have the execution section:
 
-1. You can add and delete the binary file. After adding the binary file, press **"Run"** to run the test.  
-2. The **Resource Monitor** section shows real-time CPU and memory utilization. It also displays the time taken by the test to run in the backend.  
+1. You can add and delete the binary file. After adding the binary file, press **"Run"** to run the test.
+2. The **Resource Monitor** section shows real-time CPU and memory utilization. It also displays the time taken by the test to run in the backend.
 3. Another section shows the real-time test status: **Pending**, **Running**, **Passed**, or **Failed**. At the bottom, you’ll find the overall test results.
 
 ![execute](/assets/tester/execute.png)
 
 ## Testcase
 
-1. Displays the test case number and its status.  
+1. Displays the test case number and its status.
 2. If a test fails, an **"info"** icon appears next to the test case number. Clicking this icon opens a modal that describes possible reasons why the test might have failed.
 
 ![testcase](/assets/tester/testtab.png)

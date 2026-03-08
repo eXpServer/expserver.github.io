@@ -1,9 +1,11 @@
 # eXpServer Tester Utility -- Frontend
 
 ## Prerequisites
+
 - `node v18+`
 
 ## Directory Structure
+
 ```plaintext
 eXpServer Frontend
 ├── public/
@@ -30,22 +32,34 @@ eXpServer Frontend
 ```
 
 ## Installation
-- clone the repo 
+
+- Clone the repo
+
 ```bash
 git clone https://github.com/eXpServer/expserver-tester.git
 ```
 
-- cd into frontend directory
+- Navigate to the frontend directory:
+
 ```bash
 cd frontend
 ```
 
-- install the dependencies
+- Install the dependencies:
+
 ```bash
 npm install
 ```
 
-- build and execute the program
+- Create a `.env.local` file and add the following configuration to point to your backend services:
+
+```bash
+NEXT_PUBLIC_BACKEND_URL=http://localhost:6969
+NEXT_PUBLIC_SOCKET_URL=http://localhost:6970
+```
+
+- Build and run the application:
+
 ```bash
 npm run build
 npm run start
