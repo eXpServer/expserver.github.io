@@ -11,7 +11,8 @@ Due to the implementation of file server being a rudimentary version (to be chan
 
 - Proxy server should run on port `8001`
 - File server should run on port `8002`
-- Ports `8003`, `8004` should be used for string write-back
+- File server with file path (`../temp/file.txt`) should run on port `8003`
+- Port`8004` should be used for string write-back
 - Server should be able to accept an incoming TCP connection from any of the port, while ensuring graceful shutdown in case of errors
 
 ## Tests
@@ -50,4 +51,11 @@ Checks the behaviour of the proxy server in the event that the upstream server i
 ```js
 testInput: 'Client connects to the proxy and sends a request to be relayed to the upstream server'
 expectedBehavior: "Proxy server shouldn't crash, instead handle the error gracefully"
+```
+### Test 5: File access restriction
+This test verifies that the file server rejects requests for files outside the `public/` directory (`../temp/file.txt`) and doesn't crash
+
+```js
+testInput: "Client connects to port 8003 and sends a path outside the public directory (../temp/file.txt)"
+expectedBehavior: "Server should reject the request gracefully without crashing or serving the file"
 ```
