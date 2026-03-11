@@ -77,6 +77,10 @@ method request-target HTTP-version /* Example: GET /index.html HTTP/1.1 */
 
 #### **Headers (optional)**
 
+:::tip READ
+Before proceeding further, take a look at the various HTTP request and response headers listed [here](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields).
+:::
+
 Headers let the client and the server pass additional information with an HTTP request. Have a look at their syntax below:
 
 ```HTTP
@@ -85,9 +89,9 @@ header-key: header-value /* Example: Host: www.example.com */
 
 Below are some examples of headers, specific to HTTP Request:
 
-- `Accept: text/html` or `Accept: application/json` or `Accept: */*`
-- `Connection: keep-alive` or `Connection: close` or `Connection: upgrade`
-- `Date: Mon, 27 Jul 2009 12:28:53 GMT`
+- [`Accept`](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Accept): `text/html` or `Accept`: `application/json` or `Accept`: `*/*`
+- [`Connection`](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Connection): `keep-alive` or `close` or `upgrade`
+- [`Date`](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Date): `Mon, 27 Jul 2009 12:28:53 GMT`
 
 HTTP messages from the client could have custom Headers. eXpServer should be able to parse all of them, granted that they follow the syntax provided in the RFC.
 
@@ -97,16 +101,16 @@ Blank line to separate HTTP Request head (Request line + Headers) from body ([CR
 
 #### **Message body (optional)**
 
-Body contains data associated with the request. For example, data from an HTML form. The length of the body is indicated by `Content-Length` header in Headers.
+Body contains data associated with the request. For example, data from an HTML form. The length of the body is indicated by [`Content-Length`](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Content-Length) header in Headers.
 
 ### HTTP Response
 
 A HTTP Response message is made up of 4 sections:
 
-1. [Status line](#status-line)
-2. [Headers (optional)](#headers-optional-1)
-3. [Blank line](#blank-line-1)
-4. [Message body (optional)](#message-body-optional-1)
+1. Status line
+2. Headers (optional)
+3. Blank line
+4. Message body (optional)  
 
 ::: details _Example (From RFC9110)_
 
@@ -123,7 +127,7 @@ Accept-Encoding Content-Type: text/plain Hello World! My content includes a trai
 Response line has three parts as indicated below:
 
 ```HTTP
-HTTP-version status-code status-text // Example HTTP/1.1 200 OK
+HTTP-version status-code status-text  /*Example: HTTP/1.1 200 OK*/
 ```
 
 1. **HTTP version:** Indicates the HTTP version used. Out parser only needs to support `HTTP/1.0` and `HTTP/1.1`.
@@ -146,9 +150,9 @@ HTTP-version status-code status-text // Example HTTP/1.1 200 OK
 
 Response headers follow the same syntax as Request headers. Below are some examples of headers, specific to HTTP Response:
 
-- `Age`
-- `Location`
-- `Server`
+- [`Age`](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Age)
+- [`Location`](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Location)
+- [`Server`](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Server)
 
 #### **Blank line**
 
