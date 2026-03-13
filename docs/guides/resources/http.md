@@ -1,6 +1,6 @@
 # HTTP
 
-Hypertext Transfer Protocol (HTTP) is an application-layer protocol for transmitting hypermedia documents, such as HTML. It was designed for communication between web browsers and web servers.
+[Hypertext Transfer Protocol (HTTP)](https://en.wikipedia.org/wiki/HTTP) is an application-layer protocol for transmitting [hypermedia](https://en.wikipedia.org/wiki/Hypermedia) documents, such as HTML. It was designed for communication between web browsers and web servers.
 
 HTTP follows a classical client-server model, with a client opening a connection to make a request, then waiting until it receives a response.
 
@@ -8,12 +8,12 @@ For eXpServer, we will be focusing on HTTP version 1.1
 
 ## HTTP messages
 
-HTTP messages are how data is exchanged between a server and a client. There are two types of HTTP messages:
+HTTP messages define how data is exchanged between a server and a client. There are two types of HTTP messages:
 
 1. **HTTP Request** (client → server)
 2. **HTTP Response** (server → client)
 
-HTTP Requests, and Responses, share similar structure and are composed of:
+HTTP Requests and Responses share similar structure, and are composed of:
 
 1. **Start line** (request line / status line depending upon the type of message)
 2. (optional) **HTTP headers**
@@ -28,10 +28,10 @@ Let us look at each one of them in detail.
 
 A HTTP Request message is made up of 4 sections:
 
-1. [Request line](#request-line)
-2. [Headers (optional)](#headers-optional)
-3. [Blank line](#blank-line)
-4. [Message body (optional)](#message-body-optional)
+1. Request line
+2. Headers (optional)
+3. Blank line
+4. Message body (optional)
 
 ::: details _Example (From RFC9110)_
 
@@ -46,18 +46,22 @@ GET /hello.txt HTTP/1.1 User-Agent: curl/7.64.1 Host: www.example.com Accept-Lan
 Request line has three parts as indicated below:
 
 ```HTTP
-method request-target HTTP-version // Example GET /index.html HTTP/1.1
+method request-target HTTP-version /* Example: GET /index.html HTTP/1.1 */
 ```
 
-1. **Method:** describes the action to be performed. Description of each can be found [here](https://www.rfc-editor.org/rfc/rfc9110#table-4). Below are all the headers supported by HTTP 1.1:
-   - `GET`
-   - `HEAD`
-   - `POST`
-   - `PUT`
-   - `DELETE`
-   - `CONNECT`
-   - `OPTIONS`
-   - `TRACE`
+1. **Method:** describes the action to be performed. Description of each can be found [here](https://www.rfc-editor.org/rfc/rfc9110#table-4). Below are all the methods supported by HTTP 1.1:
+
+   | Method Name | Description |
+   | :--- | :--- |
+   | GET | Retrieves a representation of the specified resource. |
+   | HEAD | Retrieves the headers of the specified resource. |
+   | POST | Submits an entity to the specified resource. |
+   | PUT | Replaces the representation of the target resource with the request payload. |
+   | DELETE | Deletes the specified resource. |
+   | CONNECT | Establishes a tunnel to the server identified by the target resource. |
+   | OPTIONS | Describes the communication options for the target resource. |
+   | TRACE | Performs a message loop-back test along the path to the target resource. |
+
 2. **Request target:** URL or absolute path of the protocol, port and domain. Read about the exact format from [here](https://www.rfc-editor.org/rfc/rfc9110#section-4.1-3). Below are some examples:
    - `/`
    - `/background.png`
@@ -65,7 +69,7 @@ method request-target HTTP-version // Example GET /index.html HTTP/1.1
    - `https://expserver.github.io/roadmap/`
    - `developer.google.com:80`
    - `*`
-3. **HTTP version:** Indicates the HTTP version used. Acts as an indicator of the expected version to use for the response. Out parser only needs to support `HTTP/1.0` and `HTTP/1.1`.
+3. **HTTP version:** Indicates the HTTP version used. Acts as an indicator of the expected version to use for the response. Our parser only needs to support `HTTP/1.0` and `HTTP/1.1`.
    - `HTTP/1.0`
    - `HTTP/1.1`
    - `HTTP/2`
@@ -76,14 +80,14 @@ method request-target HTTP-version // Example GET /index.html HTTP/1.1
 Headers let the client and the server pass additional information with an HTTP request. Have a look at their syntax below:
 
 ```HTTP
-header-key: header-value // Example Host: www.example.com
+header-key: header-value /* Example: Host: www.example.com */
 ```
 
 Below are some examples of headers, specific to HTTP Request:
 
-- `Accept`
-- `Connection`
-- `Date`
+- `Accept: text/html` or `Accept: application/json` or `Accept: */*`
+- `Connection: keep-alive` or `Connection: close` or `Connection: upgrade`
+- `Date: Mon, 27 Jul 2009 12:28:53 GMT`
 
 HTTP messages from the client could have custom Headers. eXpServer should be able to parse all of them, granted that they follow the syntax provided in the RFC.
 
@@ -93,7 +97,7 @@ Blank line to separate HTTP Request head (Request line + Headers) from body ([CR
 
 #### **Message body (optional)**
 
-Body contains data associated with the request. For example, data from HTML form. The length of the body is indicated by `Content-Length` header in Headers.
+Body contains data associated with the request. For example, data from an HTML form. The length of the body is indicated by `Content-Length` header in Headers.
 
 ### HTTP Response
 

@@ -12,7 +12,7 @@
 
 ## Introduction
 
-In the previous stages we have implemented upstream and file modules. Whenever any client requests are received on port 8001, we created an upstream module which will interact with the upstream server. Similarly for requests received on port 8002, a file module was created which will serve the static files. Now we are introducing a new module named session module. Session module will play the role of an intermediary in handling client requests. From this stage onwards all the client requests will be first directed to the session module. Session module will decide whether it should serve a file or reverse the proxy. In the current stage, session module makes this decision based on the port on which the requests were received. In the later stages an xps_http module will be used, which will parse the incoming client requests. The session module will then look at the configuration, based on the parsed HTTP request and make the decision.
+In the previous stages we have implemented upstream and file modules. Whenever any client requests are received on port 8001, we created an upstream module which will interact with the upstream server. Similarly for requests received on port 8002, a file module was created which will serve the static files. Now we are introducing a new module named session module. Session module will play the role of an intermediary in handling client requests. From this stage onwards all the client requests will be first directed to the session module. Session module will decide whether it should serve a file or reverse the proxy. In the current stage, session module makes this decision based on the port on which the requests were received. In the later stages an xps_http module will be used, which will parse the incoming client request. The session module will then look at the configuration, based on the parsed HTTP request and make the decision.
 
 ### File Structure for stage 13
 
@@ -24,7 +24,7 @@ We design and implement a new module named `xps_session` in this stage. `xps_ses
 
 :::tip NOTE
 
-Having a clear understanding about the pipe sources and sinks attached to session is essential for doing this stage. Revisit the architecture of eXpServer to have a good understanding of the structure of session and pipes attached to it.
+Having a clear understanding of the pipe sources and sinks attached to a session is essential for doing this stage. Revisit the architecture of eXpServer to have a good understanding of the structure of session and pipes attached to it.
 
 Session has a client_source, client_sink, upstream_source, upstream_sink and a file_sink.
 
@@ -87,7 +87,7 @@ struct `xps_session_s` contains all the details associated with a session instan
 - `xps_connection_t *upstream` : pointer to the upstream connection instance.
 - `bool upstream_connected` : boolean value that denotes whether upstream is connected to the session or not
 - `bool upstream_error_res_set` : boolean value that shows whether upstream error is set or not
-- `u_long upstream_write_bytes` : the number of bytes that can be written to upstream
+- `u_long upstream_write_bytes` : the number of bytes that have been written to upstream till now
 - `xps_file_t *file` : pointer to the file instance.
 - `xps_pipe_source_t *client_source` , `xps_pipe_source_t *upstream_source`: pipe source for client connection and upstream connection.
 - `xps_pipe_sink_t *client_sink`, `xps_pipe_sink_t *upstream_sink` , `xps_pipe_sink_t *file_sink` : pipe sink for client, upstream and file.
@@ -166,8 +166,6 @@ xps_session_t *xps_session_create(xps_core_t *core, xps_connection_t *client) {
 
   /*NOTE: We will be adding list of sessions as vec_void_t sessions to xps_core_s in xps_core module below*/
   // Add current session to core->sessions
-
-  /* fill this */
 
   // Attach client
   if (xps_pipe_create(core, DEFAULT_PIPE_BUFF_THRESH, client->source, session->client_sink) ==
@@ -303,7 +301,10 @@ void client_sink_close_handler(void *ptr) {
 }
 
 void upstream_source_handler(void *ptr) {
-  /* fill this */
+  /*assert*/
+  
+  /*set ptr as source*/
+  /*set session as source->ptr*/
 
   if (xps_pipe_source_write(source, session->from_client_buff) != OK) {
     logger(LOG_ERROR, "upstream_source_handler()", "xps_pipe_source_write() failed");
@@ -334,7 +335,6 @@ void upstream_source_close_handler(void *ptr) {
 }
 
 void upstream_sink_handler(void *ptr) {
-
   /* fill this */
 
   session->upstream_connected = true;
@@ -366,7 +366,6 @@ void upstream_error_res(xps_session_t *session) {
 }
 
 void file_sink_handler(void *ptr) {
-
   /* fill this */
 
   xps_buffer_t *buff = xps_pipe_sink_read(/* fill this */);
@@ -444,7 +443,7 @@ This function is responsible for destroying the session instance. It is similar 
 - Destroy the buffers, `session->to_client_buff` and `session->from_client_buff` .
 - Set the entry for session in `core->sessions` as NULL.
 - Free the session instance.
-  ::: details **expserver/src/core/xps_session.c `xps_session_destroy()`**
+::: details **expserver/src/core/xps_session.c `xps_session_destroy()`**
 
 ```c
 void xps_session_destroy(xps_session_t *session) {
