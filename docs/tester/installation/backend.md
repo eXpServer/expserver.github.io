@@ -116,7 +116,11 @@ POSTGRES_HOST=postgresdb
 
 DATABASE_URL=postgresql://<username>:<password>@postgresdb:5432/<database>
 
-DEBUG=(true|false)
+DEBUG=false
+
+REDIS_URL=redis://redis:6379
+
+HOST_PWD=<your-expserver-tester-directory>/backend
 ```
 
 - build the container required to execute test cases
