@@ -281,7 +281,7 @@ xps_buffer_t *xps_http_serialize_headers(vec_void_t *headers);
 Following enumerations are available in the above header file:
 
 - `xps_http_method_t`: defines the supported HTTP methods(eg: GET, POST, etc)
-- `xps_http_status_code_t`: \*\*\*\*defines various HTTP status codes that the server can respond with.
+- `xps_http_status_code_t`: defines various HTTP status codes that the server can respond with.
 - `xps_http_parser_state_t`: defines the different states of the HTTP request parsing process, split into two main sections: request line states and header states. Each of these states would be explained in detail while implementing the parsing functions.
 
 ### `xps_http.c`
