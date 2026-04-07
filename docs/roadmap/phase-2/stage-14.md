@@ -737,6 +737,12 @@ xps_buffer_t *xps_http_serialize_headers(vec_void_t *headers) {
 }
 ```
 
+:::tip NOTE
+
+We could have copied the request from the original buffer instead of serializing the de-serialized struct. But we are serializing the de-serialized structure so that when we send a header from client to upstream we have full control (are able to do our own modification) of the request that get passed.
+
+:::
+
 Now we would be completing the `xps_http_req` module.
 
 ## `xps_http_req` Module - Continue
