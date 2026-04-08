@@ -162,11 +162,11 @@ A struct `xps_http_req_s` is introduced, which stores the information retrieved 
 - `header_len`: Stores the length of the headers section.
 - `body_len`: Stores the length of the body, if any.
 
-The HTTP requset to be parsed would be present in a buffer. The start and end fields for each component stores pointers marking the beginning and ending of that component in this buffer. For eg: `request_line_start` and `request_line_end` are pointers marking the start and end of the request line in the buffer.
+The HTTP request to be parsed will be present in the corresponding pipe. It is then copied into a user space buffer (and later cleared from the pipe) by the session module. This buffer is then passed onto `xps_http_req` module for parsing the request. From this module, we then invoke the functions in `xps_http` module to set the start and end fields of each component of the request (such as `request_line_start` and `request_line_end`) in the `xps_http_req_s` struct. For eg: `request_line_start` and `request_line_end` are pointers marking the start and end of the request line in the user space buffer.
 
-By maintaining specific pointers to different sections of the HTTP request (like the start and end of the method, URI, and headers), the structure allows efficient access and manipulation of the request data without needing to copy or modify the raw input buffer unnecessarily.
+By maintaining specific pointers to different sections of the HTTP request (like the start and end of the method, URI, and headers), the struct `xps_http_req_s` allows efficient access and manipulation of the request data without needing to copy or modify the raw input buffer unnecessarily.
 
-We would be completing this module after implementation of the parsing functions, thus now we would be looking into the `xps_http` module.
+We would be completing `xps_http_req` module after implementation of the parsing functions present in the `xps_http` module discussed below.
 
 ## `xps_http` Module
 
@@ -281,7 +281,7 @@ xps_buffer_t *xps_http_serialize_headers(vec_void_t *headers);
 Following enumerations are available in the above header file:
 
 - `xps_http_method_t`: defines the supported HTTP methods(eg: GET, POST, etc)
-- `xps_http_status_code_t`: \*\*\*\*defines various HTTP status codes that the server can respond with.
+- `xps_http_status_code_t`: defines various HTTP status codes that the server can respond with.
 - `xps_http_parser_state_t`: defines the different states of the HTTP request parsing process, split into two main sections: request line states and header states. Each of these states would be explained in detail while implementing the parsing functions.
 
 ### `xps_http.c`
@@ -305,13 +305,13 @@ Let us go through each of the parsing functions separately.
 
 - **`xps_http_parse_request_line()`**
 
-Parses a single HTTP request line from a buffer, extracting various components such as the HTTP method, URI, host, port, and HTTP version. It also verifies the request line is of a valid format(i.e follows RFC conventions). `http_req` is a pointer to a structure where parsed information will be stored. `buff` is a pointer to a buffer containing the request data to be parsed. Let us take an example for demonstrating request line parsing. Consider a request line:
+Parses a single HTTP request line from the user buffer (copied from pipe), extracting various components such as the HTTP method, URI, host, port, and HTTP version. It also verifies the request line is of a valid format (i.e follows RFC conventions). `http_req` is a pointer to a structure where parsed information will be stored. `buff` is a pointer to the user space buffer onto which data is copied from pipe. Let us take an example for demonstrating request line parsing. Consider a request line:
 
 ```
 GET http://localhost:8080/path/to/resource HTTP/1.1
 ```
 
-At the end of the parsing, the start and end pointers for each of the components in the `buff` would be assigned, thus enabling us to make following inferences:
+At the end of the parsing, the start and end pointers for each of the component in `buff` would be set in `xps_http_req_s` struct, thus enabling us to make following inferences:
 
 ```
 Method: GET
@@ -553,11 +553,77 @@ GET http://example.com/index.html HTTP/1.1
 - Similarly, try tracing the states for two request line examples provided earlier.
   :::
 
-Once the request line parsing is done, we would start the request headers pasring.
+
+**Example** - Consider the following HTTP request:
+
+```
+GET /index.html HTTP/1.1
+Host: example.com
+Content-Type: text/html
+Content-Length: 123
+```
+
+Once the request line parsing is done, the structure would take the following form:
+
+Deserialized structure:
+
+```c
+xps_http_req_s http_req = {
+  method: "GET"
+  uri: "/index.html"
+  schema: "HTTP"
+  version: "1.1"
+  headers: [
+    /* To be filled when header parsing is done */
+  ]
+}
+```
+From here, we move on to populate the headers part of the structure.
 
 - **`xps_http_parse_header_line()`**
 
-Parse a single line of an HTTP header from a buffer. It also verifies the header is of a valid format. `http_req` holds the current state of the HTTP request parsing, such as the parser state. The start and end of parsed header key and value are to be stored in this struct. `buff` is a pointer to an the buffer with the HTTP header data which has to be parsed.
+A single invocation of this function would populate the header part of the structure as shown below.
+
+```c
+xps_http_req_s http_req = {
+  method: "GET"
+  uri: "/index.html"
+  schema: "HTTP"
+  version: "1.1"
+  headers: [
+    {
+      key: "Host"
+      value: "example.com"
+    },
+  ]
+}
+```
+
+For the above example, three invocations of this function would be required to populate the header section of the structure to the final form as shown below.
+
+```c
+xps_http_req_s http_req = {
+  method: "GET"
+  uri: "/index.html"
+  schema: "HTTP"
+  version: "1.1"
+  headers: [
+    {
+      key: "Host"
+      value: "example.com"
+    },
+    {
+      key: "Content-Type"
+      value: "text/html"
+    },
+    {
+      key: "Content-Length"
+      value: "123"
+    }
+  ]
+}
+```
+**`xps_http_parse_header_line()`** parses a single line of an HTTP header from a buffer and populates the header section of the `xps_http_req_s` struct. It also verifies the header is of a valid format. `http_req` holds the current state of the HTTP request parsing, such as the parser state. The start and end of parsed header key and value are to be stored in this struct. `buff` is a pointer to an the buffer with the HTTP header data which has to be parsed.
 
 Similar to request line parsing, here also the function goes through the buffer character by character and uses a state machine to determine how to process each character based on the current parsing state.
 
@@ -650,7 +716,16 @@ Let us look into the states in header parsing:
 
   :::
 
-Let us walk through an example, the headers be as given below:
+Let us walk through another example, consider the following HTTP request.
+
+```c
+GET /index.html HTTP/1.1
+Host: example.com
+Content-Type: text/html
+Content-Length: 123
+```
+
+The headers are as given below:
 
 ```c
 Host: example.com
@@ -710,19 +785,61 @@ const char *xps_http_get_header(vec_void_t *headers, const char *key) {
 
 ::: tip TRY
 
-- Try to do a case insensitive comparison of key in the above function.
+- HTTP is case insensitive. Modify the code such that the comparison handles input key in a case insensitive way.
   :::
 
 - **`xps_http_serialize_headers()`**
 
-Serialize a list of HTTP headers(key-value pairs) into a buffer. The serialized headers will be formatted as a string, where each header is in the format - key: value\n. The function `sprintf` is used to format and store a string into a character buffer. For header size, along with size of key and value, a +5 is added to account for the colon (`:`), space ( ``), newline (`\n`), and null terminator (`\0`).
+Serialize a list of HTTP headers(key-value pairs) into a buffer. The serialized headers will be formatted as a string, where each header is in the format - key: value\n. The function `sprintf` is used to format and store a string into a character buffer.
+For each key value pair (eg. given below), an additional size of +5 characters are added to account for the colon (`:`), space (` `), newline (`\r\n`), and null terminator (`\0`).  
+
+For example consider the HTTP Request
+
+```
+GET /index.html HTTP/1.1
+Host: example.com
+Content-Type: text/html
+Content-Length: 123
+```
+
+Deserialized structure:
+
+```c
+xps_http_req_s http_req = {
+  method: "GET"
+  uri: "/index.html"
+  schema: "HTTP"
+  version: "1.1"
+  headers: [
+    {
+      key: "Host"
+      value: "example.com"
+    },
+    {
+      key: "Content-Type"
+      value: "text/html"
+    },
+    {
+      key: "Content-Length"
+      value: "123"
+    }
+  ]
+}
+```
+
+
+The above key-value pair of headers can be serialized as follows:
+
+```json
+Host: example.com\r\nContent-Type: text/html\r\nContent-Length: 123\r\n
+```
 
 ```c
 xps_buffer_t *xps_http_serialize_headers(vec_void_t *headers) {
   /*assert*/
 	/*create a buffer and initialize first byte to null terminator*/
   for (/*traverse through headers*/) {
-	  /*get required length to store a header*/
+    /*get required length to store a header*/
     char header_str[header_str_len];
     sprintf(header_str, "%s: %s\n", header->key, header->val);
     if ((buff->size - buff->len) < header_str_len) { //buffer is small
@@ -739,8 +856,8 @@ xps_buffer_t *xps_http_serialize_headers(vec_void_t *headers) {
 
 :::tip NOTE
 
-We could have copied the request from the original buffer instead of serializing the de-serialized struct. But we are serializing the de-serialized structure so that when we send a header from client to upstream we have full control (are able to do our own modification) of the request that get passed.
-
+The functions `xps_http_parse_request_line()` and `xps_http_parse_header_line()` convert the HTTP request line and headers to de-serialized form and store the contents in the `xps_http_req_s` structure.  Subsequently,
+the `xps_http_serialize_headers()` function extracts the data from this structure and serializes it back to a single string.  The reason for doing such a complicated process is that we will need to make changes to the HTTP request received from the client before forwarding it to the upstream sever.  (This will be discussed in subsequent stages.)  The required modifications are done on the de-serialized `xps_http_req_s` structure before serializing the modified request back into a string and forwarding the request to the upstream server.  
 :::
 
 Now we would be completing the `xps_http_req` module.
@@ -847,7 +964,7 @@ xps_buffer_t *xps_http_req_serialize(xps_http_req_t *http_req) {
 
 - **`xps_http_req_create()`**
 
-Creates a new HTTP request object, processes the request line and headers, and sets up the request structure. The initial parser state is `RL_START`, indicating the starting of request line parsing. `buff` is the input buffer holding the HTTP request data which has to be parsed.
+Reads the raw HTTP request data from `buff`, creates an `xps_http_req_t` structure to hold the deserialized data, populates it by processing the request line and headers as discussed above, and returns the structure. The parser state is initialized to `RL_START` before processing begins.
 
 ```c
 xps_http_req_t *xps_http_req_create(xps_core_t *core, xps_buffer_t *buff, int *error) {
@@ -883,7 +1000,7 @@ void xps_http_req_destroy(xps_core_t *core, xps_http_req_t *http_req) {
 }
 ```
 
-Now we have implemented the modules required for parsing HTTP request. We have to make changes in `xps_session` module as the server now acts only as a file server and upstream functionality is not implemented in the present stage as discussed earlier.
+Now we have implemented the modules required for parsing HTTP request. We have to make changes in `xps_session` module as the server now acts only as a file server, and upstream functionality is not implemented in the present stage as discussed earlier.
 
 ## `xps_session` Module - Modifications
 

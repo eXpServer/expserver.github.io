@@ -619,8 +619,19 @@ void xps_connection_destroy(xps_connection_t *connection) {
     ...
 }
 
+void connection_source_handler(void *ptr)  {
+    ...
+
+    /* update the recv() function parameter to limit the data read upto pipe threshold limit*/
+    /* hint: use minimum of current buffer size and  diffrence between DEFAULT_PIPE_BUFF_THRESH and pipe's current size */
+    int read_n = recv(connection->sock_fd, buff->data, /*fill this*/, 0);
+    buff->len = read_n;
+
+    ...
+}
+
 void connection_loop_read_handler(void *ptr) {
-    ..
+    ...
     /*ready flag of source*/ = true;
 }
 
