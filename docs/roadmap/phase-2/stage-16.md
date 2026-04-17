@@ -44,9 +44,7 @@ We are also introducing the redirecting server and re-introducing the reverse pr
 
 A new module `xps_config` is added for reading the JSON configuration file and storing the parsed data in the structs. It also implements a lookup of the configuration to determine the appropriate server and route for an incoming request. It also matchs the listeners and hostnames.
 
-The session module is updated to incorporate the lookup of configuration while processing the request. The appropriate functionality is executed with respsect to the request type obtained from the lookup. The redirect server and reverse proxy server are implemented here.
-
-The `main.c` is updated to create multiple cores. Each of the listeners mentioned in the configuration file is duplicated and added to all the cores created.
+The session module is updated to incorporate the lookup of configuration while processing the request. The appropriate functionality is executed with respsect to the request type obtained from the lookup. The redirect server and reverse proxy server are implemented in this stage.
 
 ## Implementation
 
@@ -94,7 +92,7 @@ Before proceeding further read about [Parson](/docs/guides/references/parson)
 					"index": ["index.html"]
 				},
 				{
-					"req_path": "/hello",
+					"req_path": "/redirect",
 					"type": "redirect",
 					"http_status_code": 302,
 					"redirect_url": "http://localhost:8002/"
@@ -190,9 +188,6 @@ struct xps_config_lookup_s {
 	/* file_serve */
 	char *file_path; // absolute path
 	char *dir_path;  // absolute path
-	long file_start; // parse range header
-									// https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
-	long file_end;
 
 	/* reverse_proxy */
 	const char *upstream;
@@ -410,7 +405,7 @@ if (lookup->type == REQ_FILE_SERVE) {
 
 ### main.c
 
-Instead of creating a single core, multiple cores are created as specified in the configuration. Processes the command-line arguments to retrieve the configuration file path. The configuration is created which is followed by core creation.
+Processes the command-line arguments to retrieve the configuration file path. The configuration is created which is followed by core creation.
 
 ```c
 int main(int argc, char *argv[]) {
