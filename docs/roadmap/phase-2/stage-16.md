@@ -72,7 +72,7 @@ This will create a parson directory inside `expserver/src/lib/` and download all
 
 :::tip READ
 
-Before proceeding further read about [Parson](/docs/guides/references/parson)
+Before proceeding further read about [Parson](/guides/references/parson)
 
 :::
 
