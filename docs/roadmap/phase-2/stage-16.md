@@ -69,6 +69,13 @@ curl -O https://raw.githubusercontent.com/eXpServer/parson/master/parson.c
 
 This will create a parson directory inside `expserver/src/lib/` and download all the required source files.
 
+
+:::tip READ
+
+Before proceeding further read about [Parson](/docs/guides/references/parson)
+
+:::
+
 <!-- "workers": 4, to be added in the final stage as final stage handles multi-threaded architecture -->
 
 ### xps_config.json
