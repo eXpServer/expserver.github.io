@@ -44,9 +44,7 @@ We are also introducing the redirecting server and re-introducing the reverse pr
 
 A new module `xps_config` is added for reading the JSON configuration file and storing the parsed data in the structs. It also implements a lookup of the configuration to determine the appropriate server and route for an incoming request. It also matchs the listeners and hostnames.
 
-The session module is updated to incorporate the lookup of configuration while processing the request. The appropriate functionality is executed with respsect to the request type obtained from the lookup. The redirect server and reverse proxy server are implemented here.
-
-The `main.c` is updated to create multiple cores. Each of the listeners mentioned in the configuration file is duplicated and added to all the cores created.
+The session module is updated to incorporate the lookup of configuration while processing the request. The appropriate functionality is executed with respsect to the request type obtained from the lookup. The redirect server and reverse proxy server are implemented in this stage.
 
 ## Implementation
 
@@ -95,7 +93,7 @@ This will create a parson directory inside `expserver/src/lib/` and download all
 					"index": ["index.html"]
 				},
 				{
-					"req_path": "/hello",
+					"req_path": "/redirect",
 					"type": "redirect",
 					"http_status_code": 302,
 					"redirect_url": "http://localhost:8002/"
@@ -174,7 +172,6 @@ struct xps_config_route_s {
 	vec_void_t upstreams;
 	u_int http_status_code;
 	const char *redirect_url;
-	bool keep_alive;
 };
 
 typedef enum xps_req_type_e {
@@ -191,9 +188,6 @@ struct xps_config_lookup_s {
 	/* file_serve */
 	char *file_path; // absolute path
 	char *dir_path;  // absolute path
-	long file_start; // parse range header
-									// https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
-	long file_end;
 
 	/* reverse_proxy */
 	const char *upstream;
@@ -203,7 +197,6 @@ struct xps_config_lookup_s {
 	const char *redirect_url;
 
 	/* common */
-	bool keep_alive;
 	vec_void_t ip_whitelist;
 	vec_void_t ip_blacklist;
 };
@@ -219,15 +212,43 @@ void xps_config_lookup_destroy(xps_config_lookup_t *config_lookup, xps_core_t *c
 
 :::
 
+
 The names of the structs and its fields are intuitive, try to go through each and understand its use.
 
-The struct `xps_config_s` represents the overall configuration of the server.
+#### `struct xps_config_s`
+This is the top-level structure that represents the entire server configuration parsed from the JSON file.
+- `config_path`: Path to the JSON configuration file.
+- `server_name`: Name of the eXpServer instance.
+- `servers`: A list of individual server configurations (`xps_config_server_t`).
+- `_all_listeners`: A consolidated list of all unique listeners across all servers.
+- `_config_json`: Pointer to the internal Parson JSON value.
 
-The struct `xps_config_server_s` describes individual server configurations.
+#### `struct xps_config_server_s`
+Encapsulates configuration for an individual server block.
+- `listeners`: A list of `xps_config_listener_t` defining host/port bindings.
+- `hostnames`: A list of virtual hostnames associated with this server.
+- `routes`: A list of `xps_config_route_t` defining request handling rules.
 
-The struct `xps_config_lookup_s` represents a lookup result from configuration where `xps_req_type_t type` indicates thr type of request (REQ_FILE_SERVE, REQ_REVERSE_PROXY, etc.).
+#### `struct xps_config_route_s`
+Defines how a specific URL path should be handled.
+- `req_path`: The URL prefix used for route matching (e.g., `/api`).
+- `type`: The behavior type (`file_serve`, `redirect`, `reverse_proxy`, etc.).
+- `dir_path`: The root directory on disk for serving files.
+- `index`: A list of default files to try when a directory is requested (e.g., `index.html`).
+- `upstreams`: A list of backend servers for load balancing.
+- `http_status_code`: The HTTP status returned for redirects (e.g., `301`, `302`).
+- `redirect_url`: Target destination for redirection.
 
-Fields `file_path`, `dir_path`, `file_start` used by a file server, `upstream` used by a reverse proxy server and `http_status_code`, `redirect_url` used by a redirect.
+#### `struct xps_config_lookup_s`
+This structure represents the **result** of a configuration lookup for a specific request.
+- `type`: The resolved request type (e.g., `REQ_FILE_SERVE`, `REQ_REVERSE_PROXY`, etc.).
+- `file_path`: Absolute path to a specific file found on disk.
+- `dir_path`: Absolute path to a directory being accessed.
+- `upstream`: The specific backend server selected for proxying.
+- `http_status_code`: The status code for the redirect response.
+- `redirect_url`: Final destination URL for the redirect.
+- `ip_whitelist`: Vector of allowed IP addresses for this route.
+- `ip_blacklist`: Vector of blocked IP addresses for this route.
 
 ##### xps_config.c
 
@@ -264,7 +285,7 @@ xps_config_lookup_t *xps_config_lookup(xps_config_t *config, xps_http_req_t *htt
                                        xps_connection_t *client, int *error) {
   /*assert*/
  *error = E_FAIL;
-  /*get host,keep_alive(connection),accept encoding,pathname from http_req*/
+  /*get host,accept encoding,pathname from http_req*/
   // Step 1: Find matching server block
   int target_server_index = -1;
   for (int i = 0;/*fill this*/; i++) {
@@ -406,7 +427,9 @@ if (lookup->type == REQ_FILE_SERVE) {
 
 ### Listener Module - Modifications
 
-- Core is not used while creating listeners as now there are multiple cores attached to the config.
+- Core is not used while creating listeners as now we are creating listeners in `main.c`
+- In `xps_listener_create()` remove the `xps_core_t *core` argument and remove the code `listener->core = core` from the function as we will be setting it in `main.c`
+
 - Attaching the listener to the event loop and pushing to the listeners list of core is already done during the configuration set-up.
 
 ### main.c
@@ -443,25 +466,25 @@ void sigint_handler(int signum) {
 ### Additional utilities to be added
 
 - Cliargs : To handle and store command-line arguments related to the configuration file path.
-  :::details **expserver/src/utils/xps_cliargs.h**
+:::details **expserver/src/utils/xps_cliargs.h**
 
-  ```c
-  #ifndef XPS_CLIARGS_H
-  #define XPS_CLIARGS_H
+```c
+#ifndef XPS_CLIARGS_H
+#define XPS_CLIARGS_H
 
-  #include "../xps.h"
+#include "../xps.h"
 
-  struct xps_cliargs_s {
-    char *config_path;
-  };
+struct xps_cliargs_s {
+  char *config_path;
+};
 
-  xps_cliargs_t *xps_cliargs_create(int argc, char *argv[]);
-  void xps_cliargs_destroy(xps_cliargs_t *cilargs);
+xps_cliargs_t *xps_cliargs_create(int argc, char *argv[]);
+void xps_cliargs_destroy(xps_cliargs_t *cilargs);
 
-  #endif
-  ```
+#endif
+```
 
-  :::
+:::
 
 :::details **expserver/src/utils/xps_cliargs.c**
 
@@ -500,9 +523,9 @@ void xps_cliargs_destroy(xps_cliargs_t *cliargs) {
 :::
 
 - Utility functions required for checking directory, file, absolute path.
-  :::details **expserver/src/utils/xps_utils.c** {#xps-utils-c}
+:::details **expserver/src/utils/xps_utils.c** {#xps-utils-c}
 
-  ```c
+```c
 
   bool str_starts_with(const char *str, const char *prefix) {
     assert(str != NULL);
@@ -575,9 +598,9 @@ void xps_cliargs_destroy(xps_cliargs_t *cliargs) {
     assert(path != NULL);
     return path[0] == '/';
   }
-  ```
+```
 
-  :::
+:::
 
 - Also update `xps_utils.h` accordingly.
 
