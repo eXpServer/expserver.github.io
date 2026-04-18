@@ -27,7 +27,7 @@ This is the "skeleton" of every JSON element. It tells Parson what **type** the 
 
 ```c
 struct json_value_t {
-		...
+...
     JSON_Value_Type  type;  // Is it a String, Number, Object, etc.?
     JSON_Value_Value value; // The actual data (a Union)
 };
@@ -84,11 +84,10 @@ JSON_Value *json_parse_file(const char *filename);
 
 When you call `json_parse_file`, it looks at the very start of your file. Since a JSON file can be a single number, a string, or a large object, Parson always returns a **`JSON_Value*`**.
 
-- If your file starts with `{`, the top-level `JSON_Value` contains a `JSON_Object`.
-- If your file starts with `[`, the top-level `JSON_Value` contains a `JSON_Array`.
+So after getting the `JSON_Value` struct object from `json_parse_file()`, methods like `json_value_get_object()`, `json_value_get_array()`, etc.. are used to resolve it into the actual object or array. In our case we use `json_value_get_object()` as our config file `xps_config.json` starts with `{` and ends with `}` which implies it is an object.
 
 :::info NOTE
-Since a JSON file can start with any valid data type (an object, an array, a string, or a number), the parser returns a generic `JSON_Value` struct object. You must then use other Parson methods to "unpack" the specific data structure you expect.
+Since a JSON file can start with any valid data type (an object, an array, a string, or a number), the parser returns a generic `JSON_Value` struct object. We then must use the appropriate method to resolve it into the intended object or array.
 :::
 
 ### `json_value_get_object`
