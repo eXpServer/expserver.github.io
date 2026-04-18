@@ -68,11 +68,11 @@ struct json_array_t {
 };
 ```
 
-In OOPS terms, `JSON_Value` is like a generic `Base Class` and `JSON_Object` and `JSON_Array` are like `Derived Class` objects. 
+You can assume `JSON_Value` as a generic *Base Class* and `JSON_Object` and `JSON_Array` as it's *Derived Class* objects. 
 
 ## JSON_Value Methods
 
-### `json_parse_file`
+### `json_parse_file()`
 Reads a JSON file and returns (`JSON_Value*`) that contains the entire content.
 
 ```c 
@@ -91,7 +91,7 @@ When you call `json_parse_file`, it looks at the very start of your file. Since 
 Since a JSON file can start with any valid data type (an object, an array, a string, or a number), the parser returns a generic `JSON_Value` struct object. You must then use other Parson methods to "unpack" the specific data structure you expect.
 :::
 
-### `json_value_get_object`
+### `json_value_get_object()`
 
 Gets the main `JSON_Object` from a `JSON_Value`. Since our `xps_config.json` starts with `{}` we can use this function. If it had been starting with `[]` then that would imply the file starts as an array of object so we would have to use `json_value_get_array()` instead.
 
@@ -106,7 +106,7 @@ JSON_Object *json_value_get_object(const JSON_Value *value);
 
 Once you have a `JSON_Object`, you can get specific fields using the key name.
 
-### `json_value_get_array`
+### `json_value_get_array()`
 
 
 Gets the `JSON_Array` from a `JSON_Value`. This is used if your JSON file starts with an array (`[...]`) instead of an object.
@@ -120,7 +120,7 @@ JSON_Array *json_value_get_array(const JSON_Value *value);
   - `value`: The `JSON_Value` to check.
 - **Returns**: A pointer to a `JSON_Array`.
 
-### `json_value_free`
+### `json_value_free()`
 Frees the memory used by the parsed JSON.
 
 ```c
@@ -132,7 +132,7 @@ void json_value_free(JSON_Value *value);
 
 ## JSON_Object Methods
 
-### `json_object_get_string`
+### `json_object_get_string()`
 Gets a string value for a specific key.
 
 
@@ -145,7 +145,7 @@ const char *json_object_get_string(const JSON_Object *object, const char *name);
   - `name`: The key string (like `"server_name"`).
 - **Returns**: The string, or `NULL` if the key doesn't exist.
 
-### `json_object_get_number`
+### `json_object_get_number()`
 Gets a number value for a specific key.
 
 
@@ -155,7 +155,7 @@ double json_object_get_number(const JSON_Object *object, const char *name);
 
 - **Returns**: A number (which we often treat as an `int` or `size_t` in eXpServer for things like `port` or `workers`). Returns `0` on fail.
 
-### `json_object_get_boolean`
+### `json_object_get_boolean()`
 Gets a boolean (true/false) value for a specific key.
 
 
@@ -166,7 +166,7 @@ int json_object_get_boolean(const JSON_Object *object, const char *name);
 - **Returns**: `1` for true, `0` for false, or `-1` if it fails.
 <!-- - **Usage in eXpServer**: Used to check the `gzip_enable` setting. -->
 
-### `json_object_get_array`
+### `json_object_get_array()`
 Gets a JSON array for a specific key.
 
 
@@ -181,7 +181,7 @@ JSON_Array *json_object_get_array(const JSON_Object *object, const char *name);
 
 Once you have a `JSON_Array`, you can find out how big it is and loop through it.
 
-### `json_array_get_count`
+### `json_array_get_count()`
 Gets the total number of items in an array.
 
 
@@ -192,7 +192,7 @@ size_t json_array_get_count(const JSON_Array *array);
 - **Returns**: The size of the array.
 <!-- - **Usage in eXpServer**: Used as the limit in `for` loops when going through routes or servers. -->
 
-### `json_array_get_object`
+### `json_array_get_object()`
 Gets a `JSON_Object` at a specific position (index) in an array.
 
 
@@ -206,7 +206,7 @@ JSON_Object *json_array_get_object(const JSON_Array *array, size_t index);
 - **Returns**: The `JSON_Object` at that position.
 <!-- - **Usage in eXpServer**: Getting individual `"route"` items out of the main routes array. -->
 
-### `json_array_get_string`
+### `json_array_get_string()`
 Gets a string at a specific position in an array.
 
 
