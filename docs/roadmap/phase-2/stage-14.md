@@ -88,39 +88,39 @@ struct xps_http_req_s {
 
   xps_http_method_t method_n;
 
-  char *request_line; // POST https://www.devdiary.live:3000/api/problems HTTP/1.1
+  char *request_line; // eg: POST https://www.devdiary.live:3000/api/problems HTTP/1.1
   u_char *request_line_start;
   u_char *request_line_end;
 
-  char *method; // POST
+  char *method; // eg: POST
   u_char *method_start;
   u_char *method_end;
 
-  char *uri; // https://www.devdiary.live:3000/api/problems?key=val
+  char *uri; // eg: https://www.devdiary.live:3000/api/problems?key=val
   u_char *uri_start;
   u_char *uri_end;
 
-  char *schema; // https
+  char *schema; // eg: https
   u_char *schema_start;
   u_char *schema_end;
 
-  char *host; // www.devdiary.live
+  char *host; // eg: www.devdiary.live
   u_char *host_start;
   u_char *host_end;
 
-  int port; // 3000
+  int port; // eg: 3000
   u_char *port_start;
   u_char *port_end;
 
-  char *path; // /api/problems?key=val
+  char *path; // eg: /api/problems?key=val
   u_char *path_start;
   u_char *path_end;
 
-  char *pathname; // /api/problems
+  char *pathname; // eg: /api/problems
   u_char *pathname_start;
   u_char *pathname_end;
 
-  char *http_version; // 1.1
+  char *http_version; // eg: 1.1
   u_char *http_major;
   u_char *http_minor;
 
@@ -422,12 +422,12 @@ int xps_http_parse_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
 
       case RL_PATH:
         /*on ' ' - path ends, assign end of path,pathname,uri next state is RL_VERSION_START*/
-        /*on '?'or'&'or'='or'#' - assign end of pathname, next state is RL_PATHNAME*/
+        /*on '?'or'&'or'='or'#' - assign end of path, next state is RL_PATHNAME*/
         /*on CR or LF, fails*/
         break;
 
       case RL_PATHNAME:
-        /*on ' ' - assign end of uri,path, next state is RL_VERSION_START*/
+        /*on ' ' - assign end of uri,pathname, next state is RL_VERSION_START*/
         /*on CR or LF, fails*/
         break;
 
@@ -454,7 +454,7 @@ int xps_http_parse_request_line(xps_http_req_t *http_req, xps_buffer_t *buff) {
         break;
 
       case RL_VERSION_HTTP_SLASH:
-        /*on '1' - assign major, next state is RL_MAJOR, fails on all other inputs*/
+        /*on '1' - assign major, next state is RL_VERSION_MAJOR, fails on all other inputs*/
         break;
 
       case RL_VERSION_MAJOR:
@@ -785,12 +785,13 @@ const char *xps_http_get_header(vec_void_t *headers, const char *key) {
 
 ::: tip TRY
 
-- HTTP is case insensitive. Modify the code such that the comparison handles input key in a case insensitive way.
-  :::
+- TTP header names are case insensitive. Modify the code such that the comparison handles the input key in a case insensitive way.
+  
+:::
 
 - **`xps_http_serialize_headers()`**
 
-Serialize a list of HTTP headers(key-value pairs) into a buffer. The serialized headers will be formatted as a string, where each header is in the format - key: value\n. The function `sprintf` is used to format and store a string into a character buffer.
+Serialize a list of HTTP headers(key-value pairs) into a buffer. The serialized headers will be formatted as a string, where each header is in the format - `key: value\n`. The function `sprintf` is used to format and store a string into a character buffer.
 For each key value pair (eg. given below), an additional size of +5 characters are added to account for the colon (`:`), space (` `), newline (`\r\n`), and null terminator (`\0`).  
 
 For example consider the HTTP Request

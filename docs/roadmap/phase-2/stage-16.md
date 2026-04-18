@@ -70,7 +70,8 @@ This will create a parson directory inside `expserver/src/lib/` and download all
 
 :::tip READ
 
-Before proceeding further read about [Parson](/guides/references/parson)
+- Before proceeding further read about [Json](https://www.json.org/json-en.html) data exchange format
+- Read the specs of [Parson](/guides/references/parson) library
 
 :::
 
@@ -277,7 +278,7 @@ xps_config_t *xps_config_create(const char *config_path) {
 ```
 
 - `xps_config_destroy` : Cleans up and frees the memory allocated for the configuration object. Implement it by deallocating the servers and the corresponding listeners and routes. Also de-initialize the vectors.
-- `xps_config_lookup` : Performs a lookup to find the correct configuration based on an HTTP request (`xps_http_req_t`) and client details (`xps_connection_t`).
+- `xps_config_lookup` : Takes the parsed configuration, an incoming HTTP request, and the client connection as input. It determines the appropriate server and route for the request by first matching the client's listener and hostname against the configured servers, then selecting the best matching route using a longest prefix match on the request path. Based on the matched route type (`file_serve`, `reverse_proxy`, or `redirect`), it populates and returns an `xps_config_lookup_t` structure with the relevant fields. Sets `*error` to `E_FAIL` or `E_NOTFOUND` and returns `NULL` if no matching server or route is found.
 
 ```c
 xps_config_lookup_t *xps_config_lookup(xps_config_t *config, xps_http_req_t *http_req,
@@ -383,13 +384,13 @@ xps_config_lookup_t *xps_config_lookup(xps_config_t *config, xps_http_req_t *htt
 
 ### Core Module - Modifications
 
-- To `xps_core_s` struct, add `config` field. `xps_core_create()` takes config as argument.
-- Remove creating listeners while starting the server as the listeners are created during the configuration set-up itself.
+- To `xps_core_s` struct, add `config` field. Pass `config` as an argument to `xps_core_create()`.
+- Remove creating listeners while starting the server as the listeners are created during the configuration set-up itself (this will be done below, on modification to the `main.c`).
 
 ### Session Module - Modifications
 
-- Add the lookup field which is used to determine the type of the incoming request.
-- In the `session_process_request()` the lookup(to determine the type of request) is done and the request is processed with respect to its type.
+- Add a lookup field (`xps_config_lookup_t`) which is used to determine the type of the incoming request.
+- In the `session_process_request()` the lookup (to determine the type of request) is done and the request is processed with respect to its type.
 
 ```c
 /*config_lookup called*/
@@ -433,7 +434,7 @@ if (lookup->type == REQ_FILE_SERVE) {
 
 ### main.c
 
-Processes the command-line arguments to retrieve the configuration file path. The configuration is created which is followed by core creation.
+Processes the command-line arguments to retrieve the configuration file path. The configuration object is created by invoking the method of `xps_config` module. Then `core_create` function is invoked which handles creation of listeners and attaching it with core in accordance with the `config` object. And then starts the core.
 
 ```c
 int main(int argc, char *argv[]) {
@@ -655,4 +656,4 @@ Now, navigate to `http://localhost:8001/` in your browser. You will notice that 
 
 ## Conclusion
 
-In this stage, we transitioned from a hardcoded server setup to a dynamic, configuration-driven architecture using JSON. By implementing the `config` module, eXpServer now supports multiple worker cores, reverse proxying, and URL redirects. While the server currently returns a 404 error when an index file is missing from a directory, we will resolve this in the next stage by implementing a dedicated directory module.
+In this stage, we transitioned from a hardcoded server setup to a dynamic, configuration-driven architecture using a JSON config file. By implementing the `config` module, eXpServer now supports reverse proxying and URL redirects. The server currently returns a 404 error when an index file is missing from a directory, we will resolve this in the next stage by implementing a dedicated directory module.

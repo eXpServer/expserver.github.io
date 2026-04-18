@@ -300,7 +300,7 @@ void xps_pipe_destroy(xps_pipe_t *pipe) {
 **`xps_pipe_is_writable`**
 
 - Checks if the buffer list length is below the buffer threshold (see `xps.h`), allowing new data to be written.
-  ::: details **expserver/src/core/xps_pipe.c - `xps_pipe_is_readable()`, `xps_pipe_is_writable()`**
+::: details **expserver/src/core/xps_pipe.c - `xps_pipe_is_readable()`, `xps_pipe_is_writable()`**
 
 ```c
 bool xps_pipe_is_readable(xps_pipe_t *pipe) { return /*fill this*/ }

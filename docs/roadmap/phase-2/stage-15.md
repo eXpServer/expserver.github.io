@@ -148,7 +148,7 @@ xps_http_set_header(&(http_res->headers), "Access-Control-Allow-Origin", "*");
 
 `xps_http_res_serialize()` : used for serializing the whole response into a buffer. It is similiar to the serialize function used in http_request module.
 
-- First the headers are serialized using `xps_http_res_serialize()` , provided in the `xps_http` module and are stored into a temporary buffer.
+- First the headers are serialized using `xps_http_serialize_headers()` , provided in the `xps_http` module and are stored into a temporary buffer.
 - Then create a buffer instance for storing the serialized HTTP response. The length of the buffer is calculated by adding the lengths of each field in the struct `xps_http_res_s`.
 - Copy the response_line, header and body to the newly created buffer. Don’t forget to include a newline between response_line, headers and body.
 

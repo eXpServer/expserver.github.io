@@ -2,7 +2,7 @@
 
 ## Recap
 
-In the previous stages, we updated the server to handle HTTP messages. Stage 14 focused on implementing HTTP request parsing, while Stage 15 covered the construction of HTTP response messages. And in stage 16 we have implemented multiple cores, used a JSON file to set-up server configuration and implemented reverse proxy and URL redirecting in our webserver.
+In the previous stages, we updated the server to handle HTTP messages. Stage 14 focused on implementing HTTP request parsing, while Stage 15 covered the construction of HTTP response messages. And in stage 16 we have implemented config module, used a JSON file to set-up server configuration and implemented reverse proxy and URL redirecting in our webserver.
 
 ## Learning Objectives
 
