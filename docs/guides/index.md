@@ -27,6 +27,7 @@ The guides feature supplementary documentation intended for your reference as yo
 - <span v-if="!isProd">🟡</span> [Linux epoll](/guides/resources/linux-epoll)
 - <span v-if="!isProd">🟡</span> [Blocking & Non-Blocking Sockets](/guides/resources/blocking-and-non-blocking-sockets)
 - <span v-if="!isProd">🟡</span> [HTTP](/guides/resources/http)
+- <span v-if="!isProd">🟡</span> [gzip](/guides/resources/gzip)
 
 ## References
 

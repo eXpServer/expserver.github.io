@@ -59,6 +59,7 @@ export default defineConfig({
 							link: '/guides/resources/blocking-and-non-blocking-sockets',
 						},
 						{ text: 'HTTP', link: '/guides/resources/http' },
+						{ text: 'GZIP', link: '/guides/resources/gzip' },
 
 						// { text: 'Internet Protocol (IP)', link: '/guides/resources/ip' },
 						// { text: 'File descriptors', link: '/guides/resources/file-descriptors' },
@@ -263,6 +264,7 @@ export default defineConfig({
 						{ text: 'Stage 14: HTTP Request Module', link: '/tester/tests/stage14' },
 						{ text: 'Stage 15: HTTP Response Module', link: '/tester/tests/stage15' },
 						{ text: 'Stage 16: HTTP Config Module', link: '/tester/tests/stage16' },
+						{ text: 'Stage 19: HTTP Config Module', link: '/tester/tests/stage19' },
 					],
 				},
 			],
