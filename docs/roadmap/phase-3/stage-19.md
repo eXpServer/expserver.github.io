@@ -39,7 +39,9 @@ Data written into the gzip sink is buffered and compressed using `deflate()`. Th
 
 Unlike a normal compressor that requires the complete input before compression, `zlib`'s `deflate` API supports streaming compression. Data can be provided in chunks using `next_in` and `avail_in`, while compressed data is written to buffers using `next_out` and `avail_out`.
 
-When the upstream source has no more data to send, `deflate()` is called with `Z_FINISH` instead of `Z_NO_FLUSH`. This allows zlib to finish the compression stream and write the gzip trailer.
+When the file source has no more data to send, `deflate()` is called with `Z_FINISH` instead of `Z_NO_FLUSH`. This allows zlib to finish the compression stream and write the gzip trailer.
+
+While the upstream handles its own compression because it's a Python server, there are no changes required in that flow.
 
 ## File Structure
 
