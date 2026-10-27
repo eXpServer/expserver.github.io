@@ -108,6 +108,17 @@ const batch2022 = [
     ]
   }
 ]
+const batch2023 = [
+    {
+    avatar: 'https://avatars.githubusercontent.com/u/128483318?v=4',
+    name: 'Shiva Kumar G',
+    title: 'Developer',
+    links: [
+      { icon: 'github', link: 'https://github.com/Shiva-gsk' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/shivagulapala/' }
+    ]
+  }
+]
 </script>
 
 # About
@@ -166,11 +177,15 @@ The content in the website and the documentation has been authored in the [Depa
 
 <VPTeamMembers size="small" :members="batch2022" />
 
+### 2023 Batch
+
+<VPTeamMembers size="small" :members="batch2023" />
+
 ## License
 
 <img src="/assets/common/ccbync.png" width="150">
 
-eXpServer is licensed under a [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/). Based on the work at https://github.com/eXpServer
+eXpServer by Dr. Murali Krishnan K and Dr. Vinod Pathari is licensed under a [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/). Based on the work at https://github.com/eXpServer
 
 ## Acknowledgement
 
