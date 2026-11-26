@@ -66,7 +66,7 @@ What is needed here is to create a version of `fork()` where the child process s
 
 ## Introduction to Threads
 
-Such a simplified version of `fork()` is provided by threads. Linux/Unix systems allow a process to concurrently execute routines within its code segment as separate threads. To support this kind of “light weight” forking of processes, the notion of “[threads](<https://en.wikipedia.org/wiki/Thread_(computing)>)” where introduced in Unix/Linux system in 1996 and since then most servers implement concurrent code using threads. A collection of system calls are also provided in Linux/Unix systems to support creation, destruction and synchronization between threads.
+Such a simplified version of `fork()` is provided by threads. Linux/Unix systems allow a process to concurrently execute routines within its code segment as separate threads. To support this kind of “light weight” forking of processes, the notion of “[threads](<https://en.wikipedia.org/wiki/Thread_(computing)>)” were introduced in Unix/Linux system in 1996 and since then most servers implement concurrent code using threads. A collection of system calls are also provided in Linux/Unix systems to support creation, destruction and synchronization between threads.
 :::info
 A discussion of the system calls that handle threads is given in the [system calls](/guides/resources/system-calls) page.
 :::

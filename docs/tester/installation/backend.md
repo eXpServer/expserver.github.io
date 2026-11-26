@@ -22,7 +22,7 @@ The interfaces include
 
 ### Why was it chosen over other alternatives?
 
-The server provides a certain level of state management which assumes a certain browsser client as a single user. This permits the user to run multiple tabs, each running different stages simultaneously, but also maintain a primitive level of persistent result storage. Each `StageRunner` that runs the tests for a stage acts as a publisher, while each client that is currently viewing the details about that stage acts as a subscriber.
+The server provides a certain level of state management which assumes a certain browser client as a single user. This permits the user to run multiple tabs, each running different stages simultaneously, but also maintain a primitive level of persistent result storage. Each `StageRunner` that runs the tests for a stage acts as a publisher, while each client that is currently viewing the details about that stage acts as a subscriber.
 
 This allows multiple tabs opening the same stage test window to get streamed data of the same tests being run, and allows the browser client to freely choose which StageRunner to listen to.
 

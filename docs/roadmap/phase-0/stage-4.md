@@ -34,7 +34,7 @@ Think of [`tcp_server.c`](/roadmap/phase-0/stage-1.md#tcp-server-c) (implemented
 
 2. **Accepting and serving clients**
    - Accept client connection
-   - Revieve and send messages to client
+   - Receive and send messages to client
 
 We will only be changing the part of the code where we are accepting the incoming client connections as the server setup does not need any change.
 
@@ -181,9 +181,9 @@ while(1) {
 }
 ```
 
-When some event has ouccured on the FDs that we added to the epoll, `epoll_wait()` returns the number of FD’s for which events have occurred. The events themselves will be stored in the `events[]`. We wraped this in an infinite loop to keep the server running indefinitely.
+When some event has occurred on the FDs that we added to the epoll, `epoll_wait()` returns the number of FD’s for which events have occurred. The events themselves will be stored in the `events[]`. We wraped this in an infinite loop to keep the server running indefinitely.
 
-Now that we got the number of events, we have to iterate through the `events[]` array and proccess them. Since the epoll is only monitoring the listening socket right now the events will be from that only.
+Now that we got the number of events, we have to iterate through the `events[]` array and process them. Since the epoll is only monitoring the listening socket right now the events will be from that only.
 
 ```c
   for(/* interate from 0 to n_ready_fds */) {

@@ -217,7 +217,7 @@ void xps_loop_run(xps_loop_t *loop);
 Apart from this, we observe that there is a struct (`struct loop_event_s`) for loop events. Given below is an explanation of the structure’s fields. A more detailed explanation for `loop_event` is provided in the [xps_loop.c](/roadmap/phase-1/stage-7#xps-loop-c) section.
 
 - `u_int fd`: FD associated with the event
-- `xps_handler_t read_cb`: Callback function to be called when a read event occurs on the the associated FD
+- `xps_handler_t read_cb`: Callback function to be called when a read event occurs on the associated FD
 - `void *ptr`: It is a pointer to the instance which is attached to the loop. (Will be clear as we move further)
 
 ::: tip NOTE

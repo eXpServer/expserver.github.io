@@ -10,11 +10,11 @@
 
 ## Introduction
 
-In the previous stage, we implemented an edge-triggered epoll which ensures  optimal CPU utilization by triggering notifications only when the state of the file descriptor changes. Thus the issue mentioned in Experiment #1 of Stage 8 is resolved. However, the problem of high memory usage still persists.
+In the previous stage, we implemented an edge-triggered epoll which ensures optimal CPU utilization by triggering notifications only when the state of the file descriptor changes. Thus the issue mentioned in Experiment #1 of Stage 8 is resolved. However, the problem of high memory usage still persists.
 
 Reason for high memory usage is as follows:
 
-- The data only being send by the server and not receiving at the other end by the client leads to the kernel buffering this data into its internal buffer.
+- The data only being sent by the server and not receiving at the other end by the client leads to the kernel buffering this data into its internal buffer.
 - Kernel buffer has a limited size and once its full, the data gets filled up in the user - space buffer
 - Since there is no size limit for the `write_buff_list`, data gets accumulated in this user-space buffer which eventually leads to higher memory utilization
 
@@ -30,7 +30,7 @@ In the above scenario, **pipes** play a crucial role in managing the flow of dat
 
 ## Design
 
-Along with modifying the existing modules to enable data transfer through pipes, a new module (`xps_pipe`) is added. This enables creation of a  source-sink system for transferring data through pipes in an event-driven mode.
+Along with modifying the existing modules to enable data transfer through pipes, a new module (`xps_pipe`) is added. This enables creation of a source-sink system for transferring data through pipes in an event-driven mode.
 
 Three new structs are introduced here. The `xps_pipe_s` struct includes the buffer and the maximum threshold. The `xps_pipe_source_s` and `xps_pipe_sink_s` structs includes the `ready`/`active` flags and callback functions. Earlier the callback functions were called based on the `read_ready` / `write_ready` flags of connection, here it would be based on the status of source/sink and whether the pipe is readable/writable. A pipe is readable if the length of `buff_list` greater than `0` and writable if its length less than the maximum threshold.
 
@@ -38,13 +38,13 @@ The callback functions in `xps_connection.c` are modified to ensure the working 
 
 Here, the timeout in `epoll_wait()` is determined by the availability of ready pipes. If ready pipes are available, the timeout is set to `0`, meaning `epoll_wait()` returns immediately without blocking, allowing the loop to process those pipes right away. If no ready pipes exist, the timeout is set to `-1`, causing `epoll_wait()` to block indefinitely until an I/O event occurs.
 
-In Stage 6, we have discussed the issue of accumulating nulls in the events,connections and listeners list, here we would be filtering those.
+In Stage 6, we have discussed the issue of accumulating nulls in the events, connections and listeners list, here we would be filtering those.
 
 ## Implementation
 
 A new module `xps_pipe` is added and the existing modules are modified.
 
-Modifications are carried out in the following order :
+Modifications are carried out in the following order:
 
 - `xps_connection`
 - `xps_listener`
@@ -242,7 +242,8 @@ Contains functions for creation and destruction of pipes,source/sink, for attach
 
 - Removes the pipe from the core’s pipe list.
 - Destroy the buffer list of the pipe and free the pipe itself.
-  ::: details **expserver/src/core/xps_pipe.c - `xps_pipe_create()`, `xps_pipe_destroy()`**
+
+::: details **expserver/src/core/xps_pipe.c - `xps_pipe_create()`, `xps_pipe_destroy()`**
 
 ```c
 xps_pipe_t *xps_pipe_create(xps_core_t *core, size_t buff_thresh, xps_pipe_source_t *source,
@@ -268,7 +269,7 @@ xps_pipe_t *xps_pipe_create(xps_core_t *core, size_t buff_thresh, xps_pipe_sourc
     pipe->buff_list = /*fill this*/
     pipe->buff_thresh = /*fill this*/
 
-    /* Add pipe to 'pipes' list of core (see core module below)*/
+    /* Add pipe to 'pipes' list of core (see core module below) */
 
     /*Attach source and sink to pipe*/
     /*Make both source and sink of pipe active*/
@@ -319,8 +320,9 @@ bool xps_pipe_is_writable(xps_pipe_t *pipe) { return /*fill this*/ }
 
 **`xps_pipe_detach_source` and `xps_pipe_detach_sink`**
 
-- Detach the source/sink(if present) by clearing the pipe pointer in the respective structures.
-  ::: details **expserver/src/core/xps_pipe.c - `xps_pipe_attach_source()`, `xps_pipe_attach_sink()`, `xps_pipe_detach_source()`, `xps_pipe_detach_sink()`**
+- Detach the source/sink (if present) by clearing the pipe pointer in the respective structures.
+
+::: details **expserver/src/core/xps_pipe.c - `xps_pipe_attach_source()`, `xps_pipe_attach_sink()`, `xps_pipe_detach_source()`, `xps_pipe_detach_sink()`**
 
 ```c
 int xps_pipe_attach_source(xps_pipe_t *pipe, xps_pipe_source_t *source) {
@@ -382,7 +384,8 @@ int xps_pipe_detach_sink(xps_pipe_t *pipe) {
 **`xps_pipe_source_write`**
 
 - Checks if the pipe is writable and writes to the pipe
-  ::: details **expserver/src/core/xps_pipe.c - `xps_pipe_source_create()`, `xps_pipe_source_destroy()`, `xps_pipe_source_write()`**
+
+::: details **expserver/src/core/xps_pipe.c - `xps_pipe_source_create()`, `xps_pipe_source_destroy()`, `xps_pipe_source_write()`**
 
 ```c
 xps_pipe_source_t *xps_pipe_source_create(void *ptr, xps_handler_t handler_cb,
@@ -569,7 +572,8 @@ Functions Modified
 - `connection_loop_read_handler()` - set source as ready instead of connection, thus indicating the source is ready to receive data and write to pipe.
 - `connection_loop_write_handler()` - set sink as ready instead of connection, thus indicating the sink is ready to read data from pipe and sent.
 - `connection_loop_close_handler()` - invokes `connection_close()` (explained below)
-  ::: details **expserver/src/network/xps_connection.c - modified functions**
+
+::: details **expserver/src/network/xps_connection.c - modified functions**
 
 ```c
 xps_connection_t *xps_connection_create(xps_core_t *core, u_int sock_fd) {
@@ -656,7 +660,8 @@ Functions Added
 - `connection_sink_handler()` - read data from the pipe using `xps_pipe_sink_read()` and sent using `send()`. Upon successful sending, clears the data sent from the pipe buffer.
 - `connection_sink_close_handler()` - call back for closing the sink. If both the source and sink not active the connection is closed.
 - `connection_close()` - prints whether connection is closing because the peer is closed. Destroys the connction using `xps_connection_destroy()`.
-  ::: details **expserver/src/network/xps_connection.c - added functions**
+
+::: details **expserver/src/network/xps_connection.c - added functions**
 
 ```c
 void connection_source_handler(void *ptr) {
@@ -811,7 +816,8 @@ void filter_nulls(xps_core_t *core);// [!code ++]
 Functions Added
 
 - `handle_pipes()` - Here, we are replacing the `handle_connections()` with `handle_pipes()`, as the callback functions were invoked based on the `read_ready` and `write_ready` flags of the connection earlier but now it would be based on the status of source, sink and pipe. There are two iterations over the pipe. The first one is for invoking the callback functions and second for checking the existence of ready pipes. Checking for ready pipes can't be done in the first iteration itself as callbacks on current pipe could affect previously iterated pipes making them ready. It returns `true` if ready pipes exist.
-  ::: details **expserver/src/core/xps_loop.c - `handle_pipes()`**
+
+::: details **expserver/src/core/xps_loop.c - `handle_pipes()`**
 
 ```c
 bool handle_pipes(xps_loop_t *loop) {
@@ -866,8 +872,6 @@ bool handle_pipes(xps_loop_t *loop) {
 }
 ```
 
-:::
-
 :::tip NOTE
 The logic for handling cases where **only** a source or **only** a sink exists might seem unnecessary right now, since we currently connect the source and sink of the same pipe to the same client connection. However, this design is crucial for future extensibility.
 
@@ -875,7 +879,8 @@ In later stages (like Stage 11), when we introduce `upstream servers` or `file s
 :::
 
 - `filter_nulls` - Filters the null accumulated in events, listeners, connections, pipes list
-  ::: details **expserver/src/core/xps_loop.c - `filter_nulls()`**
+
+::: details **expserver/src/core/xps_loop.c - `filter_nulls()`**
 
 ```c
 void filter_nulls(xps_core_t *core) {
@@ -889,7 +894,8 @@ void filter_nulls(xps_core_t *core) {
 :::
 
 - `handle_epoll_events()` - Replaces the epoll events iteration logic from `xps_loop_run()`,  this function would be invoked from the new `xps_loop_run()`. It iterates through the events and corresponding call back functions are called based on epoll notification. This is added to simplify the new `xps_loop_run()`.
-  ::: details **expserver/src/core/xps_loop.c -** `handle_epoll_events()`
+
+::: details **expserver/src/core/xps_loop.c -** `handle_epoll_events()`
 
 ```c
 void handle_epoll_events(xps_loop_t *loop, int n_events) {
@@ -907,7 +913,8 @@ void handle_epoll_events(xps_loop_t *loop, int n_events) {
 Functions Modified
 
 - `xps_loop_run()` - This function is modified to check the existence of ready pipes, setting the `timeout` of `epollwait()` accordingly, handling the epoll events and filtering nulls from the lists attached to core. If there are ready pipes, it sets `timeout` to `0`, meaning `epoll_wait()` will be non-blocking. If there are no ready pipes, it sets `timeout` to `-1`, meaning `epoll_wait()` will block indefinitely until an event occurs. This ensures that if there are pipes ready for immediate processing, the program doesn’t block waiting for other events.
-  ::: details **expserver/src/core/xps_loop.c -** `xps_loop_run()`
+
+::: details **expserver/src/core/xps_loop.c -** `xps_loop_run()`
 
 ```c
 void xps_loop_run(xps_loop_t *loop) {

@@ -16,7 +16,7 @@ In this stage, our client will be a web browser and upstream server will be a py
 
 ![tcp-proxy.png](/assets/stage-4/tcp-proxy.png)
 
-Before we get into the implementation of the proxy, lets have a look at what we are trying to achieve. We will start by running a python file server.
+Before we get into the implementation of the proxy, let's have a look at what we are trying to achieve. We will start by running a python file server.
 
 Open a terminal and navigate to the folder you want to serve. Run the following command below to start a simple python file server:
 
@@ -36,7 +36,7 @@ Right now, the client (web browser), is directly accessing the file server. Our 
 
 ![implementation.png](/assets/stage-4/implementation.png)
 
-There will be some changes in the structure of the code from previous stage where we wrote the entire implementation in `main()`. Thus, for this stage, we recommended working on a new separate file; lets call it `tcp_proxy.c`.
+There will be some changes in the structure of the code from previous stage where we wrote the entire implementation in `main()`. Thus, for this stage, we recommended working on a new separate file; let's call it `tcp_proxy.c`.
 
 In addition to the previous definitions in `tcp_server.c`, add a global definition at the top of the file for the upstream port number that we will be serving the python file server from.
 
@@ -120,11 +120,11 @@ int route_table[MAX_SOCKS][2], route_table_size = 0; //Define MAX_SOCKS=10 as a 
 Since we have only one listening socket we could easily check whether the event is on the listen socket (we did this in Stage 3). But since we can have multiple connection sockets and multiple upstream sockets, how will we determine if the event is on a connection socket or an upstream socket?
 ::: -->
 
-Now that we have that, we are ready to start accepting connection; so lets write the `accept_connection()` function.
+Now that we have that, we are ready to start accepting connection; so let's write the `accept_connection()` function.
 
 ### `accept_connection()`
 
-`accept_connection()` takes `listen_sock_fd` as a parameter and do the following
+`accept_connection()` takes `listen_sock_fd` as a parameter and does the following:
 
 - Accept the client connection and create the connection socket FD `conn_sock_fd`
 - Add the connection socket to epoll to monitor for events using `epoll_ctl()`
@@ -162,7 +162,7 @@ Since the upstream server is a python file server, the concurrent connections ar
 ```c
 int connect_upstream() {
 
-  int upstream_sock_fd = /* create a upstrem socket */
+  int upstream_sock_fd = /* create an upstream socket */
 
   struct sockaddr_in upstream_addr;
   /* add upstream server details */
@@ -185,7 +185,7 @@ Quick recap!
 
 ---
 
-Now that we have accepted the clients, we need to handle. We will create the `handle_client()` function to receive the messages from the client, and send it to the upstream server.
+Now that we have accepted the clients, we need to handle, we will create the `handle_client()` function to receive the messages from the client, and send it to the upstream server.
 
 ### `handle_client()`
 
@@ -262,7 +262,7 @@ With encapsulation of code into multiple functions, our main function will look 
 ```c
 int main() {
 
-  listen_socket_fd = /* create server using server_create() */
+  listen_socket_fd = /* create server using create_server() */
 
   epoll_fd = /* create loop instance using loop_create() */
 

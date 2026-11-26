@@ -139,7 +139,7 @@ struct epoll_event {
 
 union epoll_data {
 	void *ptr; /* Pointer to a user defined data structure */
-	int fd; /* File descritor of the socket we are monitoring*/
+	int fd; /* File descriptor of the socket we are monitoring*/
 	uint32_t u32; /* Not used within the scope of this project */
 	uint64_t u64; /* Not used within the scope of this project */
 };

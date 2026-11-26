@@ -196,7 +196,7 @@ Think of why this is happening. We will fix it in the next stage. Close client #
 
 Did you notice what happened when you closed the connected client instance? The sever also terminated with it. But what if we want the server to keep serving other clients?
 
-Modify the code such that the server does not terminate immedietly after a client disconnects.
+Modify the code such that the server does not terminate immediately after a client disconnects.
 
 ::: info HINT
 
@@ -214,7 +214,7 @@ Now, you can try connecting a new client after disconnecting the existing client
 
 ### Experiment #3
 
-Now,we can modify the client code for creating multiple clients in a single execution of client code. We would be using fork system call to implement this.
+Now, we can modify the client code for creating multiple clients in a single execution of client code. We would be using fork system call to implement this.
 
 ::: tip PRE-REQUISITE READING
 

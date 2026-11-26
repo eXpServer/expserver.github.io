@@ -51,7 +51,7 @@ In this stage, we would be only parsing HTTP request messages. The parsing of HT
 
 ## Design
 
-Two new modules `xps_http` and `xps_http_req` are created. `xps_http` module contains functions for request line parsing(`xps_http_parse_request_line`), header parsing(`xps_http_parse_request_line`), retrieving the value of a header(`xps_http_get_header`) and serializing the  headers into a buffer(`xps_http_serialize_headers`). Parsing is done in multiple stages, managed through a state machine. Each state represents a specific point in the parsing process. When parsing an HTTP request, the parser transitions between these states based on the characters it reads.
+Two new modules `xps_http` and `xps_http_req` are created. `xps_http` module contains functions for request line parsing(`xps_http_parse_request_line`), header parsing(`xps_http_parse_request_line`), retrieving the value of a header(`xps_http_get_header`) and serializing the headers into a buffer(`xps_http_serialize_headers`). Parsing is done in multiple stages, managed through a state machine. Each state represents a specific point in the parsing process. When parsing an HTTP request, the parser transitions between these states based on the characters it reads.
 
 In `xps_http_req module`, a `xps_http_req_s` struct is introduced. This structure is a container for storing the parsed components of an HTTP request. As the parser processes the request, it populates this structure with the related information such as method, URI, headers. This module deals with the creation and destruction of `xps_http_req_s` struct object. It also have functions for processing and serializing the parsed request.
 
@@ -347,7 +347,7 @@ The parser is implemented as a state machine which changes state while traversin
 - `RL_CR`: expects a line feed (`LF`) after a carriage return (`CR`).
 - `RL_LF`: indicates the successful completion of the request line. Parser moves to the `H_START` state (start of header parsing)
 
-For each component the start pointer is assigned on beginning and and end pointer is assigned while the component ends. The pointer is made to the current position of `buff`.
+For each component the start pointer is assigned on beginning and end pointer is assigned while the component ends. The pointer is made to the current position of `buff`.
 
 :::details **expserver/src/http/xps_http.c -** `xps_http_parse_request_line()`
 
@@ -785,7 +785,7 @@ const char *xps_http_get_header(vec_void_t *headers, const char *key) {
 
 ::: tip TRY
 
-- TTP header names are case insensitive. Modify the code such that the comparison handles the input key in a case insensitive way.
+- HTTP header names are case insensitive. Modify the code such that the comparison handles the input key in a case insensitive way.
   
 :::
 
@@ -1107,7 +1107,7 @@ Verify the following output is printed in terminal thus ensuring the parsing of 
 
 Now let us verify the request header parsing.
 
-In the `http_process_headers()`, after parsing all the headers, iterarte thorugh the headers list and print the key and value of each header.
+In the `http_process_headers()`, after parsing all the headers, iterate through the headers list and print the key and value of each header.
 
 ```c
 printf("HEADERS\n");
@@ -1129,7 +1129,7 @@ We have already verified the parsing of HTTP request (both request line and head
 xps_file_t *file = xps_file_create(core, "../public/sample.txt", &error);
 ```
 
-But in this stage, the name of the file to be opened can be taken from the path of HTTP request. We have alredy implemented this in `session_process_request()` as below:
+But in this stage, the name of the file to be opened can be taken from the path of HTTP request. We have already implemented this in `session_process_request()` as below:
 
 ```c
 strcpy(file_path, "../public");

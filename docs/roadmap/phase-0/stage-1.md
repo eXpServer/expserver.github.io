@@ -78,7 +78,7 @@ While a socket is in the `TIME_WAIT` state, the operating system reserves the as
 
 When we restart the server quickly, it attempts to bind to the same IP and port to resume it is operation. However, if the IP and port are still reserved due to the previous socket being in the `TIME_WAIT` state, the server may encounter an error indicating that the address is already in use.
 
-In the code snipped below, we'll set the socket option `SO_REUSEADDR` for the listening socket identified by the file descriptor `listen_sock_fd`. This option allows us to reuse local IPs and ports, even if they are in the `TIME_WAIT` state.
+In the code snippet below, we'll set the socket option `SO_REUSEADDR` for the listening socket identified by the file descriptor `listen_sock_fd`. This option allows us to reuse local IPs and ports, even if they are in the `TIME_WAIT` state.
 
 ```c
   // Setting sock opt reuse addr
@@ -234,7 +234,7 @@ Initialize a `char` **buffer** to store the client message. A buffer is a region
     memset(buff, 0, BUFF_SIZE);
 ```
 
-The `memset` function is initialize the value of `buff` to 0.
+The `memset` function initializes the value of `buff` to 0.
 
 ```c
     // Read message from client to buffer
