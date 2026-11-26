@@ -225,28 +225,28 @@ xps_session_t *xps_session_create(xps_core_t *core, xps_connection_t *client) {
 
 In `xps_session.c` several handler functions are there for handling various events, they are as follows
 
-- `void client_source_handler()` : is used while writing data from session instance to client connection instance( `session->client_source` to `client->sink` ). Whatever data is stored in `session->to_client_buff` is written into the pipe. After successful write, the `session->to_client_buff` is set to NULL.
+- `void client_source_handler()`: is used while writing data from session instance to client connection instance (`session->client_source` to `client->sink`). Whatever data is stored in `session->to_client_buff` is written into the pipe. After successful write, the `session->to_client_buff` is set to NULL.
 
-- `void client_sink_handler()` : is used when data is read from client connection instance to session instance(`client->source` to `session->client_sink` ). The read data from pipe is then stored into `session->from_client_buff` .
+- `void client_sink_handler()`: is used when data is read from client connection instance to session instance (`client->source` to `session->client_sink`). The read data from pipe is then stored into `session->from_client_buff`.
 
-- `void upstream_source_handler()` : is used when data is written from session to upstream. Whatever data is stored in `session->from_client_buff` is written into the pipe. After successful write the `session->from_client_buff` is set to NULL. The `upstream_connected` flag is set to true, if some data has been moved from session to upstream.
+- `void upstream_source_handler()`: is used when data is written from session to upstream. Whatever data is stored in `session->from_client_buff` is written into the pipe. After successful write the `session->from_client_buff` is set to NULL. The `upstream_connected` flag is set to true, if some data has been moved from session to upstream.
 
-- `void upstream_sink_handler()` : deals with reading of data from upstream to session. Here the `session->upstream_connected` is set to true. After successfully reading the data, it is then stored in the `session->to_client_buff` .
+- `void upstream_sink_handler()`: deals with reading of data from upstream to session. Here the `session->upstream_connected` is set to true. After successfully reading the data, it is then stored in the `session->to_client_buff` .
 
-- `void file_sink_handler()` : is similar to `upstream_sink_handler()` . Here data is read from file to session and it is stored in `session->to_client_buff` .
+- `void file_sink_handler()`: is similar to `upstream_sink_handler()` . Here data is read from file to session and it is stored in `session->to_client_buff` .
 
-- `void client_source_close_handler()`, `void client_sink_close_handler()`, `void upstream_source_close_handler()`, `void upstream_sink_close_handler()`, `void file_sink_close_handler()` : all these are sink/source close handlers, which deals with closing of the session instance. In the upstream source/sink close handlers, if upstream is not connected and `upstream_error_res_set` flag is not set, then `upstream_error_res_set` is set to true.
+- `void client_source_close_handler()`, `void client_sink_close_handler()`, `void upstream_source_close_handler()`, `void upstream_sink_close_handler()`, `void file_sink_close_handler()`: all these are sink/source close handlers, which deals with closing of the session instance. In the upstream source/sink close handlers, if upstream is not connected and `upstream_error_res_set` flag is not set, then `upstream_error_res_set` is set to true.
 
 - `void upstream_error_res()` is used to set the `session->upstream_error_res_set` as true.
 
-- `set_to_client_buff()` : This function plays an important role in setting the ready flags for source and sink for the session, upstream and file. Here if the `session->to_client_buff` is found to be null, then it implies that data has been already written into the pipe. So now session is ready to receive data from upstream or file. Therefore, `session->client_source->ready` is set to false and then `session->upstream_sink->ready` and `session->file_sink->ready` are set to true.
+- `set_to_client_buff()`: This function plays an important role in setting the ready flags for source and sink for the session, upstream and file. Here if the `session->to_client_buff` is found to be null, then it implies that data has been already written into the pipe. So now session is ready to receive data from upstream or file. Therefore, `session->client_source->ready` is set to false and then `session->upstream_sink->ready` and `session->file_sink->ready` are set to true.
 
-- `set_from_client_buff()` : This function also sets the source and sink ready flags. Here if the `session->from_client_buf` is found to be null, then it implies that no data has been read from client to session. Session is now ready to accept data from client. Therefore `session->client_sink->ready` is set to true and `session->upstream_source->ready` is set to false.
+- `set_from_client_buff()`: This function also sets the source and sink ready flags. Here if the `session->from_client_buf` is found to be null, then it implies that no data has been read from client to session. Session is now ready to accept data from client. Therefore `session->client_sink->ready` is set to true and `session->upstream_source->ready` is set to false.
 
-- `session_check_destroy()` : This function checks whether the session instance is working properly or whether it has to be destroyed. In this function various data flows are checked for verifying whether session is working or not. They are:
-  1. client to upstream flow : If `session->upstream_source` is active and either `session - >client_sink` is active or if there is some data in `from_client_buff`, then it implies there can be a data flow from client to upstream.
-  2. upstream to client flow : If `session->client_source` is active and either `session->upstream_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between upstream and client.
-  3. file to client flow : If `session->client_source` is active and either `session->file_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between file and client.
+- `session_check_destroy()`: This function checks whether the session instance is working properly or whether it has to be destroyed. In this function various data flows are checked for verifying whether session is working or not. They are:
+  1. client to upstream flow: If `session->upstream_source` is active and either `session - >client_sink` is active or if there is some data in `from_client_buff`, then it implies there can be a data flow from client to upstream.
+  2. upstream to client flow: If `session->client_source` is active and either `session->upstream_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between upstream and client.
+  3. file to client flow: If `session->client_source` is active and either `session->file_sink` is active or there is some data in `to_client_buff`, then there is a data flow possible between file and client.
      If none of these flows are present then session instance gets destroyed.
 
 ::: details **expserver/src/core/xps_session.c - handler functions**

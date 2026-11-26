@@ -13,7 +13,7 @@
 
 ## Introduction
 
-From the experiments in the previous stage, we found that there was a high CPU and memory utilization, while running the server. We will solve the CPU utilization problem in this stage and memory utilization problem in the next stage. From the experiment 1 in stage 8, we noticed that the CPU usage for an idle TCP connection was very high. This was due to epoll repeatedly notifying about write events on the socket. During an idle connection, we are not writing anything to the socket, thus the send kernel buffer will be empty and it is available to be written to. Epoll in level triggered mode(default mode) will keep on notifying about this. As a result CPU usage rises. So if we are able to avoid these repeated notifications being sent by the epoll, we can improve the CPU usage.
+From the experiments in the previous stage, we found that there was a high CPU and memory utilization, while running the server. We will solve the CPU utilization problem in this stage and memory utilization problem in the next stage. From the experiment 1 in stage 8, we noticed that the CPU usage for an idle TCP connection was very high. This was due to epoll repeatedly notifying about write events on the socket. During an idle connection, we are not writing anything to the socket, thus the send kernel buffer will be empty and it is available to be written to. Epoll in level triggered mode (default mode) will keep on notifying about this. As a result CPU usage rises. So if we are able to avoid these repeated notifications being sent by the epoll, we can improve the CPU usage.
 
 **What change in behaviour of epoll can help us in solving this problem?**
 

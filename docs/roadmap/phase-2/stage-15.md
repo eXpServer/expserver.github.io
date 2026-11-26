@@ -12,7 +12,7 @@
 
 ## Introduction
 
-In the previous stage we have seen how to parse an incoming HTTP request from the client and how to create a request instance. There the responses to the received HTTP requests were directly being send by the `session_process_request()` function in the session module. But in reality the HTTP responses that we receive from a web browser follow a specific structure. Thus it is essential to follow the structure while sending responses back to client from the server. In this stage we will send HTTP responses from server back to client. Before getting into this stage it is very essential to understand the basic structure of an HTTP response. Let’s have a quick glance through the structure of an HTTP response.
+In the previous stage we have seen how to parse an incoming HTTP request from the client and how to create a request instance. There the responses to the received HTTP requests were directly being sent by the `session_process_request()` function in the session module. But in reality the HTTP responses that we receive from a web browser follow a specific structure. Thus it is essential to follow the structure while sending responses back to client from the server. In this stage we will send HTTP responses from server back to client. Before getting into this stage it is very essential to understand the basic structure of an HTTP response. Let’s have a quick glance through the structure of an HTTP response.
 
 ### HTTP Response
 
@@ -22,7 +22,7 @@ Status line: is the first line that the client receives from the server after ma
 
 - **HTTP version** - indicates the protocol version used by the server, which helps the client understand supported features like persistent connections or multiplexing(e.g., HTTP/1.1),
 - **Status code** - a three-digit number that categorizes the response—1xx for informational, 2xx for success (e.g., 200 OK), 3xx for redirection (e.g., 301 Moved Permanently), 4xx for client errors (e.g., 404 Not Found), and 5xx for server errors (e.g., 500 Internal Server Error).
-- **Status text** - a human-readable phrase that describes the status code, aiding in debugging and clarity.(e.g., OK, Not Found, Internal Server Error).
+- **Status text** - a human-readable phrase that describes the status code, aiding in debugging and clarity. (e.g., OK, Not Found, Internal Server Error).
 
 Response headers: These are similar to request headers and provide additional information about the server's response. They appear as key-value pairs and help the client understand how to handle the response data. These headers can define the format of the data, manage caching, control connection behavior, and more. eg:
 
@@ -34,7 +34,7 @@ Response headers: These are similar to request headers and provide additional in
 - **Server**: Reveals information about the server software (e.g., `Apache`, `nginx`).
 - **Set-Cookie**: Sends cookies from the server to the client, which can be stored and sent back with future requests.
 
-Body : it is the actual content returned by server in response to the client request. It can be of various formats like html(for rendering pages), json(used in APIs for exchanging structured data), xml(structured data format, often used in older systems or specific applications), plain text(simple unformatted text), binary data(such as images, videos, or downloadable files) etc. With respect to the format of the body, Content-Type header is set.
+Body: it is the actual content returned by server in response to the client request. It can be of various formats like html(for rendering pages), json(used in APIs for exchanging structured data), xml(structured data format, often used in older systems or specific applications), plain text(simple unformatted text), binary data(such as images, videos, or downloadable files) etc. With respect to the format of the body, Content-Type header is set.
 
 ```
 HTTP/1.1 200 OK
@@ -110,7 +110,7 @@ The code below has the contents of the header file for `xps_http_res`. Have a l
   #endif
   ```
 
-A new struct `xps_http_res_s` is introduced here. From this stage on wards an HTTP response will be represented using this struct. It contain fields to carry the information related to HTTP responses. The fields of `xps_http_res_s` are as follows,
+A new struct `xps_http_res_s` is introduced here. From this stage onwards an HTTP response will be represented using this struct. It contain fields to carry the information related to HTTP responses. The fields of `xps_http_res_s` are as follows,
 
 - `char response_line[70]` : a character array that contains the whole response line of the HTTP response. It will include HTTP version, status code and status text.
 - `vec_void_t headers` : an array of parsed headers in the form of key-value pairs.

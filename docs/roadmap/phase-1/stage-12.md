@@ -10,11 +10,11 @@ We would be implementing a file server for incoming connections to port 8002.
 
 ## Introduction
 
-A file server stores and delivers files to clients over a network, enabling remote access. It allows users to download, upload, and modify files. In this stage, we would be implementing a rudimentary file server, which delivers files upon client request. Our server only allows files residing inside the `public` folder to be downloaded, and the files must have read access granted to `others`. When there are incoming connections to port 8002, the server serves a static file to the client through the pipe mechanism discussed earlier. At this stage, due to the absence of HTTP parsing the client is unable to request for a specific file so as of now the file will be predifined. In later stages, we'll be adding support for directory browsing on the `public` folder.
+A file server stores and delivers files to clients over a network, enabling remote access. It allows users to download, upload, and modify files. In this stage, we would be implementing a rudimentary file server, which delivers files upon client request. Our server only allows files residing inside the `public` folder to be downloaded, and the files must have read access granted to `others`. When there are incoming connections to port 8002, the server serves a static file to the client through the pipe mechanism discussed earlier. At this stage, due to the absence of HTTP parsing the client is unable to request for a specific file so as of now the file will be predefined. In later stages, we'll be adding support for directory browsing on the `public` folder.
 
 ## Design
 
-Two new modules `xps_file` and `xps_mime` are introduced. In `xps_file`, an `xps_file_s` struct is introduced which stores the information regarding the file including file path, file size, [MIME](https://en.wikipedia.org/wiki/MIME) type(describes the format of file), and file structure pointer. `xps_file` has functions for opening a file and creating an instance of `xps_file_s` struct for it, for destruction of file instance, for reading data from file and writing to the pipe, and for closing the file source. Earlier the source was receiving data using `recv()` and writes it to the pipe, but in a file server the source takes data from the file attached to it and writes it to the pipe. Here, the `ptr` field in `xps_source_s` struct points to an instance of `xps_file_s` struct which has to be read, instead of pointing to the connection instance as in earlier stages. `file_souce_handler()` reads data from the file and writes it to pipe.
+Two new modules `xps_file` and `xps_mime` are introduced. In `xps_file`, an `xps_file_s` struct is introduced which stores the information regarding the file including file path, file size, [MIME](https://en.wikipedia.org/wiki/MIME) type (describes the format of file), and file structure pointer. `xps_file` has functions for opening a file and creating an instance of `xps_file_s` struct for it, for destruction of file instance, for reading data from file and writing to the pipe, and for closing the file source. Earlier the source was receiving data using `recv()` and writes it to the pipe, but in a file server the source takes data from the file attached to it and writes it to the pipe. Here, the `ptr` field in `xps_source_s` struct points to an instance of `xps_file_s` struct which has to be read, instead of pointing to the connection instance as in earlier stages. `file_souce_handler()` reads data from the file and writes it to pipe.
 
 The `xps_mime` module is used for getting the MIME type of the file. A MIME type (Multipurpose Internet Mail Extensions type) is a standard that indicates the nature and format of a file. Originally developed for email systems to specify the type of data attached in emails, MIME types are now used extensively on the internet, particularly in HTTP, to describe the content being transferred. We would be exploring more on this in later stages.
 
@@ -178,7 +178,9 @@ Several file system-related C standard library functions are used to handle file
     - SEEK_SET: The offset is set relative to the beginning of the file.
     - SEEK_CUR: The offset is added to the current position.
     - SEEK_END: The offset is set relative to the end of the file.
-      **Returns**: 0 on success, or -1 on error.
+
+  **Returns**: 0 on success, or -1 on error.
+
 - `ftell()`
   ```c
   long ftell(FILE *stream);

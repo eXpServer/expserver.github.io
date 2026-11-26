@@ -21,7 +21,7 @@ eXpServer is developed in the form of modules. A module will comprise of a `.h` 
 
 ### **Create and Destroy Functions**
 
-A typical pattern that we will be seeing in modules is the _create_ and _destroy_ functions. For example, the `xps_listener` module has `xps_listener_t *xps_listener_create(...)` and `void xps_listener_destory(xps_listener_t *listener)` functions. These functions are responsible for the following:
+A typical pattern that we will be seeing in modules is the _create_ and _destroy_ functions. For example, the `xps_listener` module has `xps_listener_t *xps_listener_create(...)` and `void xps_listener_destroy(xps_listener_t *listener)` functions. These functions are responsible for the following:
 
 - The _create_ functions allocate memory and initialize the struct for the respective modules, `xps_listener_t` in this example. On success it will return a pointer to the instance and on error it will return `NULL` . Hence the calling function can detect an error by checking if the returned value is `NULL` or not.
 - The _destroy_ functions accept a pointer to an instance of the module struct, `xps_listener_t` in this case, to release memory and properly de-initialize any associated values. Since the destroy functions are always expected to succeed, it will not return any errors.

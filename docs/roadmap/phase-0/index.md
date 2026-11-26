@@ -27,7 +27,7 @@ We call this the **client-server model** or the **client-server architecture.**
 
 ---
 
-When someone says the word server, we immediately get a picture of huge datacentres with lots computers, expensive hardware, wires and blinking lights. But in reality, **server is just a program** that is running on a computer. The term “server” just describes the role or the purpose of what the program does.
+When someone says the word server, we immediately get a picture of huge datacentres with lots of computers, expensive hardware, wires and blinking lights. But in reality, **server is just a program** that is running on a computer. The term “server” just describes the role or the purpose of what the program does.
 
 A server's role is to provide data or services requested by ‘someone’. That someone is a client, which again is just a program, that initiates communication by asking the server for what it needs. When a client requests something, the server fulfils the request by providing the requested data or service.
 

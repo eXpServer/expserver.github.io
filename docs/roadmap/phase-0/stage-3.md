@@ -24,7 +24,7 @@
 
 At the end of [Stage 2](/roadmap/phase-0/stage-2), we noticed how the server is only able to cater to one client at a time. When the client disconnects, the server breaks out of the recv-send while loop and exits the program. Later in the exercises we modified the server to accept clients sequentially, one after the other.
 
-Now we will use multithreading to implement the same. We can use **multithreading** along with either TCP or UDP protocol. In this stage we will use **UDP** (User Dtagram Protocol) which is a connectionless and unreliable protocol.
+Now we will use multithreading to implement the same. We can use **multithreading** along with either TCP or UDP protocol. In this stage we will use **UDP** (User Datagram Protocol) which is a connectionless and unreliable protocol.
 
 We will be using the following functions to setup UDP connections:
 

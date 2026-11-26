@@ -25,7 +25,7 @@ When it comes to web servers, there are primarily 2 types of architectures:
 
 Let us break it down.
 
-In a multi-threaded architecture such as that of Apache, a new [thread](<https://en.wikipedia.org/wiki/Thread_(computing)>) is created to handle each incoming connection. Utilizing threads enables the server to manage multiple clients simulatneously, with the operating system taking care of thread scheduling. However, using a separate thread for every connection results in significant overhead on system resources.
+In a multi-threaded architecture such as that of Apache, a new [thread](<https://en.wikipedia.org/wiki/Thread_(computing)>) is created to handle each incoming connection. Utilizing threads enables the server to manage multiple clients simultaneously, with the operating system taking care of thread scheduling. However, using a separate thread for every connection results in significant overhead on system resources.
 
 Due to this limitation, most modern web servers uses a single-threaded, event-driven, asynchronous architecture. What exactly do all these terms mean?
 
