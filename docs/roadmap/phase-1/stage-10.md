@@ -872,6 +872,8 @@ bool handle_pipes(xps_loop_t *loop) {
 }
 ```
 
+:::
+
 :::tip NOTE
 The logic for handling cases where **only** a source or **only** a sink exists might seem unnecessary right now, since we currently connect the source and sink of the same pipe to the same client connection. However, this design is crucial for future extensibility.
 
